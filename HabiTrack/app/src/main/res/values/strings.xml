@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HabiTrack</string>
+    <string name="title_activity_signup">SignupActivity</string>
+    <string name="title_activity_all_habit_types">AllHabitTypesActivity</string>
 </resources>

@@ -16,6 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".NewHabitEventActivity" />
+        <activity android:name=".NewHabitTypeActivity" />
+        <activity android:name=".HistoryActivity" />
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".AllHabitTypesActivity" />
+        <activity android:name=".HabitTypeDetailsActivity" />
+        <activity android:name=".HabitEventDetailsActivity"></activity>
     </application>
 
 </manifest>
