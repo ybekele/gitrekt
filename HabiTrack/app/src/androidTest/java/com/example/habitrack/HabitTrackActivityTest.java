@@ -1,10 +1,11 @@
 package com.example.habitrack;
+
 /**
  * Created by yonaelbekele on 2017-10-22.
  */
 
-public class HabitTrackActivityTest {
-    /*
+public class HabitTrackActivityTest extends ExampleInstrumentedTest{
+/*
     private Solo solo;
 
     public HabiTrackActivityTest() {
@@ -12,21 +13,22 @@ public class HabitTrackActivityTest {
     }
 
     public void setUp() throws Exception{
-        solo = new Solo.getInstrumentation(), getActivity());
+        solo = new Solo.getInstrumentation(), getActivity();
     }
     public void testStart() throws Exception {
         Activity activity = getActivity();
     }
 
         @Override
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
+    public void tearDown() throws Exception {
+            solo.finishOpenedActivities();
 
-    // Test habit
+            // Test habit
 
-    // Test create habit
+            // Test create habit
 
-    // Test create habit event
+            // Test create habit event
+        }
+        */
 
-     */
 }
