@@ -9,12 +9,21 @@ public class HabitEvent {
     String word = "hello";
 
     private String title;
+    private String comment;
     private boolean status;
     private int eventsDone;
     private int totalEventCount;
 
+    public HabitEvent(String title) {
+        this.title = title;
+    }
+
     public String getTitle(){
         return this.title;
+    }
+
+    public String getComment(){
+        return this.comment;
     }
 
     public float getProgress(){
@@ -24,7 +33,7 @@ public class HabitEvent {
     public boolean getStatus(){
         return false;
     }
-    
+
     public String get_my_Word() {
         return word;
     }
