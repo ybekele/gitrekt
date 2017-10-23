@@ -1,14 +1,20 @@
 package com.example.habitrack;
+import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
+import com.robotium.solo.Solo;
+import junit.framework.TestCase;
 
 /**
  * Created by yonaelbekele on 2017-10-22.
  */
 
-public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2{
-    public HabitTrackActivityTest(Class activityClass) {
+public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<MainActivity>{
+    private Solo solo;
+    public HabitTrackActivityTest(Class<MainActivity> activityClass) {
         super(activityClass);
     }
+
+
 
    // private Solo solo;
 /*
