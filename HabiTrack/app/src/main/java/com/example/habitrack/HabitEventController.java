@@ -19,6 +19,14 @@ public class HabitEventController {
         eventList.add(event);
     }
 
+    public int getTotalEvents(){
+        return eventList.size();
+    }
+
+    public void deleteEvent(){
+        eventList.remove(0);
+    }
+
     public ArrayList<HabitEvent> getAllEvents(){
         return eventList;
     }
