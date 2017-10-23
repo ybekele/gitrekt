@@ -10,12 +10,14 @@ public class HabitEvent {
 
     private String title;
     private String comment;
+    private Date date;
     private boolean status;
     private int eventsDone;
     private int totalEventCount;
 
     public HabitEvent(String title) {
         this.title = title;
+        this.date = new Date();
     }
 
     public String getTitle(){
