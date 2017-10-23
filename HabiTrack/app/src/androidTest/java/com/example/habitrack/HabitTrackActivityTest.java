@@ -1,8 +1,9 @@
 package com.example.habitrack;
+
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
+
 import com.robotium.solo.Solo;
-import junit.framework.TestCase;
 
 /**
  * Created by yonaelbekele on 2017-10-22.
@@ -13,10 +14,22 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
     public HabitTrackActivityTest(Class<MainActivity> activityClass) {
         super(activityClass);
     }
+    
+    public void testStart() throws Exception {
+        Activity activity = getActivity();
+    }
+    @Override
+    public void tearDown() throws Exception {
+        solo.finishOpenedActivities();
+
+        // Test habit
+
+        // Test create habit
+
+        // Test create habit event
+    }
 
 
-
-   // private Solo solo;
 /*
     public HabiTrackActivityTest() {
         super(ca.ualberta.cs.habitrack.HabiTrackActivity.class);
