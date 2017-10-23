@@ -5,4 +5,10 @@ package com.example.habitrack;
  */
 
 public class HabitType {
+    String third_word = "hello";
+
+
+    public String getWords() {
+        return third_word;
+    }
 }

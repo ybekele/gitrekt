@@ -5,4 +5,10 @@ package com.example.habitrack;
  */
 
 public class HabitEventController {
+    String third_word = "hello";
+
+
+    public String get_third_Word() {
+        return third_word;
+    }
 }
