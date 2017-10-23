@@ -1,13 +1,17 @@
 package com.example.habitrack;
+import android.test.ActivityInstrumentationTestCase2;
 
 /**
  * Created by yonaelbekele on 2017-10-22.
  */
 
-public class HabitTrackActivityTest extends ExampleInstrumentedTest{
-/*
-    private Solo solo;
+public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2{
+    public HabitTrackActivityTest(Class activityClass) {
+        super(activityClass);
+    }
 
+   // private Solo solo;
+/*
     public HabiTrackActivityTest() {
         super(ca.ualberta.cs.habitrack.HabiTrackActivity.class);
     }
