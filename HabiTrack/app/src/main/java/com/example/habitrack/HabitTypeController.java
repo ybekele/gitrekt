@@ -1,10 +1,13 @@
 package com.example.habitrack;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 /**
  *
  * HabitTypeController
  *
- * Version 1.0
+ * Version 1.01
  *
  * Created by sshussai on 10/21/17.
  *
@@ -33,17 +36,17 @@ public class HabitTypeController {
     }
 
     public void delete(Integer requestedID) {
-        HabitTypeManager.getHTManager().removeHabitType(requestedID);
+        HabitStateTypeManager.getHTManager().removeHabitType(requestedID);
 
     }
 
     public HabitType viewDetails(Integer requestedID) {
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitStateTypeManager.getHTManager().getHabitType(requestedID);
         return ht;
     }
 
     public static void editHabitTypeTitle(Integer requestedID, String newTitle){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitStateTypeManager.getHTManager().getHabitType(requestedID);
 
         if(ht != null){
             ht.setTitle(newTitle);
@@ -51,21 +54,21 @@ public class HabitTypeController {
     }
 
     public static void editHabitTypeReason(Integer requestedID, String newReason){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitStateTypeManager.getHTManager().getHabitType(requestedID);
         if(ht != null){
             ht.setReason(newReason);
         }
     }
 
     public static void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitStateTypeManager.getHTManager().getHabitType(requestedID);
         if(ht != null){
             ht.setStartDate(newDate);
         }
     }
 
     public static void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitStateTypeManager.getHTManager().getHabitType(requestedID);
         if(ht != null){
             ht.setSchedule(newSchedule);
         }
