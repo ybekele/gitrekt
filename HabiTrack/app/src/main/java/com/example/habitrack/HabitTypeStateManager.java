@@ -5,10 +5,25 @@ import java.util.Calendar;
 import java.util.ArrayList;
 
 /**
+ * HabitTypeStateManager
+ *
+ * Version 1.0
+ *
  * Created by sshussai on 11/4/17.
+ *
  */
 
 public class HabitTypeStateManager {
+
+    /**
+     * Version 1.0
+     * This class is the state manager for all Habit Type related events. It contains a
+     * list that has all the habit types created so far, along with all the habit types
+     * for today.
+     * It can add habit types to the list, retrieve and remove them, and calculate habit
+     * types for today.
+     *
+     */
 
     private static Integer habitTypeID;
 
