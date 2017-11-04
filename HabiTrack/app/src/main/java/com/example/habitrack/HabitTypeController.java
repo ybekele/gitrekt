@@ -1,10 +1,13 @@
 package com.example.habitrack;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 /**
  *
  * HabitTypeController
  *
- * Version 1.0
+ * Version 1.03
  *
  * Created by sshussai on 10/21/17.
  *
@@ -24,26 +27,28 @@ public class HabitTypeController {
 
     public void createNewHabitType(String title, String reason,
                                    Calendar startDate, ArrayList<Integer> schedule) {
-        HabitType ht = new HabitType(4);
+        HabitType ht = new
+                HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
         ht.setTitle(title);
         ht.setReason(reason);
         ht.setStartDate(startDate);
         ht.setSchedule(schedule);
+        HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
 
     }
 
-    public void delete(Integer requestedID) {
-        HabitTypeManager.getHTManager().removeHabitType(requestedID);
+    public void deleteHabitType(Integer requestedID) {
+        HabitTypeStateManager.getHTStateManager().removeHabitType(requestedID);
 
     }
 
-    public HabitType viewDetails(Integer requestedID) {
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+    public HabitType getHabitType(Integer requestedID) {
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
 
     public static void editHabitTypeTitle(Integer requestedID, String newTitle){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
 
         if(ht != null){
             ht.setTitle(newTitle);
@@ -51,21 +56,21 @@ public class HabitTypeController {
     }
 
     public static void editHabitTypeReason(Integer requestedID, String newReason){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         if(ht != null){
             ht.setReason(newReason);
         }
     }
 
     public static void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         if(ht != null){
             ht.setStartDate(newDate);
         }
     }
 
     public static void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
-        HabitType ht = HabitTypeManager.getHTManager().getHabitType(requestedID);
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         if(ht != null){
             ht.setSchedule(newSchedule);
         }
