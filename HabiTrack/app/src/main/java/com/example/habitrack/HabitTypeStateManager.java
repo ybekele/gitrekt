@@ -63,16 +63,16 @@ public class HabitTypeStateManager {
                 return ALL_HABITTYPES.get(count);
             }
         }
-        return null;
-        //HabitType ht = new HabitType(-1);
-        //return ht;
+        HabitType ht = new HabitType(-1);
+        return ht;
     }
 
 
     public void removeHabitType(Integer requestedID){
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             if(ALL_HABITTYPES.get(count).getID() == requestedID){
-                ALL_HABITTYPES.remove(count);
+                HabitType rmht = ALL_HABITTYPES.get(count);
+                ALL_HABITTYPES.remove(rmht);
             }
         }
     }
