@@ -7,7 +7,7 @@ import java.util.Calendar;
  *
  * HabitTypeController
  *
- * Version 1.03
+ * Version 1.2
  *
  * Created by sshussai on 10/21/17.
  *
@@ -74,6 +74,11 @@ public class HabitTypeController {
         if(ht != null){
             ht.setSchedule(newSchedule);
         }
+    }
+
+    public String getHabitTitle(Integer requestedID){
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
+        return ht.getTitle();
     }
 
 }
