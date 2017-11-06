@@ -1,41 +1,75 @@
 package com.example.habitrack;
 
 
+import java.util.Calendar;
+
 import java.util.ArrayList;
 
 /**
+ * HabitEventController
+ *
+ * Version 1.0
+ *
  * Created by sshussai on 10/21/17.
  */
 
 public class HabitEventController {
-    String third_word = "hello";
+    /**
+     * This class is the main interface for the habit event entity. It can create a new habit event
+     * and delete it, given a corresponding habit type
+     *
+     */
 
-    private static final String FILENAME = "file.sav";
-    private ArrayList<HabitEvent> eventList= new ArrayList<HabitEvent>();
-    private ArrayList<HabitEvent> todayList = new ArrayList<HabitEvent>();
+    public HabitEventController(){}
 
-    public void createHabitEvent(String title){
-        HabitEvent event = new HabitEvent(title);
-        eventList.add(event);
+    public void createNewHabitEvent(Integer habitTypeID){
+        HabitTypeController htc = new HabitTypeController();
+        HabitEvent he = new
+                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
+        he.setTitle(htc.getHabitTitle(habitTypeID));
+        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
     }
 
-    public int getTotalEvents(){
-        return eventList.size();
+    public void createNewHabitEvent(Integer habitTypeID, String comment){
+        HabitTypeController htc = new HabitTypeController();
+        HabitEvent he = new
+                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
+        he.setTitle(htc.getHabitTitle(habitTypeID));
+        he.setComment(comment);
+        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
     }
 
-    public void deleteEvent(){
-        eventList.remove(0);
+    public void deleteHabitEvent(Integer requestedID) {
+        HabitEventStateManager.getHEStateManager().removeHabitEvent(requestedID);
+
     }
 
-    public ArrayList<HabitEvent> getAllEvents(){
-        return eventList;
+    public HabitEvent getHabitEvent(Integer requestedID) {
+        HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
+        return he;
     }
 
-    public ArrayList<HabitEvent> getEventsForToday(){
-        return todayList;
+    public void editHabitEventTitle(Integer requestedID, String newTitle){
+        HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
+
+        if(he != null){
+            he.setTitle(newTitle);
+        }
     }
 
-    public String get_third_Word() {
-        return third_word;
+    public void editHabitEventComment(Integer requestedID, String newComment){
+        HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
+        if(he != null){
+            he.setComment(newComment);
+        }
     }
+
+    public void editHabitEventDate(Integer requestedID, Calendar newDate){
+        HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
+        if(he != null){
+            he.setDate(newDate);
+
+        }
+    }
+
 }

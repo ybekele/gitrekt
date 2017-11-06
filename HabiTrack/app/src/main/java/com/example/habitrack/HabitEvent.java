@@ -15,6 +15,7 @@ import java.util.Calendar;
 
 public class HabitEvent {
     /**
+     * Version 1.0
      * This class is the template for a habit event entity.
      *
      */
