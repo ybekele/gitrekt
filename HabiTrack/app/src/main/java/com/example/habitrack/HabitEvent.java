@@ -1,44 +1,68 @@
 package com.example.habitrack;
 
-import java.util.Date;
+import java.util.Calendar;
+
 
 /**
+ * HabitEvent
+ *
+ * Version 1.0
+ *
  * Created by sshussai on 10/21/17.
+ *
  */
 
 
 public class HabitEvent {
-    String word = "hello";
+    /**
+     * Version 1.0
+     * This class is the template for a habit event entity.
+     *
+     */
 
-    private String title;
-    private String comment;
-    private Date date;
-    private boolean status;
-    private int eventsDone;
-    private int totalEventCount;
+    private final Integer habitEventID;         // ID for the event
+    private final Integer habitTypeID;          // ID for the corresponding habit type
+    private String title;                       // title of the habit event
+    private String comment;                     // comment for the habit event
+    private Calendar date;                      // date of the habit event
 
-    public HabitEvent(String title) {
+    public HabitEvent(Integer heID, Integer htID) {
+        HabitTypeController htc = new HabitTypeController();
+        this.title = htc.getHabitTitle(htID);
+        this.habitEventID = heID;
+        this.habitTypeID = htID;
+        this.date = Calendar.getInstance();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
-        this.date = new Date();
     }
 
-    public String getTitle(){
-        return this.title;
+    public String getComment() {
+        return comment;
     }
 
-    public String getComment(){
-        return this.comment;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    public float getProgress(){
-        return 100*(eventsDone/totalEventCount);
+    public Calendar getDate() {
+        return date;
     }
 
-    public boolean getStatus(){
-        return false;
+    public void setDate(Calendar date) {
+        this.date = date;
     }
 
-    public String get_my_Word() {
-        return word;
+    public Integer getHabitEventID() {
+        return habitEventID;
+    }
+
+    public Integer getHabitTypeID() {
+        return habitTypeID;
     }
 }

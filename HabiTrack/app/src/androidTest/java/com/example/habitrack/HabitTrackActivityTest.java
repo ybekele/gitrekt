@@ -14,7 +14,7 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
     public HabitTrackActivityTest(Class<MainActivity> activityClass) {
         super(activityClass);
     }
-    
+
     public void testStart() throws Exception {
         Activity activity = getActivity();
     }
