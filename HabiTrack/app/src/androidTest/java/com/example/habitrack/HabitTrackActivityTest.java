@@ -29,6 +29,16 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         // Test create habit event
     }
 
+    public void testActivities() throws Exception {
+        solo.clickOnButton(R.id.button);
+
+        solo.waitForActivity(NewHabitTypeActivity.class);
+        solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
+
+
+
+    }
+
 
 /*
     public HabiTrackActivityTest() {
