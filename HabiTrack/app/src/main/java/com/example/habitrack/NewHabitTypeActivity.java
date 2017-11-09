@@ -95,6 +95,8 @@ public class NewHabitTypeActivity extends AppCompatActivity {
 
                 if ((!(title.equals("")) && !(reason.equals("")) && plan != null)) {
                     htc.createNewHabitType(title, reason, date, plan);
+
+
                 }
 
                 else {

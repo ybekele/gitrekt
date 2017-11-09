@@ -34,6 +34,8 @@ public class HabitTypeController {
         ht.setStartDate(startDate);
         ht.setSchedule(schedule);
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
+        // Ay Austin write your stuff here
+        // - Yonael
 
     }
 
