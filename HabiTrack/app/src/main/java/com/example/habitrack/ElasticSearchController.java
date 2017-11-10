@@ -29,7 +29,7 @@ public class ElasticSearchController {
         protected Void doInBackground(HabitType... habitTypes) {
             verifySettings();
             for (HabitType habitType : habitTypes) {
-                Index index = new Index.Builder(habitType).index("habit_type").type("habitType").build();
+                Index index = new Index.Builder(habitType).index("habit_type").type("").build();
                 try {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {

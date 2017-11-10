@@ -29,7 +29,7 @@ public class HabitEventStateManager {
 
 
     private HabitEventStateManager(){
-        this.habitEventID = 0;
+        habitEventID = 0;
     }
 
     public static HabitEventStateManager getHEStateManager(){
