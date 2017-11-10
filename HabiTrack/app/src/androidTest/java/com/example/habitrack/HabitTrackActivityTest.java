@@ -1,8 +1,11 @@
 package com.example.habitrack;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.EditText;
 
 import com.robotium.solo.Solo;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * Created by yonaelbekele on 2017-10-22.
@@ -45,7 +48,11 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.clickOnView(solo.getView(R.id.button));
         solo.waitForActivity(NewHabitTypeActivity.class);
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.editText3), "test title");
+        solo.enterText((EditText) solo.getView(R.id.editText4), "test Reason");
+        solo.enterText((EditText) solo.getView(R.id.editText5), "7/10/2018");
         solo.clickOnView(solo.getView(R.id.button6));
+        assert(solo.waitForText("Invalid Creation") == FALSE);
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
     }

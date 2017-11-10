@@ -1,6 +1,5 @@
 package com.example.habitrack;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -38,7 +37,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent newType = new Intent(NewHabitTypeActivity.this, MainActivity.class);
+                //Intent newType = new Intent(NewHabitTypeActivity.this, MainActivity.class);
                 EditText titleEntry = (EditText) findViewById(R.id.editText3);
                 EditText reasonEntry = (EditText) findViewById(R.id.editText4);
                 EditText dateEntry = (EditText) findViewById(R.id.editText5);
@@ -112,7 +111,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 newType.putExtra("reason", reason);
                 newType.putExtra("date", date);
                 */
-                startActivity(newType);
+                //startActivity(newType);
                 finish();
             }
         });
