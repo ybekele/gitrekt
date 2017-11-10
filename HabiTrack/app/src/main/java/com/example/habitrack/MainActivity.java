@@ -5,14 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button createTypeButton;
-   // private ArrayList<HabitType> habitTypeArrayList = new ArrayList<HabitType>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,21 +24,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(newType);
             }
         });
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-
-        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
-        getHabitType.execute("");
-        try {
-        //    habitTypeArrayList = getHabitType.get();
-        }
-        catch (Exception e)
-        {
-            Log.i("Error","Failed to get the habit Types from the async object");
-        }
-      //  todaysHabits.setAdapter(typeArrayAdapter);
     }
 }
