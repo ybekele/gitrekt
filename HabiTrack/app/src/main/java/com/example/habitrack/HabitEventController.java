@@ -28,6 +28,8 @@ public class HabitEventController {
                 HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
         he.setTitle(htc.getHabitTitle(habitTypeID));
         HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+       // ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+       // addHabitEvent.execute(he);
     }
 
     public void createNewHabitEvent(Integer habitTypeID, String comment){
