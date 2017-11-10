@@ -2,6 +2,8 @@ package com.example.habitrack;
 
 import java.util.Calendar;
 
+import io.searchbox.annotations.JestId;
+
 
 /**
  * HabitEvent
@@ -11,6 +13,7 @@ import java.util.Calendar;
  * Created by sshussai on 10/21/17.
  *
  */
+
 
 
 public class HabitEvent {
@@ -25,6 +28,9 @@ public class HabitEvent {
     private String title;                       // title of the habit event
     private String comment;                     // comment for the habit event
     private Calendar date;                      // date of the habit event
+    @JestId
+    private String id;
+
 
     public HabitEvent(Integer heID, Integer htID) {
         HabitTypeController htc = new HabitTypeController();
@@ -64,5 +70,9 @@ public class HabitEvent {
 
     public Integer getHabitTypeID() {
         return habitTypeID;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

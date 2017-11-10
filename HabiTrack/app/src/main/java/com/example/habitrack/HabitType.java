@@ -3,6 +3,8 @@ package com.example.habitrack;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.searchbox.annotations.JestId;
+
 /**
  *
  * HabitType
@@ -26,6 +28,8 @@ public class HabitType {
     private ArrayList<Integer> schedule;    // ArrayList of ints representing days of the week for the plan
     private Integer completedCounter;       // habit events currently completed
     private Integer currentMaxCounter;      // total number of habits events possible so far
+    @JestId
+    private String id;
 
     public HabitType(Integer id) {
         this.ID = id;
@@ -66,8 +70,7 @@ public class HabitType {
     }
 
     public Double getStatus(){
-        return (completedCounter.doubleValue()/currentMaxCounter.doubleValue());
-    }
+        return (completedCounter.doubleValue()/currentMaxCounter.doubleValue());}
 
     public Integer getID() {
         return ID;
@@ -81,4 +84,7 @@ public class HabitType {
         currentMaxCounter++;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 }
