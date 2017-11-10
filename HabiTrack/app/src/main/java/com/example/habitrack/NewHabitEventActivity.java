@@ -13,7 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NewHabitEventActivity extends AppCompatActivity {
-    HabitEvent habitEvent;
+    HabitEventController habitEvent;
+
     CheckBox completed;
     TextView title;
     EditText comment;
@@ -43,6 +44,8 @@ public class NewHabitEventActivity extends AppCompatActivity {
             }
         });
 
+
+
         addEvent = (Button) findViewById(R.id.button7);
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +53,11 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 Intent addingEvent = new Intent(getApplicationContext(), MainActivity.class);
                 String commentString = comment.getText().toString();
                 String titleString = title.getText().toString();
-                habitEvent.setTitle(titleString);
-                habitEvent.setComment(commentString);
+                if (titleString.length() > 0) {
+                    habitEvent.createNewHabitEvent(1, commentString);
+                }
+                //habitEvent.setTitle(titleString);
+                //habitEvent.(commentString);
                 startActivity(addingEvent);
             }
         });
