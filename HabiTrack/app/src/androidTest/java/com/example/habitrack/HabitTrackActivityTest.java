@@ -45,6 +45,8 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.clickOnView(solo.getView(R.id.button));
         solo.waitForActivity(NewHabitTypeActivity.class);
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
+        setTitle = solo.
+
         solo.clickOnView(solo.getView(R.id.button6));
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
