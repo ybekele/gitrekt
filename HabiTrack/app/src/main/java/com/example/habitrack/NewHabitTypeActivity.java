@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+
 
 public class NewHabitTypeActivity extends AppCompatActivity {
     ArrayList<Integer> plan = new ArrayList<Integer>();
@@ -51,7 +53,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                  */
                 String dateString = dateEntry.getText().toString();
                 String expectedPattern = "MM/dd/yyyy";
-                SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);
+                SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern, Locale.CANADA);
                 Calendar date = Calendar.getInstance();
                 try {
                     Date dateDate = formatter.parse(dateString);
