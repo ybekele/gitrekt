@@ -20,7 +20,7 @@ import io.searchbox.annotations.JestId;
  *
  * HabitTypeController
  *
- * Version 2.0
+ * Version 2.2
  *
  * Created by sshussai on 10/21/17.
  *
@@ -34,11 +34,12 @@ public class HabitTypeController {
      * and delete it. It can also edit the title, reason, start date or schedule for a given
      * habit type.
      * Added load and save functions
-     *
+     * Added load and save functions for ID too
      */
 
     private Context ctx;
     private final String FILE_NAME = "habitTypes.sav";
+    private final String ID_FILE_NAME = "hdid.sav";
 
     public HabitTypeController(Context givenContext){
         this.ctx = givenContext;
@@ -355,4 +356,51 @@ public class HabitTypeController {
         }
     }
 
+    public void saveHTID(){
+        Integer saveID = HabitTypeStateManager.getHTStateManager().getIDToSave();
+        try {
+            FileOutputStream fos = ctx.openFileOutput(ID_FILE_NAME, 0);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(saveID);
+
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("HabiTrack HT:SaveID", "File Not Found");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("HabiTrack HT:SaveID", "IO Exception");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadHTID() {
+        //ArrayList<HabitType> htList = new ArrayList<HabitType>();
+        Integer loadedID = 0;
+        try {
+            FileInputStream fis = ctx.openFileInput(FILE_NAME);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            Object o = ois.readObject();
+
+            if (o instanceof ArrayList) {
+                //htList = (ArrayList<HabitType>) o;
+                loadedID = (Integer) o;
+            } else {
+                Log.i("HabiTrack HT:", "Error casting");
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("HabiTrack HT:Load", "File Not Found");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("HabiTrack HT:Load", "IOException");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            Log.i("HabiTrack HT:Load", "ClassNotFound");
+        }
+        HabitTypeStateManager.getHTStateManager().setID(loadedID);
+    }
 }
