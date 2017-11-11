@@ -29,7 +29,7 @@ public class HabitType {
     private Integer completedCounter;       // habit events currently completed
     private Integer currentMaxCounter;      // total number of habits events possible so far
     @JestId
-    private String id;
+    private String id;                      // Elastic Search ID for the habit
 
     public HabitType(Integer id) {
         this.ID = id;
@@ -74,6 +74,18 @@ public class HabitType {
 
     public Integer getID() {
         return ID;
+    }
+
+    public Integer getCompletedCounter() {
+        return completedCounter;
+    }
+
+    public Integer getCurrentMaxCounter() {
+        return currentMaxCounter;
+    }
+
+    public String getElasticSearchId() {
+        return id;
     }
 
     public void incrementCompletedCounter(){
