@@ -3,11 +3,13 @@ package com.example.habitrack;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.searchbox.annotations.JestId;
+
 /**
  *
  * HabitTypeController
  *
- * Version 1.03
+ * Version 1.2
  *
  * Created by sshussai on 10/21/17.
  *
@@ -22,19 +24,20 @@ public class HabitTypeController {
      * habit type.
      *
      */
-
     public HabitTypeController(){}
 
-    public void createNewHabitType(String title, String reason,
-                                   Calendar startDate, ArrayList<Integer> schedule) {
-        HabitType ht = new
-                HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
+    public void createNewHabitType(String title, String reason, Calendar startDate, ArrayList<Integer> schedule) {
+        HabitType ht = new HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
+
         ht.setTitle(title);
         ht.setReason(reason);
         ht.setStartDate(startDate);
         ht.setSchedule(schedule);
+
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
 
+        ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
+        addHabitType.execute(ht);
     }
 
     public void deleteHabitType(Integer requestedID) {
@@ -76,6 +79,10 @@ public class HabitTypeController {
         }
     }
 
+    public String getHabitTitle(Integer requestedID){
+        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
+        return ht.getTitle();
+    }
 }
 
 
