@@ -26,11 +26,12 @@ public class HabitEventStateManager {
     public static HabitEventStateManager heManager = new HabitEventStateManager();
 
     //private static final ArrayList<Integer> ALL_HABITEVENTS_ID = new ArrayList<Integer>();
+
     private static ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
 
 
-    private HabitEventStateManager(){
+    public HabitEventStateManager(){
         habitEventID = 0;
     }
 

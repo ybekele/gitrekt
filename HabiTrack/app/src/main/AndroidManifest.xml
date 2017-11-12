@@ -26,7 +26,8 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".AllHabitTypesActivity" />
         <activity android:name=".HabitTypeDetailsActivity" />
-        <activity android:name=".HabitEventDetailsActivity"></activity>
+        <activity android:name=".HabitEventDetailsActivity" />
+        <activity android:name=".HabitHistory"></activity>
     </application>
 
 </manifest>
