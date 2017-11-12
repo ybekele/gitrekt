@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -49,9 +51,20 @@ public class HabitTypeController {
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
-    public void getHabitTypeElasticSearch(){
+    public ArrayList<HabitType> getHabitTypeElasticSearch(){
+        ArrayList<HabitType> ht = new ArrayList<>();
         ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
         getHabitType.execute("");
+        try {
+            ht = getHabitType.get();
+        }
+        catch (Exception e)
+        {
+            Log.i("Error","Failed to get the tweets from the async object");
+        }
+
+        return ht;
+
     }
     public static void editHabitTypeTitle(Integer requestedID, String newTitle){
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
