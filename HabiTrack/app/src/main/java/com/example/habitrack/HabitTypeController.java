@@ -128,17 +128,18 @@ public class HabitTypeController {
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
-    public ArrayList<HabitType> getHabitTypeElasticSearch(){
+
+    public ArrayList<HabitType> getHabitTypeElasticSearch() {
         ArrayList<HabitType> ht = new ArrayList<>();
         ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
         getHabitType.execute("");
         try {
             ht = getHabitType.get();
+        } catch (Exception e) {
+            Log.i("Error", "Failed to get the tweets from the async object");
         }
-        catch (Exception e)
-        {
-            Log.i("Error","Failed to get the tweets from the async object");
-        }
+        return ht;
+    }
 
 
     /**
