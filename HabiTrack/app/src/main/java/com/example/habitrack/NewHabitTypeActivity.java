@@ -30,7 +30,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_type);
-        final HabitTypeController htc = new HabitTypeController();
+        final HabitTypeController htc = new HabitTypeController(this);
 
 
         Button createButton = (Button) findViewById(R.id.button6);

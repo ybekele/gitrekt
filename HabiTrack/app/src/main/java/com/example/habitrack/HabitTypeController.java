@@ -84,6 +84,10 @@ public class HabitTypeController {
         return HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
     }
 
+    public void generateHabitsForToday(){
+        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+    }
+
     /**
      * This function returns the list of habit types for today
      * @return
