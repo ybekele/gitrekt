@@ -68,13 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 String stringTitle = ht.getTitle();
                 todaysHabits.add(stringTitle);
             }
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todaysHabits);
-            displayNames.setAdapter(adapter);
+
         }
-
-
-
-
     }
 
 }

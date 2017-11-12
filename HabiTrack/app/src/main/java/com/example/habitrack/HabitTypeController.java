@@ -49,7 +49,10 @@ public class HabitTypeController {
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
-
+    public void getHabitTypeElasticSearch(){
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute("");
+    }
     public static void editHabitTypeTitle(Integer requestedID, String newTitle){
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
 

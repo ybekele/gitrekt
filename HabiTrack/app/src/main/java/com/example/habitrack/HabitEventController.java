@@ -28,8 +28,8 @@ public class HabitEventController {
                 HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
         he.setTitle(htc.getHabitTitle(habitTypeID));
         HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-       // ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
-       // addHabitEvent.execute(he);
+        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+        addHabitEvent.execute(he);
     }
 
     public void createNewHabitEvent(Integer habitTypeID, String comment){
@@ -49,6 +49,11 @@ public class HabitEventController {
     public HabitEvent getHabitEvent(Integer requestedID) {
         HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
         return he;
+    }
+
+    public void getHabitEventElasticSearch(){
+        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+        getHabitEvent.execute("");
     }
 
     public void editHabitEventTitle(Integer requestedID, String newTitle){

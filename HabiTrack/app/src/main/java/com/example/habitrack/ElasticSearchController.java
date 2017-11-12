@@ -45,21 +45,21 @@ public class ElasticSearchController {
         }
     }
 
-    public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Void>{
+    public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Void> {
         @Override
         protected Void doInBackground(HabitEvent... habitEvents) {
             verifySettings();
             for (HabitEvent habitEvent : habitEvents) {
-                Index index = new Index.Builder(habitEvent).index("habit_event").type("habitEvent").build();
+                Index index = new Index.Builder(habitEvent).index("habit_event").type("").build();
                 try {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
                         habitEvent.setId(result.getId());
                     } else {
-                        Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                        Log.i("Error", "Elasticsearch was not able to add the HabitEvent");
                     }
                 } catch (IOException e) {
-                    Log.i("Error", "The application failed to build and send the HabitType");
+                    Log.i("Error", "The application failed to build and send the HabitEvent");
                 }
             }
             return null;
@@ -75,7 +75,7 @@ public class ElasticSearchController {
 
 
 
-            String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"reason\", \"Calender\"], \n" + "}";
+            String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"reason\", \"Schedule\"], \n" + "}";
 
             Search search = new Search.Builder(search_parameters[0])
                     .addIndex("habit_type")
