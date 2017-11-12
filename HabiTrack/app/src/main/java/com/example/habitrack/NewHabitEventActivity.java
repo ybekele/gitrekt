@@ -29,7 +29,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_event);
         Intent intent = getIntent();
-        String titleString = intent.getStringExtra("        HabitTitle");
+        String titleString = intent.getStringExtra(" HabitTitle");
         title = (TextView)findViewById(R.id.textView3);
         title.setText(titleString);
         completed = (CheckBox)findViewById(R.id.checkBox);

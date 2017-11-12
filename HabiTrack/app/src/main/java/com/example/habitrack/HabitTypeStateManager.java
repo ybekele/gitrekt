@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
 import java.util.Calendar;
 
 import java.util.ArrayList;
