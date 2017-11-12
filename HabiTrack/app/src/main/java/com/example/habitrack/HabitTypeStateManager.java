@@ -45,8 +45,14 @@ public class HabitTypeStateManager {
         HABITTYPES_FOR_TODAY.clear();
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
-                if(currCal.get(Calendar.DAY_OF_WEEK) == cal.get(Calendar.DAY_OF_WEEK)){
-                HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
+            if(currCal.compareTo(cal) <= 0){
+                ArrayList<Integer> schedule = ALL_HABITTYPES.get(count).getSchedule();
+                for(Integer cnt = 0; cnt < schedule.size(); cnt++){
+                    if(schedule.get(cnt) == cal.get(Calendar.DAY_OF_WEEK)){
+                        HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
+                        break;
+                    }
+                }
             }
         }
     }
@@ -74,13 +80,15 @@ public class HabitTypeStateManager {
 
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
-
-
-        HABITTYPES_FOR_TODAY.add(ht);
-
+//        HABITTYPES_FOR_TODAY.add(ht);
     }
 
     public HabitType getHabitType(Integer requestedID){
+        for(Integer count = 0; count < HABITTYPES_FOR_TODAY.size(); count++){
+            if(HABITTYPES_FOR_TODAY.get(count).getID() == requestedID){
+                return HABITTYPES_FOR_TODAY.get(count);
+            }
+        }
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             if(ALL_HABITTYPES.get(count).getID() == requestedID){
                 return ALL_HABITTYPES.get(count);
