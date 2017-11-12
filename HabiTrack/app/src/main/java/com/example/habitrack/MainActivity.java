@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -61,23 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(newType);
             }
         });
-    } //HabitEventController controller = new HabitEventController();
-    /*
-    //todaysHabits = (ListView) findViewById(R.id.listView);
 
-    //ArrayAdapter<HabitType> typeArrayAdapter = new ArrayAdapter<HabitType>(MainActivity.this, android.R.layout.simple_list_item_1);
-    //getResources().getStringArray(R.array.forToday);
-        //todaysHabits.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            Intent intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
-            //intent.putExtra("HabitTitle", todaysHabits.getItemAtPosition(i).toString());
-            startActivity(intent);
-        }
 
-    });
-        todaysHabits.setAdapter(typeArrayAdapter);
-        */
+    }
 
 
     @Override
@@ -85,13 +72,12 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         displayNames = (ListView) findViewById(R.id.listView);
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-        ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
+        final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
 
 
         if (!(today.isEmpty())) {
             for (int i = 0; i < today.size(); i++) {
                 HabitType ht = today.get(i);
-
                 String stringTitle = ht.getTitle();
                 Log.d("see",stringTitle);
                 todaysHabits.add(stringTitle);
@@ -104,8 +90,17 @@ public class MainActivity extends AppCompatActivity {
             //todaysHabits.clear();
         }
 
+        displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent;
+                intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
+                intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
+                startActivity(intent);
+            }
+        });
 
         }
+
     }
 
-}
