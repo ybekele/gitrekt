@@ -15,10 +15,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button createTypeButton;
+    Button historybutton;
     private ListView displayNames;
     private ArrayAdapter<String> adapter;
     HabitEventController habitEventController;
     ArrayList<String> todaysHabits;
+
 
 
     @Override
@@ -27,14 +29,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
         HabitTypeController htc = new HabitTypeController();
 
 
         createTypeButton = (Button) findViewById(R.id.button);
+        historybutton = (Button) findViewById(R.id.button3);
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent newType = new Intent(getApplicationContext(), NewHabitTypeActivity.class);
+                startActivity(newType);
+            }
+        });
+        historybutton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent newType = new Intent(getApplicationContext(), HabitHistory.class);
                 startActivity(newType);
             }
         });
