@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class HabitTypeStateManager {
         HABITTYPES_FOR_TODAY.clear();
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
-            if(currCal.get(Calendar.DAY_OF_WEEK) == cal.get(Calendar.DAY_OF_WEEK)){
+                if(currCal.get(Calendar.DAY_OF_WEEK) == cal.get(Calendar.DAY_OF_WEEK)){
                 HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
             }
         }
@@ -72,7 +74,10 @@ public class HabitTypeStateManager {
 
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
+
+
         HABITTYPES_FOR_TODAY.add(ht);
+
     }
 
     public HabitType getHabitType(Integer requestedID){

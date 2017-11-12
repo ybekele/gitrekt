@@ -3,6 +3,7 @@ package com.example.habitrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView displayNames;
     private ArrayAdapter<String> adapter;
     HabitEventController habitEventController;
-    ArrayList<String> todaysHabits;
+    ArrayList<String> todaysHabits = new ArrayList<>();
 
 
 
@@ -75,15 +76,19 @@ public class MainActivity extends AppCompatActivity {
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
         ArrayList<HabitType> today = HabitTypeStateManager.HABITTYPES_FOR_TODAY;
 
+
         if (!(today.isEmpty())) {
             for (int i = 0; i < today.size(); i++) {
                 HabitType ht = today.get(i);
 
                 String stringTitle = ht.getTitle();
+                Log.d("see",stringTitle);
                 todaysHabits.add(stringTitle);
+
             }
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todaysHabits);
             displayNames.setAdapter(adapter);
+            //todaysHabits.clear();
         }
 
 
