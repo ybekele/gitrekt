@@ -31,7 +31,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        HabitTypeController htc = new HabitTypeController();
+        HabitTypeController htc = new HabitTypeController(this);
+        HabitEventController hc = new HabitEventController(this);
+
+        // Get IDs
+        htc.loadHTID();
+        hc.loadHEID();
+        // Restore all HT and HE
+        htc.loadFromFile();
+        hc.loadFromFile();
+        // Get Recent events and HabitTypes for today
+        htc.getHabitTypesForToday();
+        hc.updateRecentHabitEvents();
 
 
         createTypeButton = (Button) findViewById(R.id.button);
@@ -74,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         displayNames = (ListView) findViewById(R.id.listView);
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-        ArrayList<HabitType> today = HabitTypeStateManager.HABITTYPES_FOR_TODAY;
+        ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
 
 
         if (!(today.isEmpty())) {
@@ -89,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todaysHabits);
             displayNames.setAdapter(adapter);
+
             //todaysHabits.clear();
         }
 

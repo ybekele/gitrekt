@@ -28,7 +28,7 @@ public class HabitTypeStateManager {
      */
 
     private static Integer habitTypeID;
-    private Calendar cal = Calendar.getInstance();
+    private static Calendar cal = Calendar.getInstance();
     public static HabitTypeStateManager htManager = new HabitTypeStateManager();
 
     private static ArrayList<HabitType> ALL_HABITTYPES = new ArrayList<HabitType>();
@@ -41,7 +41,7 @@ public class HabitTypeStateManager {
         return htManager;
     }
 
-    public void calculateHabitsForToday(){
+    public static void calculateHabitsForToday(){
         HABITTYPES_FOR_TODAY.clear();
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
@@ -65,7 +65,7 @@ public class HabitTypeStateManager {
         this.ALL_HABITTYPES = allHabittypes;
     }
 
-    public ArrayList<HabitType> getHabitTypesForToday(){
+    public static ArrayList<HabitType> getHabitTypesForToday(){
         calculateHabitsForToday();
         return HABITTYPES_FOR_TODAY;
     }
