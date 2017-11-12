@@ -37,7 +37,7 @@ public class HabitHistory extends AppCompatActivity {
 
     int i;
 
-    HabitEventController hec = new HabitEventController();
+
 
 
 
@@ -49,11 +49,11 @@ public class HabitHistory extends AppCompatActivity {
         ListView lv = (ListView)findViewById(R.id.listView_history);
 
 
-        HabitEventStateManager hes = new HabitEventStateManager();
+        HabitEventController hc = new HabitEventController(this);
 
         if(all_habit_titles.isEmpty()) {
-            for (i = 0; i < hes.ALL_HABITEVENTS.size(); i++) {
-                String title = hes.ALL_HABITEVENTS.get(i).getTitle();
+            for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                String title = hc.getAllHabitEvent().get(i).getTitle();
                 all_habit_titles.add(title);
             }
 
@@ -116,10 +116,10 @@ public class HabitHistory extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Total number of items: " + s, Toast.LENGTH_LONG).show();
                     if(switchState ==true){
                         all_habit_titles.clear();
-                        HabitEventStateManager he = new HabitEventStateManager();
-                        for(i=0;i<he.ALL_HABITEVENTS.size();i++){
-                            String comment = he.ALL_HABITEVENTS.get(i).getComment();
-                            String title = he.ALL_HABITEVENTS.get(i).getTitle();
+                        HabitEventController hc = new HabitEventController(getApplicationContext());
+                        for(i=0;i<hc.getAllHabitEvent().size();i++){
+                            String comment = hc.getAllHabitEvent().get(i).getComment();
+                            String title = hc.getAllHabitEvent().get(i).getTitle();
                             comments_list.add(comment);
                             habit_title.add(title);
 
