@@ -128,6 +128,7 @@ public class HabitTypeController {
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
+
     public ArrayList<HabitType> getHabitTypeElasticSearch() {
         ArrayList<HabitType> ht = new ArrayList<>();
         ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
