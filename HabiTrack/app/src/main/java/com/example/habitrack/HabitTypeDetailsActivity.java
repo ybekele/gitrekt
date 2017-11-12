@@ -10,4 +10,6 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_habit_type_details);
     }
+
+
 }

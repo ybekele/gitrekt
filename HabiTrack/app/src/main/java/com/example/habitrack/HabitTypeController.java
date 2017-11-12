@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -127,6 +128,18 @@ public class HabitTypeController {
         HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
         return ht;
     }
+    public ArrayList<HabitType> getHabitTypeElasticSearch(){
+        ArrayList<HabitType> ht = new ArrayList<>();
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute("");
+        try {
+            ht = getHabitType.get();
+        }
+        catch (Exception e)
+        {
+            Log.i("Error","Failed to get the tweets from the async object");
+        }
+
 
     /**
      * Given an ID of a habit type and a new title, this method
@@ -138,56 +151,11 @@ public class HabitTypeController {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if(!ht.getID().equals(-1)){
+
             ht.setTitle(newTitle);
         }
         saveToFile();
     }
-
-    /**
-     * Given an ID of a habit type and a new reason, this method
-     * edits the reason, if the habit exists
-     * @param requestedID
-     * @param newReason
-     */
-    public void editHabitTypeReason(Integer requestedID, String newReason){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setReason(newReason);
-        }
-        saveToFile();
-    }
-
-    /**
-     * Given an ID of a habit type and a new date, this method
-     * edits the start date, if the habit exists
-     * @param requestedID
-     * @param newDate
-     */
-    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setStartDate(newDate);
-        }
-        saveToFile();
-    }
-
-    /**
-     * Given an ID of a habit type and a new list
-     * representing the habit schedule, this method edits the schedule, if the habit exists
-     * @param requestedID
-     * @param newSchedule
-     */
-    public void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setSchedule(newSchedule);
-        }
-        saveToFile();
-    }
-
     /**
      * Given an ID of a habit type, this method return the habit's title, if it exists
      * @param requestedID
