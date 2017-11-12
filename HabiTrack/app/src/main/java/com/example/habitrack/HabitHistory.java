@@ -25,10 +25,9 @@ public class HabitHistory extends AppCompatActivity {
 
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
-    public String[] teams = {"lakers", "man u", "man utd","orland", "orleans", "new orleans", "san fran"};
 
     ArrayList<ArrayList<String>> historyList = new ArrayList<ArrayList<String>>();
-    Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
+
 
 
     List<String> comments_list = new ArrayList<String>();
@@ -36,7 +35,9 @@ public class HabitHistory extends AppCompatActivity {
     List<String> all_habit_titles = new ArrayList<String>();
     List<String> temp = new ArrayList<String>();
 
+    int i;
 
+    HabitEventController hec = new HabitEventController();
 
 
 
@@ -48,10 +49,15 @@ public class HabitHistory extends AppCompatActivity {
         ListView lv = (ListView)findViewById(R.id.listView_history);
 
 
-        getHistoryList();
+        HabitEventStateManager hes = new HabitEventStateManager();
 
-        String[] teams = {"lakers", "man u", "man utd","orland", "orleans", "new orleans", "san fran"};
+        if(all_habit_titles.isEmpty()) {
+            for (i = 0; i < hes.ALL_HABITEVENTS.size(); i++) {
+                String title = hes.ALL_HABITEVENTS.get(i).getTitle();
+                all_habit_titles.add(title);
+            }
 
+        }
         //MAKE A TEMPORARY ARRAYLIST EQUAL THE ORIGINAL ARRAYLIST SO WHEN YOU YOU ARE LONGER
         //FILTERING YOUR SEARCH, YOU GET BACK YOUR ORIGINAL LISTVIEW
 
@@ -62,7 +68,7 @@ public class HabitHistory extends AppCompatActivity {
             all_habit_titles = temp;
         }
 
-        adapter = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, teams)));
+        adapter = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, all_habit_titles)));
 
         //adapter = new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, arrayHabits);
         //adapter2 = new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, arrayComments);
@@ -107,31 +113,33 @@ public class HabitHistory extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit (String s){
-                Toast.makeText(getApplicationContext(), "Total number of items: " + s, Toast.LENGTH_LONG).show();
-                /*if(switchstate ==true){
-                    habiteventcontroller hec = new habiteventcontroller();
-                    for(i=0;i<len(all_habitevents);i++){
-                        string comment = i.getcomment();
-                        string title = i.gettitle();
-                        comments_list.add(comment);
-                        habit_title.add(title);
-                        teams.add("hello");
-
+                    Toast.makeText(getApplicationContext(), "Total number of items: " + s, Toast.LENGTH_LONG).show();
+                    if(switchState ==true){
                         all_habit_titles.clear();
+                        HabitEventStateManager he = new HabitEventStateManager();
+                        for(i=0;i<he.ALL_HABITEVENTS.size();i++){
+                            String comment = he.ALL_HABITEVENTS.get(i).getComment();
+                            String title = he.ALL_HABITEVENTS.get(i).getTitle();
+                            comments_list.add(comment);
+                            habit_title.add(title);
 
 
-                        for(i=0;i<=comment.size();i++){
-                            if(comments_list.get(i).startswith(s.touppercase()))
-                            {
-                             all_habit_titles.add(habit_title[i]);
+
+
+
+                            for(i=0;i<=comments_list.size();i++){
+                                if(comments_list.get(i).startsWith(s.toUpperCase()))
+                                {
+                                all_habit_titles.add(habit_title.get(i));
+                                }
+
                             }
 
-                        }
-
                     }
-                }*/
+                }
 
 
+                adapter.notifyDataSetChanged();
                 return false;
             }
 
@@ -142,12 +150,6 @@ public class HabitHistory extends AppCompatActivity {
 
                 adapter.getFilter().filter(newText);
 
-
-
-
-
-
-
                 return false;
             }
         });
@@ -157,33 +159,4 @@ public class HabitHistory extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-    private void getHistoryList(){
-        HabitEventController hec = new HabitEventController();
-        //HabitEventControlle
-    }
 }
-
-
-
-
-/*
-<ListView
-        android:id="@+id/listView_history"
-                android:layout_width="370dp"
-                android:layout_height="259dp"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginTop="52dp"
-                android:choiceMode="multipleChoice"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-                */
