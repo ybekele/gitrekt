@@ -106,7 +106,7 @@ public class ElasticSearchController {
             ArrayList<HabitEvent> habitEvents = new ArrayList<HabitEvent>();
 
 
-            // String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"comment\", \"Calender\"], \n" + "}";
+            String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"comment\", \"Calender\"], \n" + "}";
 
             Search search = new Search.Builder(search_parameters[0])
                     .addIndex("habit_event")
