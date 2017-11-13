@@ -8,7 +8,12 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+/**
+ * Will display all the Habit Types on Screen
+ */
+
 public class AllHabitTypesActivity extends AppCompatActivity {
+    // declare components
     private ListView allTypes;
     private ArrayAdapter<String> adapter;
     private static ArrayList<HabitType> typeList = new ArrayList<HabitType>();
@@ -17,15 +22,13 @@ public class AllHabitTypesActivity extends AppCompatActivity {
     HabitTypeController htc = new HabitTypeController(this);
     HabitEventController hc = new HabitEventController(this);
 
-    // Get IDs
-
-    // Get IDs
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_habit_types);
+
+        // initialize ListView
         allTypes = (ListView) findViewById(R.id.listView2);
 
     }
