@@ -5,16 +5,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class NewHabitEventActivity extends AppCompatActivity {
-    HabitEventController habitEvent;
 
+    // declare components
+    HabitEventController habitEvent;
     CheckBox completed;
     TextView title;
     EditText comment;
@@ -23,15 +28,23 @@ public class NewHabitEventActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
     Button addEvent;
+    int typeID = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_event);
         Intent intent = getIntent();
-        String titleString = intent.getStringExtra("        HabitTitle");
+        String titleString = intent.getStringExtra("HabitTitle");
+        ArrayList<HabitType> namesList;
+
+
+
+
+        // intialize Views
         title = (TextView)findViewById(R.id.textView3);
         title.setText(titleString);
+        Log.d("workingTitle", titleString);
         completed = (CheckBox)findViewById(R.id.checkBox);
         title = (EditText) findViewById(R.id.editText7);
         comment = (EditText) findViewById(R.id.editText6);
@@ -46,6 +59,26 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
 
 
+        //get habit IDs for today from HabitTypeStateManager
+        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+        final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
+        HabitType iterater = null;
+        Log.d("stringTitle", titleString);
+
+        for (int j = 0; j < today.size(); j++)
+            iterater = today.get(j);
+            Log.d("iterator", iterater.getTitle());
+            if (titleString.equals(iterater.getTitle())) {
+                Log.d("iterator2", iterater.toString());
+                Log.d("ID", iterater.getID().toString());
+                typeID = iterater.getID() ;
+            }
+
+
+
+
+
+
         addEvent = (Button) findViewById(R.id.button7);
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,22 +86,43 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 Intent addingEvent = new Intent(getApplicationContext(), MainActivity.class);
                 String commentString = comment.getText().toString();
                 String titleString = title.getText().toString();
-                if (titleString.length() > 0) {
-                    habitEvent.createNewHabitEvent(1, commentString);
+
+                // if user did NOT leave a comment
+                if ((titleString.length() > 0) && (commentString.length() == 0) && (typeID != -1)) {
+                    Log.d("newID", Integer.toString(typeID));
+                    habitEvent.createNewHabitEvent(typeID);
                 }
-                //habitEvent.setTitle(titleString);
-                //habitEvent.(commentString);
+
+                // exception, if user did leave a comment
+                if ((titleString.length() > 0) && (commentString.length() > 0) && (typeID != -1)) {
+                    habitEvent.createNewHabitEvent(typeID, commentString);
+                }
+
+                // Handles any error that may occur
+                else {
+                    Log.d("typeID", Integer.toString(typeID));
+                    Log.d("title", titleString);
+
+                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event", Toast.LENGTH_SHORT).show();
+                }
                 startActivity(addingEvent);
             }
         });
     }
 
+
+    /*
+    Opens the gallery in phone to select a photo
+     */
     //https://www.youtube.com/watch?v=OPnusBmMQTw
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    /*
+    Gets the data of the photo user has picked from gallery
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);

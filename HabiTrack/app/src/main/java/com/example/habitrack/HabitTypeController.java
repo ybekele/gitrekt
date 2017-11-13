@@ -3,13 +3,21 @@ package com.example.habitrack;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -60,6 +68,8 @@ public class HabitTypeController {
                                    Calendar startDate, ArrayList<Integer> schedule) {
         // Generate the new habit type
         HabitType ht = new HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
+        // Save updated htID
+        saveHTID();
         // Set its attributes
         ht.setTitle(title);
         ht.setReason(reason);
@@ -81,6 +91,10 @@ public class HabitTypeController {
      */
     public ArrayList<HabitType> getAllHabitTypes(){
         return HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
+    }
+
+    public void generateHabitsForToday(){
+        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
     }
 
     /**
@@ -128,6 +142,19 @@ public class HabitTypeController {
         return ht;
     }
 
+    public ArrayList<HabitType> getHabitTypeElasticSearch() {
+        ArrayList<HabitType> ht = new ArrayList<>();
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute("");
+        try {
+            ht = getHabitType.get();
+        } catch (Exception e) {
+            Log.i("Error", "Failed to get the tweets from the async object");
+        }
+        return ht;
+    }
+
+
     /**
      * Given an ID of a habit type and a new title, this method
      * edits the title, if the habit exists
@@ -138,56 +165,11 @@ public class HabitTypeController {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if(!ht.getID().equals(-1)){
+
             ht.setTitle(newTitle);
         }
         saveToFile();
     }
-
-    /**
-     * Given an ID of a habit type and a new reason, this method
-     * edits the reason, if the habit exists
-     * @param requestedID
-     * @param newReason
-     */
-    public void editHabitTypeReason(Integer requestedID, String newReason){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setReason(newReason);
-        }
-        saveToFile();
-    }
-
-    /**
-     * Given an ID of a habit type and a new date, this method
-     * edits the start date, if the habit exists
-     * @param requestedID
-     * @param newDate
-     */
-    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setStartDate(newDate);
-        }
-        saveToFile();
-    }
-
-    /**
-     * Given an ID of a habit type and a new list
-     * representing the habit schedule, this method edits the schedule, if the habit exists
-     * @param requestedID
-     * @param newSchedule
-     */
-    public void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setSchedule(newSchedule);
-        }
-        saveToFile();
-    }
-
     /**
      * Given an ID of a habit type, this method return the habit's title, if it exists
      * @param requestedID
@@ -307,99 +289,75 @@ public class HabitTypeController {
         saveToFile();
     }
 
-    @SuppressWarnings("unchecked")
     public void loadFromFile() {
-        ArrayList<HabitType> htList = new ArrayList<HabitType>();
+        ArrayList<HabitType> habits;
         try {
             FileInputStream fis = ctx.openFileInput(FILE_NAME);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            Object o = ois.readObject();
-
-            if (o instanceof ArrayList) {
-                htList = (ArrayList<HabitType>) o;
-            } else {
-                Log.i("HabiTrack HT:", "Error casting");
-            }
-
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+            Gson gson = new Gson();
+            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+            Type listType = new TypeToken<ArrayList<HabitType>>(){}.getType();
+            habits = gson.fromJson(in, listType);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "File Not Found");
-            HabitTypeStateManager.getHTStateManager().setAllHabittypes(htList);
+            // TODO Auto-generated catch block
+            habits = new ArrayList<HabitType>();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "IOException");
-            HabitTypeStateManager.getHTStateManager().setAllHabittypes(htList);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "ClassNotFound");
-            HabitTypeStateManager.getHTStateManager().setAllHabittypes(htList);
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
-        HabitTypeStateManager.getHTStateManager().setAllHabittypes(htList);
+        HabitTypeStateManager.getHTStateManager().setAllHabittypes(habits);
     }
 
     public void saveToFile() {
-        ArrayList<HabitType> htList = getAllHabitTypes();
+        ArrayList<HabitType> habits = getAllHabitTypes();
         try {
-            FileOutputStream fos = ctx.openFileOutput(FILE_NAME, 0);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(htList);
-
-            fos.close();
+            FileOutputStream fos = ctx.openFileOutput(FILE_NAME,0);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(habits, writer);
+            writer.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Save", "File Not Found");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Save", "IO Exception");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
     }
 
     public void saveHTID(){
         Integer saveID = HabitTypeStateManager.getHTStateManager().getIDToSave();
+
         try {
-            FileOutputStream fos = ctx.openFileOutput(ID_FILE_NAME, 0);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(saveID);
-
-            fos.close();
+            FileOutputStream fos = ctx.openFileOutput(ID_FILE_NAME,0);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(saveID, writer);
+            writer.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:SaveID", "File Not Found");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:SaveID", "IO Exception");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void loadHTID() {
-        //ArrayList<HabitType> htList = new ArrayList<HabitType>();
-        Integer loadedID = 0;
+        Integer loadedID;
         try {
-            FileInputStream fis = ctx.openFileInput(FILE_NAME);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            Object o = ois.readObject();
-
-            if (o instanceof ArrayList) {
-                //htList = (ArrayList<HabitType>) o;
-                loadedID = (Integer) o;
-            } else {
-                Log.i("HabiTrack HT:", "Error casting");
-            }
-
+            FileInputStream fis = ctx.openFileInput(ID_FILE_NAME);
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+            Gson gson = new Gson();
+            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+            Type intType = new TypeToken<Integer>(){}.getType();
+            loadedID = gson.fromJson(in, intType);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "File Not Found");
+            // TODO Auto-generated catch block
+            loadedID = 0;
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "IOException");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HT:Load", "ClassNotFound");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
         HabitTypeStateManager.getHTStateManager().setID(loadedID);
     }

@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -44,11 +45,13 @@ public class HabitEventController {
                 HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
         he.setTitle(htc.getHabitTitle(habitTypeID));
         HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+
         // Save event on elastic search
         ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
         addHabitEvent.execute(he);
         // Save event locally
         saveToFile();
+
     }
 
     public void createNewHabitEvent(Integer habitTypeID, String comment){
@@ -106,6 +109,22 @@ public class HabitEventController {
 
     public HabitEvent getHabitEvent(Integer requestedID) {
         HabitEvent he = HabitEventStateManager.getHEStateManager().getHabitEvent(requestedID);
+        return he;
+    }
+
+    public ArrayList<HabitEvent> getHabitEventElasticSearch(){
+
+        ArrayList<HabitEvent> he = new ArrayList<>();
+        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+        getHabitEvent.execute("");
+        try {
+            he = getHabitEvent.get();
+        }
+        catch (Exception e)
+        {
+            Log.i("Error","Failed to get the tweets from the async object");
+        }
+
         return he;
     }
 

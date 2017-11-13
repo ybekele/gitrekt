@@ -99,4 +99,7 @@ public class HabitType {
     public void setId(String id) {
         this.id = id;
     }
+
+    @Override
+    public String toString(){return getID().toString() + " | " + getTitle();}
 }
