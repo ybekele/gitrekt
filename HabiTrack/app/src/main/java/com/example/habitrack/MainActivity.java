@@ -84,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
-                intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
-                Log.d("position", displayNames.getItemAtPosition(i).toString());
+                //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
+                //Log.d("position", displayNames.getItemAtPosition(i).toString());
+                intent.putExtra("habitID", today.get(i).getID());
                 startActivity(intent);
             }
         });
