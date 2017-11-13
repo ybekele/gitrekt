@@ -19,71 +19,65 @@ public class AllHabitTypesActivity extends AppCompatActivity {
     // declare components
     int typeID = 0;
     private ListView allTypes;
-    private ArrayAdapter<String> adapter;
+    //private ArrayAdapter<String> adapter;
+    private ArrayAdapter<HabitType> adapter;
     private static ArrayList<HabitType> typeList = new ArrayList<HabitType>();
     private static ArrayList<String> namesOfTypes = new ArrayList<String>();
 
     HabitTypeController htc = new HabitTypeController(this);
-    HabitEventController hc = new HabitEventController(this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_habit_types);
-
         // initialize ListView
         allTypes = (ListView) findViewById(R.id.listView2);
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Get IDs
-
-        htc.loadHTID();
-        hc.loadHEID();
-        // Restore all HT and HE
-        htc.loadFromFile();
-        hc.loadFromFile();
-
-        // Get Recent events and HabitTypes for today
-        htc.getHabitTypesForToday();
-        hc.updateRecentHabitEvents();
-        typeList = HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
-        Log.d("start", "Entered start");
-        Log.d("array", typeList.toString());
-        if (!(typeList.isEmpty())) {
-            for (int i = 0; i < typeList.size(); i++) {
-                HabitType tempHt = typeList.get(i);
-                String stringTitle = tempHt.getTitle();
-                namesOfTypes.add(stringTitle);
-                Log.d("stringTitle", stringTitle);
-            }
-        }
-
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, namesOfTypes);
-        allTypes.setAdapter(adapter);
 
         allTypes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(AllHabitTypesActivity.this, HabitTypeDetailsActivity.class);
-                intent.putExtra("HabitTitle", allTypes.getItemAtPosition(i).toString());
-
-                final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
-                HabitType iterater = null;
-                for (int j = 0; j < today.size(); j++)
-                    iterater = today.get(j);
-                    Log.d("iterator", iterater.getTitle());
-                    if (allTypes.getItemAtPosition(i).toString().equals(iterater.getTitle())) {
-                    typeID = iterater.getID() ;
-                 }
-                 intent.putExtra("typeID", typeID);
+                //intent.putExtra("HabitTitle", allTypes.getItemAtPosition(i).toString());
+                intent.putExtra("habitID", typeList.get(i).getID());
                 startActivity(intent);
+//                final ArrayList<HabitType> today = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
+//                HabitType iterater = null;
+//                for (int j = 0; j < today.size(); j++)
+//                    iterater = today.get(j);
+//                Log.d("iterator", iterater.getTitle());
+//                if (allTypes.getItemAtPosition(i).toString().equals(iterater.getTitle())) {
+//                    typeID = iterater.getID() ;
+//                }
+//                intent.putExtra("typeID", typeID);
+
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Restore all HT
+        htc.loadFromFile();
+
+        // Get Recent events and HabitTypes for today
+        //htc.getHabitTypesForToday();
+        htc.generateHabitsForToday();
+        typeList = HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
+        Log.d("start", "Entered start");
+        Log.d("array", typeList.toString());
+//        if (!(typeList.isEmpty())) {
+//            for (int i = 0; i < typeList.size(); i++) {
+//                HabitType tempHt = typeList.get(i);
+//                String stringTitle = tempHt.getTitle();
+//                namesOfTypes.add(stringTitle);
+//                Log.d("stringTitle", stringTitle);
+//            }
+//        }
+
+        //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, namesOfTypes);
+        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, typeList);
+        allTypes.setAdapter(adapter);
     }
 /*
     @Override
