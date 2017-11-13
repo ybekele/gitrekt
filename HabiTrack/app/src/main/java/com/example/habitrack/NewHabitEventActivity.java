@@ -80,6 +80,19 @@ public class NewHabitEventActivity extends AppCompatActivity {
 //                Log.d("ID", iterater.getID().toString());
 //                typeID = iterater.getID() ;
 //            }
+        final String titleEvent = intent.getStringExtra("title");
+        /*final String commentEvent = intent.getStringExtra("comment");
+        if (commentEvent != null) {
+            comment.setText(commentEvent);
+        }
+*/
+        if (titleEvent != null) {
+            title.setText(titleEvent);
+        }
+
+
+
+
 
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
