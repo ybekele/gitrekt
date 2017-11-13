@@ -85,7 +85,13 @@ public class HabitTypeStateManager {
 
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
-//        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
+        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
     }
 
     public HabitType getHabitType(Integer requestedID){
