@@ -1,6 +1,7 @@
 package com.example.habitrack;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Button createTypeButton;
     Button historybutton;
     Button allButton;
+    Button logoutButton;
     private ListView displayNames;
     private ArrayList<HabitType> today = new ArrayList<HabitType>();
     //private ArrayAdapter<String> adapter;
@@ -50,7 +52,28 @@ public class MainActivity extends AppCompatActivity {
         createTypeButton = (Button) findViewById(R.id.button);
         allButton = (Button) findViewById(R.id.button2);
         historybutton = (Button) findViewById(R.id.button3);
+        logoutButton = (Button) findViewById(R.id.button10);
         displayNames = (ListView) findViewById(R.id.listView);
+
+        // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
+        SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
+        final SharedPreferences.Editor loggedInEditor = loggedInPrefs.edit();
+        boolean isLoggedIn = loggedInPrefs.getBoolean("loggedIn", false);
+        final Intent toLogIn = new Intent(getApplicationContext(), SignupActivity.class);
+        if(!isLoggedIn) {
+            startActivity(toLogIn);
+        }
+
+        //If logoutButton is clicked, change loggedIn to false and go to SignupAcitivty
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loggedInEditor.putBoolean("loggedIn", false);
+                loggedInEditor.apply();
+                startActivity(toLogIn);
+            }
+        });
+
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
         createTypeButton.setOnClickListener(new View.OnClickListener() {
