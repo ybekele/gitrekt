@@ -12,9 +12,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 /**
- * Will display all the Habit Types on Screen
+ * Will display all the Habit Types on Screen.
+ * User able to click on Habit Types to redirect to HabitType Details page
  */
-
 public class AllHabitTypesActivity extends AppCompatActivity {
     // declare components
     int typeID = 0;
@@ -26,6 +26,10 @@ public class AllHabitTypesActivity extends AppCompatActivity {
 
     HabitTypeController htc = new HabitTypeController(this);
 
+    /**
+     * Initializes the ListView.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,11 @@ public class AllHabitTypesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get IDs and reload data from File every time app is in onStart
+     * Will populize the array for names that will be displayed
+     * and handle the necessary IDs for when a Habit Type is selected
+     */
     @Override
     protected void onStart() {
         super.onStart();
