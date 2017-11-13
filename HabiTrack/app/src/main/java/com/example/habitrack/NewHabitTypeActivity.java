@@ -18,6 +18,8 @@ import java.util.Locale;
 
 
 public class NewHabitTypeActivity extends AppCompatActivity {
+
+    /* declaring variables */
     ArrayList<Integer> plan = new ArrayList<Integer>();
     Switch sundaySwitch;
     Switch mondaySwitch;
@@ -26,18 +28,24 @@ public class NewHabitTypeActivity extends AppCompatActivity {
     Switch thursdaySwitch;
     Switch fridaySwitch;
     Switch saturdaySwitch;
+
+    /**
+     * Handles the creation of Habit Types
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_type);
-        final HabitTypeController htc = new HabitTypeController();
+        final HabitTypeController htc = new HabitTypeController(this);
 
 
+        /* Handles when user wishes to Create using the User input fields */
         Button createButton = (Button) findViewById(R.id.button6);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent newType = new Intent(NewHabitTypeActivity.this, MainActivity.class);
+                /* Initializing */
                 EditText titleEntry = (EditText) findViewById(R.id.editText3);
                 EditText reasonEntry = (EditText) findViewById(R.id.editText4);
                 EditText dateEntry = (EditText) findViewById(R.id.editText5);
@@ -55,15 +63,17 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern, Locale.CANADA);
                 Calendar date = Calendar.getInstance();
                 try {
+                    /* Using the previously described expected pattern, making sure it was inputted correctly */
                     Date dateDate = formatter.parse(dateString);
                     date.setTime(dateDate);
 
+                    /* exception, will make date of creation current date if not entered correctly or specified */
                 } catch (ParseException e) {
                     e.printStackTrace();
                     date = Calendar.getInstance();
                 }
 
-
+                /* initialize switch toggles */
                 sundaySwitch = (Switch)findViewById(R.id.sunday);
                 mondaySwitch = (Switch) findViewById(R.id.monday);
                 tuesdaySwitch = (Switch) findViewById(R.id.tuesday);
@@ -72,6 +82,8 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 fridaySwitch = (Switch) findViewById(R.id.friday);
                 saturdaySwitch = (Switch) findViewById(R.id.saturday);
 
+                /* Handle for whichever day the user wishes to do the Habit.
+                * Adds it to the plan */
                 if(sundaySwitch.isChecked()) {
                     plan.add(Calendar.SUNDAY);
                 }
@@ -94,30 +106,28 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                     plan.add(Calendar.SATURDAY);
                 }
 
+                /* Adds the new Habit Type to the Habit Type Controller */
                 if ((!(title.equals("")) && !(reason.equals("")) && plan != null)) {
                     htc.createNewHabitType(title, reason, date, plan);
 
 
                 }
 
+                /* Handles all errors that may occur creating new Habit Type.
+                 * Notifies the User  */
                 else {
                     Toast.makeText(getApplicationContext(), "Invalid Creation", Toast.LENGTH_SHORT).show();
 
 
                 }
 
-                /*
-                newType.putExtra("title", title);
-                newType.putExtra("reason", reason);
-                newType.putExtra("date", date);
-                */
-                //startActivity(newType);
                 finish();
             }
         });
 
     }
 
+    /* Experimental way of moving the switches and adding to a seperate function  */
     public void CheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView.isChecked()) {
             if ((buttonView.getId()) == sundaySwitch.getId()) {

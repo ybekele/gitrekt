@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.ArrayList;
 /**
  * HabitTypeStateManager
  *
- * Version 1.0
+ * Version 2.0
  *
  * Created by sshussai on 11/4/17.
  *
@@ -16,48 +18,88 @@ import java.util.ArrayList;
 public class HabitTypeStateManager {
 
     /**
-     * Version 1.0
      * This class is the state manager for all Habit Type related events. It contains a
      * list that has all the habit types created so far, along with all the habit types
      * for today.
      * It can add habit types to the list, retrieve and remove them, and calculate habit
      * types for today.
+     * Added functions to set and get loaded or saved IDs
      *
      */
 
     private static Integer habitTypeID;
-
+    private static Calendar habitTypeDate;
+    private static Calendar cal = Calendar.getInstance();
     public static HabitTypeStateManager htManager = new HabitTypeStateManager();
 
-    private Calendar cal = Calendar.getInstance();
-
-    private static final ArrayList<HabitType> ALL_HABITTYPES = new ArrayList<HabitType>();
-    public static final ArrayList<HabitType> HABITTYPES_FOR_TODAY = new ArrayList<HabitType>();
+    private static ArrayList<HabitType> ALL_HABITTYPES = new ArrayList<HabitType>();
+    private static ArrayList<HabitType> HABITTYPES_FOR_TODAY = new ArrayList<HabitType>();
 
 
-    private HabitTypeStateManager(){
-        habitTypeID = 0;
-    }
+    private HabitTypeStateManager(){}
 
     public static HabitTypeStateManager getHTStateManager(){
         return htManager;
     }
 
-    public void calculateHabitsForToday(){
-        HABITTYPES_FOR_TODAY.clear();
-        for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
-            Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
-            if(currCal.get(Calendar.DAY_OF_WEEK) == cal.get(Calendar.DAY_OF_WEEK)){
-                HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
+    public static void calculateHabitsForToday(){
+        if(ALL_HABITTYPES.isEmpty()){
+            HABITTYPES_FOR_TODAY = new ArrayList<HabitType>();
+        } else {
+            HABITTYPES_FOR_TODAY.clear();
+            for (Integer count = 0; count < ALL_HABITTYPES.size(); count++) {
+                Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
+                if (currCal.compareTo(cal) <= 0) {
+                    ArrayList<Integer> schedule = ALL_HABITTYPES.get(count).getSchedule();
+                    for (Integer cnt = 0; cnt < schedule.size(); cnt++) {
+                        if (schedule.get(cnt) == cal.get(Calendar.DAY_OF_WEEK)) {
+                            HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
 
+    public ArrayList<HabitType> getAllHabitTypes(){
+        return ALL_HABITTYPES;
+    }
+
+    public void setAllHabittypes(ArrayList<HabitType> allHabittypes){
+        this.ALL_HABITTYPES = allHabittypes;
+    }
+
+    public ArrayList<HabitType> getHabitTypesForToday(){
+        calculateHabitsForToday();
+        return HABITTYPES_FOR_TODAY;
+    }
+
+    public void removeAllHabitTypes(){
+        ALL_HABITTYPES.clear();
+    }
+
+    public void removeHabitTypesForToday(){
+        HABITTYPES_FOR_TODAY.clear();
+    }
+
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
+
+
+
+        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
     }
 
     public HabitType getHabitType(Integer requestedID){
+        for(Integer count = 0; count < HABITTYPES_FOR_TODAY.size(); count++){
+            if(HABITTYPES_FOR_TODAY.get(count).getID() == requestedID){
+                return HABITTYPES_FOR_TODAY.get(count);
+            }
+        }
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             if(ALL_HABITTYPES.get(count).getID() == requestedID){
                 return ALL_HABITTYPES.get(count);
@@ -67,7 +109,6 @@ public class HabitTypeStateManager {
         return ht;
     }
 
-
     public void removeHabitType(Integer requestedID){
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             if(ALL_HABITTYPES.get(count).getID() == requestedID){
@@ -75,6 +116,28 @@ public class HabitTypeStateManager {
                 ALL_HABITTYPES.remove(rmht);
             }
         }
+        for(Integer count = 0; count < HABITTYPES_FOR_TODAY.size(); count++){
+            if(HABITTYPES_FOR_TODAY.get(count).getID() == requestedID){
+                HabitType rmht = HABITTYPES_FOR_TODAY.get(count);
+                HABITTYPES_FOR_TODAY.remove(rmht);
+            }
+        }
+    }
+
+    public Calendar getHabitTypeDate() {
+        return habitTypeDate;
+    }
+
+    public void setHabitTypeDate(Calendar habitTypeDate) {
+        HabitTypeStateManager.habitTypeDate = habitTypeDate;
+    }
+
+    public void setID(Integer savedID){
+        HabitTypeStateManager.habitTypeID = savedID;
+    }
+
+    public Integer getIDToSave(){
+        return HabitTypeStateManager.habitTypeID;
     }
 
     public Integer getHabitTypeID(){

@@ -1,5 +1,8 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
+import java.lang.reflect.Array;
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -7,28 +10,31 @@ import java.util.ArrayList;
 /**
  * HabitEventStateManager
  *
- * Version 1.0
+ * Version 2.0
  *
  * Created by sshussai on 11/5/17.
  */
 
 public class HabitEventStateManager {
     /**
-     * Version 1.0
+     * Version 2.0
      * This class is the state manager for all Habit event related entities
+     * Added load and save functions for events, and for habitevent ID
      *
      */
 
     private static Integer habitEventID;
 
+
     public static HabitEventStateManager heManager = new HabitEventStateManager();
 
     //private static final ArrayList<Integer> ALL_HABITEVENTS_ID = new ArrayList<Integer>();
-    private static final ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
-    private static final ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
+
+    private static ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
 
 
-    private HabitEventStateManager(){
+    public HabitEventStateManager(){
         habitEventID = 0;
     }
 
@@ -37,6 +43,7 @@ public class HabitEventStateManager {
     }
 
     public void updateRecentHabitEvents(){
+
         // Get date from 4 weeks ago, by adding -28 to today's date
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -28);
@@ -50,10 +57,35 @@ public class HabitEventStateManager {
         }
     }
 
+    public ArrayList<HabitEvent> getAllHabitEvents(){
+        return ALL_HABITEVENTS;
+    }
+
+    public ArrayList<HabitEvent> getRecentHabitevents(){
+        updateRecentHabitEvents();
+        return ALL_HABITEVENTS;
+    }
+
+    public void setAllHabitEvents(ArrayList<HabitEvent> allEvents){
+        this.ALL_HABITEVENTS = allEvents;
+    }
+
+    public void setRecentHabitEvents(ArrayList<HabitEvent> recentEvents){
+        this.RECENT_HABITEVENTS = recentEvents;
+    }
+
+    public void removeAllHabitEvents(){
+        this.ALL_HABITEVENTS.clear();
+    }
+
+    public void removeRecentHabitEvents(){
+        this.RECENT_HABITEVENTS.clear();;
+    }
+
     public void storeHabitEvent(HabitEvent he){
-        RECENT_HABITEVENTS.add(he);
         ALL_HABITEVENTS.add(he);
-        //ALL_HABITEVENTS_ID.add(he.getHabitEventID());
+        Log.d("seen",ALL_HABITEVENTS.toString());
+//        ALL_HABITEVENTS_ID.add(he.getHabitEventID());
     }
 
     public HabitEvent getHabitEvent(Integer requestedID){
@@ -91,6 +123,15 @@ public class HabitEventStateManager {
         }
         */
     }
+
+    public void setID(Integer savedID){
+        HabitEventStateManager.habitEventID = savedID;
+    }
+
+    public Integer getIDToSave(){
+        return HabitEventStateManager.habitEventID;
+    }
+
 
     public Integer getHabitEventID(){
         HabitEventStateManager.habitEventID++;

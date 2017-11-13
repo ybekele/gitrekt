@@ -33,8 +33,6 @@ public class HabitEvent {
 
 
     public HabitEvent(Integer heID, Integer htID) {
-        HabitTypeController htc = new HabitTypeController();
-        this.title = htc.getHabitTitle(htID);
         this.habitEventID = heID;
         this.habitTypeID = htID;
         this.date = Calendar.getInstance();
