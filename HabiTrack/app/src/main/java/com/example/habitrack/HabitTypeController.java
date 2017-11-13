@@ -47,7 +47,8 @@ public class HabitTypeController {
 
     private Context ctx;
     private final String FILE_NAME = "habitTypes.sav";
-    private final String ID_FILE_NAME = "hdid.sav";
+    private final String ID_FILE_NAME = "htid.sav";
+    private final String DATE_FILE_NAME = "htdate.sav";
 
     public HabitTypeController(Context givenContext){
         this.ctx = givenContext;
@@ -98,7 +99,10 @@ public class HabitTypeController {
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
         Calendar today = Calendar.getInstance();
         Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
-        if(htDate.compareTo(today) < 0){
+        //if(htDate.compareTo(today) < 0){
+        if(htDate.get(Calendar.DATE) < today.get(Calendar.DATE)
+                && htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
+                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)){
             saveHTDate();
             ArrayList<HabitType> recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
             for(Integer count = 0; count < recent.size(); count++){
@@ -360,14 +364,16 @@ public class HabitTypeController {
             BufferedReader in = new BufferedReader(new InputStreamReader(fis));
             Gson gson = new Gson();
             //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
-            Type intType = new TypeToken<Integer>(){}.getType();
-            loadedID = gson.fromJson(in, intType);
+            //Type intType = new TypeToken<ArrayList<Integer>>(){}.getType();
+            //loadedArray = gson.fromJson(in, intType);
+            loadedID = gson.fromJson(in, Integer.class);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             loadedID = 0;
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
-            throw new RuntimeException();
+            //throw new RuntimeException();
+            loadedID = 0;
         }
         HabitTypeStateManager.getHTStateManager().setID(loadedID);
     }
@@ -376,7 +382,7 @@ public class HabitTypeController {
         Calendar saveDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
 
         try {
-            FileOutputStream fos = ctx.openFileOutput(ID_FILE_NAME,0);
+            FileOutputStream fos = ctx.openFileOutput(DATE_FILE_NAME,0);
             OutputStreamWriter writer = new OutputStreamWriter(fos);
             Gson gson = new Gson();
             gson.toJson(saveDate, writer);
@@ -393,7 +399,7 @@ public class HabitTypeController {
     public void loadHTDate() {
         Calendar loadedDate;
         try {
-            FileInputStream fis = ctx.openFileInput(ID_FILE_NAME);
+            FileInputStream fis = ctx.openFileInput(DATE_FILE_NAME);
             BufferedReader in = new BufferedReader(new InputStreamReader(fis));
             Gson gson = new Gson();
             //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
