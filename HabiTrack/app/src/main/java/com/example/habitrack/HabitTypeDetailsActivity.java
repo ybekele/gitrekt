@@ -1,7 +1,8 @@
 package com.example.habitrack;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 public class HabitTypeDetailsActivity extends AppCompatActivity {
 
@@ -11,5 +12,12 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit_type_details);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        String titleString = intent.getStringExtra("HabitTitle");
+        int typeID = intent.getIntExtra("typeID", -1);
 
+    }
 }

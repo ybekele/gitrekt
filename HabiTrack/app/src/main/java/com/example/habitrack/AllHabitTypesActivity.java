@@ -1,8 +1,11 @@
 package com.example.habitrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 
 public class AllHabitTypesActivity extends AppCompatActivity {
     // declare components
+    int typeID = 0;
     private ListView allTypes;
     private ArrayAdapter<String> adapter;
     private static ArrayList<HabitType> typeList = new ArrayList<HabitType>();
@@ -61,6 +65,25 @@ public class AllHabitTypesActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, namesOfTypes);
         allTypes.setAdapter(adapter);
+
+        allTypes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(AllHabitTypesActivity.this, HabitTypeDetailsActivity.class);
+                intent.putExtra("HabitTitle", allTypes.getItemAtPosition(i).toString());
+
+                final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
+                HabitType iterater = null;
+                for (int j = 0; j < today.size(); j++)
+                    iterater = today.get(j);
+                    Log.d("iterator", iterater.getTitle());
+                    if (allTypes.getItemAtPosition(i).toString().equals(iterater.getTitle())) {
+                    typeID = iterater.getID() ;
+                 }
+                 intent.putExtra("typeID", typeID);
+                startActivity(intent);
+            }
+        });
     }
 /*
     @Override
