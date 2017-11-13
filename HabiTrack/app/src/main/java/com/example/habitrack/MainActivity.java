@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String stringTitle = ht.getTitle();
                 Log.d("see",stringTitle);
+                Log.d("seen","asdfasdfasdfasf");
                 todaysHabits.add(stringTitle);
 
             }

@@ -42,6 +42,7 @@ public class HabitTypeStateManager {
     }
 
     public static void calculateHabitsForToday(){
+
         HABITTYPES_FOR_TODAY.clear();
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
@@ -77,6 +78,7 @@ public class HabitTypeStateManager {
 
 
         HABITTYPES_FOR_TODAY.add(ht);
+
 
     }
 
