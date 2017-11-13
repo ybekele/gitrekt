@@ -4,13 +4,20 @@ package com.example.habitrack;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.Calendar;
 
 import java.util.ArrayList;
@@ -43,15 +50,17 @@ public class HabitEventController {
         HabitTypeController htc = new HabitTypeController(hectx);
         HabitEvent he = new
                 HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
+        // Save the new HE ID
+        saveHEID();
         he.setTitle(htc.getHabitTitle(habitTypeID));
         HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-
         // Save event on elastic search
         ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
         addHabitEvent.execute(he);
         // Save event locally
         saveToFile();
-
+        // Increment the completed event counter for the habit type
+        htc.incrementHTCurrentCounter(habitTypeID);
     }
 
     public void createNewHabitEvent(Integer habitTypeID, String comment){
@@ -211,33 +220,21 @@ public class HabitEventController {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void loadFromFile() {
         ArrayList<HabitEvent> heList = new ArrayList<HabitEvent>();
         try {
             FileInputStream fis = hectx.openFileInput(FILE_NAME);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            Object o = ois.readObject();
-
-            if (o instanceof ArrayList) {
-                heList = (ArrayList<HabitEvent>) o;
-            } else {
-                Log.i("HabiTrack HE:Load", "Error casting");
-            }
-
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+            Gson gson = new Gson();
+            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+            Type listType = new TypeToken<ArrayList<HabitEvent>>(){}.getType();
+            heList = gson.fromJson(in, listType);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "File Not Found");
-            HabitEventStateManager.getHEStateManager().setAllHabitEvents(heList);
+            // TODO Auto-generated catch block
+            heList = new ArrayList<HabitEvent>();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "IOException");
-            HabitEventStateManager.getHEStateManager().setAllHabitEvents(heList);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "ClassNotFound");
-            HabitEventStateManager.getHEStateManager().setAllHabitEvents(heList);
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
         HabitEventStateManager.getHEStateManager().setAllHabitEvents(heList);
     }
@@ -245,67 +242,54 @@ public class HabitEventController {
     public void saveToFile() {
         ArrayList<HabitEvent> heList = getAllHabitEvent();
         try {
-            FileOutputStream fos = hectx.openFileOutput(FILE_NAME, 0);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(heList);
-
-            fos.close();
+            FileOutputStream fos = hectx.openFileOutput(FILE_NAME,0);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(heList, writer);
+            writer.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Save", "File Not Found");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Save", "IO Exception");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
     }
 
     public void saveHEID(){
         Integer saveID = HabitEventStateManager.getHEStateManager().getIDToSave();
+
         try {
-            FileOutputStream fos = hectx.openFileOutput(ID_FILE_NAME, 0);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(saveID);
-
-            fos.close();
+            FileOutputStream fos = hectx.openFileOutput(ID_FILE_NAME,0);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(saveID, writer);
+            writer.flush();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:SaveID", "File Not Found");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:SaveID", "IO Exception");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void loadHEID() {
-        //ArrayList<HabitType> htList = new ArrayList<HabitType>();
-        Integer loadedID = 0;
+        Integer loadedID;
         try {
-            FileInputStream fis = hectx.openFileInput(FILE_NAME);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            Object o = ois.readObject();
-
-            if (o instanceof ArrayList) {
-                //htList = (ArrayList<HabitType>) o;
-                loadedID = (Integer) o;
-            } else {
-                Log.i("HabiTrack HE:", "Error casting");
-            }
-
+            FileInputStream fis = hectx.openFileInput(ID_FILE_NAME);
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+            Gson gson = new Gson();
+            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+            Type intType = new TypeToken<Integer>(){}.getType();
+            loadedID = gson.fromJson(in, intType);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "File Not Found");
+            // TODO Auto-generated catch block
+            loadedID = 0;
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "IOException");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            Log.i("HabiTrack HE:Load", "ClassNotFound");
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
         }
         HabitEventStateManager.getHEStateManager().setID(loadedID);
     }
-
 }
