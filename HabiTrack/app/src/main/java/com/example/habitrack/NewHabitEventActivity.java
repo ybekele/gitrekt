@@ -35,11 +35,16 @@ public class NewHabitEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_event);
         Intent intent = getIntent();
-        String titleString = intent.getStringExtra(" HabitTitle");
+        String titleString = intent.getStringExtra("HabitTitle");
+        ArrayList<HabitType> namesList;
+
+
+
 
         // intialize Views
         title = (TextView)findViewById(R.id.textView3);
         title.setText(titleString);
+        Log.d("workingTitle", titleString);
         completed = (CheckBox)findViewById(R.id.checkBox);
         title = (EditText) findViewById(R.id.editText7);
         comment = (EditText) findViewById(R.id.editText6);
@@ -58,12 +63,18 @@ public class NewHabitEventActivity extends AppCompatActivity {
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
         final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
         HabitType iterater = null;
+        Log.d("stringTitle", titleString);
+
         for (int j = 0; j < today.size(); j++)
             iterater = today.get(j);
-            if ((iterater != null) && (iterater.getTitle().equals(titleString))) {
-                Log.d("iterator", iterater.toString());
+            Log.d("iterator", iterater.getTitle());
+            if (titleString.equals(iterater.getTitle())) {
+                Log.d("iterator2", iterater.toString());
+                Log.d("ID", iterater.getID().toString());
                 typeID = iterater.getID() ;
             }
+
+
 
 
 
@@ -78,6 +89,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
                 // if user did NOT leave a comment
                 if ((titleString.length() > 0) && (commentString.length() == 0) && (typeID != -1)) {
+                    Log.d("newID", Integer.toString(typeID));
                     habitEvent.createNewHabitEvent(typeID);
                 }
 
@@ -93,8 +105,6 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
                     Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event", Toast.LENGTH_SHORT).show();
                 }
-                //habitEvent.setTitle(titleString);
-                //habitEvent.(commentString);
                 startActivity(addingEvent);
             }
         });

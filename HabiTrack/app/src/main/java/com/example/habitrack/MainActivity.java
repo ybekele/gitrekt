@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
         displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent;
-                intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
+                Intent intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
+                Log.d("position", displayNames.getItemAtPosition(i).toString());
                 startActivity(intent);
             }
         });
