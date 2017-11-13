@@ -28,6 +28,7 @@ public class HabitTypeStateManager {
      */
 
     private static Integer habitTypeID;
+    private static Calendar habitTypeDate;
     private static Calendar cal = Calendar.getInstance();
     public static HabitTypeStateManager htManager = new HabitTypeStateManager();
 
@@ -42,15 +43,19 @@ public class HabitTypeStateManager {
     }
 
     public static void calculateHabitsForToday(){
-        HABITTYPES_FOR_TODAY.clear();
-        for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
-            Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
-            if(currCal.compareTo(cal) <= 0){
-                ArrayList<Integer> schedule = ALL_HABITTYPES.get(count).getSchedule();
-                for(Integer cnt = 0; cnt < schedule.size(); cnt++){
-                    if(schedule.get(cnt) == cal.get(Calendar.DAY_OF_WEEK)){
-                        HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
-                        break;
+        if(ALL_HABITTYPES.isEmpty()){
+            HABITTYPES_FOR_TODAY = new ArrayList<HabitType>();
+        } else {
+            HABITTYPES_FOR_TODAY.clear();
+            for (Integer count = 0; count < ALL_HABITTYPES.size(); count++) {
+                Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
+                if (currCal.compareTo(cal) <= 0) {
+                    ArrayList<Integer> schedule = ALL_HABITTYPES.get(count).getSchedule();
+                    for (Integer cnt = 0; cnt < schedule.size(); cnt++) {
+                        if (schedule.get(cnt) == cal.get(Calendar.DAY_OF_WEEK)) {
+                            HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
+                            break;
+                        }
                     }
                 }
             }
@@ -65,7 +70,7 @@ public class HabitTypeStateManager {
         this.ALL_HABITTYPES = allHabittypes;
     }
 
-    public static ArrayList<HabitType> getHabitTypesForToday(){
+    public ArrayList<HabitType> getHabitTypesForToday(){
         calculateHabitsForToday();
         return HABITTYPES_FOR_TODAY;
     }
@@ -80,7 +85,13 @@ public class HabitTypeStateManager {
 
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
-//        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
+        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
     }
 
     public HabitType getHabitType(Integer requestedID){
@@ -111,6 +122,14 @@ public class HabitTypeStateManager {
                 HABITTYPES_FOR_TODAY.remove(rmht);
             }
         }
+    }
+
+    public Calendar getHabitTypeDate() {
+        return habitTypeDate;
+    }
+
+    public void setHabitTypeDate(Calendar habitTypeDate) {
+        HabitTypeStateManager.habitTypeDate = habitTypeDate;
     }
 
     public void setID(Integer savedID){
