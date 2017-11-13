@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     Button createTypeButton;
     Button historybutton;
+    Button allButton;
     private ListView displayNames;
     private ArrayAdapter<String> adapter;
     HabitEventController habitEventController;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         createTypeButton = (Button) findViewById(R.id.button);
+        allButton = (Button) findViewById(R.id.button2);
         historybutton = (Button) findViewById(R.id.button3);
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view){
                 Intent newType = new Intent(getApplicationContext(), HabitHistory.class);
                 startActivity(newType);
+            }
+        });
+        allButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewAll = new Intent(getApplicationContext(), AllHabitTypesActivity.class);
+                startActivity(viewAll);
             }
         });
 
