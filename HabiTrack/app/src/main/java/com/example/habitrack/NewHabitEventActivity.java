@@ -19,7 +19,8 @@ import java.util.ArrayList;
 public class NewHabitEventActivity extends AppCompatActivity {
 
     // declare components
-    HabitEventController habitEvent;
+    HabitEventController hec = new HabitEventController(this);
+    HabitTypeController htc = new HabitTypeController(this);
     CheckBox completed;
     TextView title;
     EditText comment;
@@ -28,18 +29,21 @@ public class NewHabitEventActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
     Button addEvent;
-    int typeID = -1;
+    int typeID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_event);
         Intent intent = getIntent();
-        String titleString = intent.getStringExtra("HabitTitle");
+        //String titleString = intent.getStringExtra("HabitTitle");
+        // Get incoming HT's ID
+        final Integer htID = intent.getIntExtra("habitID", -1);
         ArrayList<HabitType> namesList;
-
-
-
+        // Get the interesting HT
+        HabitType currHT = htc.getHabitType(htID);
+        // Get interesting HT's attributes
+        String titleString = currHT.getTitle();
 
         // intialize Views
         title = (TextView)findViewById(R.id.textView3);
@@ -50,6 +54,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         comment = (EditText) findViewById(R.id.editText6);
         addImage = (Button) findViewById(R.id.button8);
         eventImage = (ImageView) findViewById(R.id.imageView);
+        addEvent = (Button) findViewById(R.id.button7);
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,54 +63,53 @@ public class NewHabitEventActivity extends AppCompatActivity {
         });
 
 
-
         //get habit IDs for today from HabitTypeStateManager
-        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-        final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
-        HabitType iterater = null;
-        Log.d("stringTitle", titleString);
+        //HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+        //final ArrayList<HabitType> today = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
+//        HabitType iterater = null;
+//        Log.d("stringTitle", titleString);
+//
+//        for (int j = 0; j < today.size(); j++)
+//            iterater = today.get(j);
+//            Log.d("iterator", iterater.getTitle());
+//            if (titleString.equals(iterater.getTitle())) {
+//                Log.d("iterator2", iterater.toString());
+//                Log.d("ID", iterater.getID().toString());
+//                typeID = iterater.getID() ;
+//            }
 
-        for (int j = 0; j < today.size(); j++)
-            iterater = today.get(j);
-            Log.d("iterator", iterater.getTitle());
-            if (titleString.equals(iterater.getTitle())) {
-                Log.d("iterator2", iterater.toString());
-                Log.d("ID", iterater.getID().toString());
-                typeID = iterater.getID() ;
-            }
-
-
-
-
-
-
-        addEvent = (Button) findViewById(R.id.button7);
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent addingEvent = new Intent(getApplicationContext(), MainActivity.class);
                 String commentString = comment.getText().toString();
-                String titleString = title.getText().toString();
+                //String titleString = title.getText().toString();
 
                 // if user did NOT leave a comment
-                if ((titleString.length() > 0) && (commentString.length() == 0) && (typeID != -1)) {
+                //if ((titleString.length() > 0) && (commentString.length() == 0) && (typeID != -1)) {
+                if ((commentString.length() == 0) && (typeID != -1)) {
                     Log.d("newID", Integer.toString(typeID));
-                    habitEvent.createNewHabitEvent(typeID);
+                    //habitEvent.createNewHabitEvent(typeID);
+                    hec.createNewHabitEvent(htID);
                 }
+                //}
 
                 // exception, if user did leave a comment
-                if ((titleString.length() > 0) && (commentString.length() > 0) && (typeID != -1)) {
-                    habitEvent.createNewHabitEvent(typeID, commentString);
+                //if ((titleString.length() > 0) && (commentString.length() > 0) && (typeID != -1)) {
+                else if ((commentString.length() > 0) && (typeID != -1)) {
+                    //habitEvent.createNewHabitEvent(typeID, commentString);
+                    hec.createNewHabitEvent(htID, commentString);
                 }
 
                 // Handles any error that may occur
                 else {
                     Log.d("typeID", Integer.toString(typeID));
-                    Log.d("title", titleString);
+                    //Log.d("title", titleString);
 
                     Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event", Toast.LENGTH_SHORT).show();
                 }
-                startActivity(addingEvent);
+                finish();
+                //startActivity(addingEvent);
             }
         });
     }
