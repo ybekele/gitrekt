@@ -28,21 +28,28 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
     }*/
 
 
-
+    /**
+     * Will test an Invalid Type because User had not entered required fields
+     * @throws Exception
+     */
     public void testInvalidType() throws Exception {
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
+
+        // Click on Create Button redirects to -> Habit Type Creation page
         solo.clickOnView(solo.getView(R.id.button));
-        //solo.clickOnButton(solo.getString(R.string.button));
-
-
         solo.waitForActivity(NewHabitTypeActivity.class);
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
         solo.clickOnView(solo.getView(R.id.button6));
-        solo.waitForText("Invalid Creation");
+        solo.waitForText("Invalid Creation"); /* Asserts that the User has failed to create a new Habit Type */
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
     }
 
+    /**
+     * Will test that the User has created a proper Habit Type
+     * and is able to create a Habit Event
+     * @throws Exception
+     */
     public void testValidType() throws Exception {
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.button));
@@ -50,12 +57,27 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
         solo.enterText((EditText) solo.getView(R.id.editText3), "test title");
         solo.enterText((EditText) solo.getView(R.id.editText4), "test Reason");
-        solo.enterText((EditText) solo.getView(R.id.editText5), "7/10/2018");
+        solo.enterText((EditText) solo.getView(R.id.editText5), "11/11/2017");
+        solo.clickOnView(solo.getView(R.id.sunday));
+        solo.clickOnView(solo.getView(R.id.monday));
+        solo.clickOnView(solo.getView(R.id.tuesday));
+        solo.clickOnView(solo.getView(R.id.wednesday));
+        solo.clickOnView(solo.getView(R.id.thursday));
+        solo.clickOnView(solo.getView(R.id.friday));
+        solo.clickOnView(solo.getView(R.id.saturday));
         solo.clickOnView(solo.getView(R.id.button6));
-        assert(solo.waitForText("Invalid Creation") == FALSE);
+        assert(solo.waitForText("Invalid Creation") == FALSE); /* Asserts that the User has created a new Habit Type */
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
+        solo.clickInList(1);
+        solo.waitForActivity(NewHabitEventActivity.class);
+        solo.assertCurrentActivity("Failed to Go to new Habit Event", NewHabitEventActivity.class);
+        solo.enterText((EditText) solo.getView(R.id.editText7), "test event");
+        solo.clickOnView(solo.getView(R.id.checkBox));
     }
+
+
+
 
     @Override
     public void tearDown() throws Exception {

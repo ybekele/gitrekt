@@ -16,9 +16,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Handles the creation of New Habit Events
+ */
 public class NewHabitEventActivity extends AppCompatActivity {
 
-    // declare components
+    /* declare components */
     HabitEventController habitEvent;
     CheckBox completed;
     TextView title;
@@ -36,12 +39,12 @@ public class NewHabitEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_habit_event);
         Intent intent = getIntent();
         String titleString = intent.getStringExtra("HabitTitle");
-        ArrayList<HabitType> namesList;
 
 
 
 
-        // intialize Views
+
+        /* initialize views */
         title = (TextView)findViewById(R.id.textView3);
         title.setText(titleString);
         Log.d("workingTitle", titleString);
@@ -59,7 +62,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
 
 
-        //get habit IDs for today from HabitTypeStateManager
+        /* get habit IDs for today from HabitTypeStateManager */
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
         final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
         HabitType iterater = null;
@@ -77,8 +80,9 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
 
 
-
-
+        /* Adds the event to the HabitEventController using the User entered fields
+         while handling for errors and exceptions
+         */
         addEvent = (Button) findViewById(R.id.button7);
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,18 +91,18 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 String commentString = comment.getText().toString();
                 String titleString = title.getText().toString();
 
-                // if user did NOT leave a comment
+                /* if user did not leave a comment */
                 if ((titleString.length() > 0) && (commentString.length() == 0) && (typeID != -1)) {
                     Log.d("newID", Integer.toString(typeID));
                     habitEvent.createNewHabitEvent(typeID);
                 }
 
-                // exception, if user did leave a comment
+                /* exception, if user did leave a comment */
                 if ((titleString.length() > 0) && (commentString.length() > 0) && (typeID != -1)) {
                     habitEvent.createNewHabitEvent(typeID, commentString);
                 }
 
-                // Handles any error that may occur
+                /* Handles any error that may occur when trying to create a new habit event */
                 else {
                     Log.d("typeID", Integer.toString(typeID));
                     Log.d("title", titleString);
@@ -113,8 +117,8 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
     /*
     Opens the gallery in phone to select a photo
+    Proper way to do it derived from this video: https://www.youtube.com/watch?v=OPnusBmMQTw
      */
-    //https://www.youtube.com/watch?v=OPnusBmMQTw
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
