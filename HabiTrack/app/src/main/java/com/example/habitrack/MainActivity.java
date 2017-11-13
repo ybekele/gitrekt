@@ -13,9 +13,13 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 
-
+/**
+ *  Handles all the Activities on the Main Page once Logged in
+ */
 
 public class MainActivity extends AppCompatActivity {
+
+    // declare components
     Button createTypeButton;
     Button historybutton;
     Button allButton;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         createTypeButton = (Button) findViewById(R.id.button);
         allButton = (Button) findViewById(R.id.button2);
         historybutton = (Button) findViewById(R.id.button3);
+
+        // Handles if user pressed CREATE button , redirects to create a new habit type class
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(newType);
             }
         });
+
+        // Handles if user pressed HISTORY button , redirects to history class
         historybutton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(newType);
             }
         });
+
+        // Handles if user pressed ALL button, redirects to all habit types
         allButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
 
 
+        // Makes sure we have due Habits for today
         if (!(today.isEmpty())) {
             for (int i = 0; i < today.size(); i++) {
                 HabitType ht = today.get(i);
@@ -99,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
             //todaysHabits.clear();
         }
 
+
+        // Handles the pressing of Habits on the Main Activity to launch a new habit event
         displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
