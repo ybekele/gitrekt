@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.util.Log;
+
 import java.lang.reflect.Array;
 import java.util.Calendar;
 
@@ -23,6 +25,7 @@ public class HabitEventStateManager {
 
     private static Integer habitEventID;
 
+
     public static HabitEventStateManager heManager = new HabitEventStateManager();
 
     //private static final ArrayList<Integer> ALL_HABITEVENTS_ID = new ArrayList<Integer>();
@@ -40,6 +43,7 @@ public class HabitEventStateManager {
     }
 
     public void updateRecentHabitEvents(){
+
         // Get date from 4 weeks ago, by adding -28 to today's date
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -28);
@@ -80,6 +84,7 @@ public class HabitEventStateManager {
 
     public void storeHabitEvent(HabitEvent he){
         ALL_HABITEVENTS.add(he);
+        Log.d("seen",ALL_HABITEVENTS.toString());
 //        ALL_HABITEVENTS_ID.add(he.getHabitEventID());
     }
 

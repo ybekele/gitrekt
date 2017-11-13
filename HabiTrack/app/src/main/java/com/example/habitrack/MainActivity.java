@@ -13,41 +13,46 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 
-
+/**
+ *  Handles all the Activities on the Main Page once Logged in
+ */
 
 public class MainActivity extends AppCompatActivity {
+
+    // declare components
     Button createTypeButton;
     Button historybutton;
+    Button allButton;
     private ListView displayNames;
-    private ArrayAdapter<String> adapter;
-    HabitEventController habitEventController;
+    private ArrayList<HabitType> today = new ArrayList<HabitType>();
+    //private ArrayAdapter<String> adapter;
+    private ArrayAdapter<HabitType> adapter;
     ArrayList<String> todaysHabits = new ArrayList<>();
-
-
+    HabitTypeController htc = new HabitTypeController(this);
+    HabitEventController hec = new HabitEventController(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-        HabitTypeController htc = new HabitTypeController(this);
-        HabitEventController hc = new HabitEventController(this);
-
-        // Get IDs
+        // Preliminary Setup
+        // 1. Get the controllers
+        // 2. Get IDs if they're saved. Otherwise, create new IDs
         htc.loadHTID();
-        hc.loadHEID();
-        // Restore all HT and HE
+        hec.loadHEID();
+        // 3. Restore all HT and HE if saved
         htc.loadFromFile();
-        hc.loadFromFile();
-        // Get Recent events and HabitTypes for today
-        htc.getHabitTypesForToday();
-        hc.updateRecentHabitEvents();
-
+        hec.loadFromFile();
+        // 4. Get Recent events and HabitTypes for today
+        htc.generateHabitsForToday();
+        hec.updateRecentHabitEvents();
 
         createTypeButton = (Button) findViewById(R.id.button);
+        allButton = (Button) findViewById(R.id.button2);
         historybutton = (Button) findViewById(R.id.button3);
+        displayNames = (ListView) findViewById(R.id.listView);
+
+        // Handles if user pressed CREATE button , redirects to create a new habit type class
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(newType);
             }
         });
+
+        // Handles if user pressed HISTORY button , redirects to history class
         historybutton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -63,42 +70,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Handles if user pressed ALL button, redirects to all habit types
+        allButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewAll = new Intent(getApplicationContext(), AllHabitTypesActivity.class);
+                startActivity(viewAll);
+            }
+        });
 
+        // Handles the pressing of Habits on the Main Activity to launch a new habit event
+        displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
+                //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
+                //Log.d("position", displayNames.getItemAtPosition(i).toString());
+                intent.putExtra("habitID", today.get(i).getID());
+                startActivity(intent);
+            }
+        });
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        displayNames = (ListView) findViewById(R.id.listView);
-        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-        final ArrayList<HabitType> today = HabitTypeStateManager.getHabitTypesForToday();
+
+        htc.loadHTID();
+        hec.loadHEID();
+        // 3. Restore all HT and HE if saved
+        htc.loadFromFile();
+        hec.loadFromFile();
+        // 4. Get Recent events and HabitTypes for today
+        //htc.generateHabitsForToday();
+        today = htc.getHabitTypesForToday();
+        hec.updateRecentHabitEvents();
 
 
-        if (!(today.isEmpty())) {
-            for (int i = 0; i < today.size(); i++) {
-                HabitType ht = today.get(i);
-                String stringTitle = ht.getTitle();
-                Log.d("see",stringTitle);
-                todaysHabits.add(stringTitle);
-
-            }
-
-            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todaysHabits);
-            displayNames.setAdapter(adapter);
-
-            //todaysHabits.clear();
-        }
-
-        displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent;
-                intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
-                intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
-                startActivity(intent);
-            }
-        });
+        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
+        displayNames.setAdapter(adapter);
 
         }
 
