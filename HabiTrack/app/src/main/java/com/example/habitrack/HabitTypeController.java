@@ -94,7 +94,17 @@ public class HabitTypeController {
     }
 
     public void generateHabitsForToday(){
+        loadHTDate();
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+        Calendar today = Calendar.getInstance();
+        Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
+        if(htDate.compareTo(today) < 0){
+            saveHTDate();
+            ArrayList<HabitType> recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
+            for(Integer count = 0; count < recent.size(); count++){
+                incrementHTMaxCounter(recent.get(count).getID());
+            }
+        }
     }
 
     /**
@@ -361,4 +371,42 @@ public class HabitTypeController {
         }
         HabitTypeStateManager.getHTStateManager().setID(loadedID);
     }
+
+    public void saveHTDate(){
+        Calendar saveDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
+
+        try {
+            FileOutputStream fos = ctx.openFileOutput(ID_FILE_NAME,0);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(saveDate, writer);
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
+        }
+    }
+
+    public void loadHTDate() {
+        Calendar loadedDate;
+        try {
+            FileInputStream fis = ctx.openFileInput(ID_FILE_NAME);
+            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+            Gson gson = new Gson();
+            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+            Type calType = new TypeToken<Calendar>(){}.getType();
+            loadedDate = gson.fromJson(in, calType);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            loadedDate = Calendar.getInstance();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException();
+        }
+        HabitTypeStateManager.getHTStateManager().setHabitTypeDate(loadedDate);
+    }
+
 }
