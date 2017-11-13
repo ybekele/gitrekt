@@ -42,6 +42,7 @@ public class HabitTypeStateManager {
     }
 
     public static void calculateHabitsForToday(){
+
         HABITTYPES_FOR_TODAY.clear();
         for(Integer count = 0; count < ALL_HABITTYPES.size(); count++){
             Calendar currCal = ALL_HABITTYPES.get(count).getStartDate();
@@ -80,7 +81,13 @@ public class HabitTypeStateManager {
 
     public void storeHabitType(HabitType ht){
         ALL_HABITTYPES.add(ht);
-//        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
+        HABITTYPES_FOR_TODAY.add(ht);
+
+
+
     }
 
     public HabitType getHabitType(Integer requestedID){

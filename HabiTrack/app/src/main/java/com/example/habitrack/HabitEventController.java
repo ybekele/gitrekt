@@ -39,6 +39,7 @@ public class HabitEventController {
     }
 
     public void createNewHabitEvent(Integer habitTypeID){
+        Log.d("seen","itcame here");
         HabitTypeController htc = new HabitTypeController(hectx);
         HabitEvent he = new
                 HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
