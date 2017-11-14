@@ -43,7 +43,7 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
 
     public void testInvalidType() throws Exception {
         solo.clickOnView(solo.getView(R.id.editText));
-        solo.enterText(0, "Harjot");
+        solo.enterText(0, "gitrekt");
         solo.clickOnView(solo.getView(R.id.button5));
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
