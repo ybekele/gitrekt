@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.util.ArrayList;
 
 /**
  *
@@ -23,8 +22,8 @@ import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
-    String userName;
-    EditText uname;
+    String userName, uID;
+    EditText userInput;
     Button loginButton, signUpButton;
     //ArrayList<String> userIDs = new ArrayList<>();
     //private int userIDKey = 2000;
@@ -34,11 +33,9 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        uname = (EditText) findViewById(R.id.editText);
+        userInput = (EditText) findViewById(R.id.editText);
         loginButton = (Button) findViewById(R.id.button5);
         signUpButton = (Button) findViewById(R.id.button9);
-
-        userName = uname.getText().toString();
 
         /*
         * Shared Preference files to store values of the users ID as well as the logged in state of the app
@@ -52,8 +49,9 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 /*Checks if a username key already exists in sharedUserIDs*/
+                userName = userInput.getText().toString();
                 if (sharedUserIDs.contains("USERNAME")) {
-                    String uID = sharedUserIDs.getString("USERNAME", null);
+                    uID = sharedUserIDs.getString("USERNAME", null);
                     /*Check to see if the username entered by user matches what was signed up.
                     * If it does, go to MainActivity
                     */
@@ -65,7 +63,8 @@ public class SignupActivity extends AppCompatActivity {
                         startActivity(loggedIn);
                     } else /*If username doesn't match what was saved, don't sign in.*/
                     {
-                        Toast.makeText(getApplicationContext(), "Login Unsuccessful: Username incorrect.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Login Unsuccessful: Username incorrect. Username = " + uID, Toast.LENGTH_LONG).show();
+
                     }
 
                 } else /*If no such key exists, user has not signed up yet*/
@@ -75,13 +74,14 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         });
-        /**
+
+        /*
          * Saves username entered by user into userIDs when Signup button is clicked and only if user has not signed up previously
          * */
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                userName = userInput.getText().toString();
                 if(sharedUserIDs.contains("USERNAME")) {
                     Toast.makeText(getApplicationContext(),"Account already exists. Please Login.", Toast.LENGTH_LONG).show();
                 } else {
