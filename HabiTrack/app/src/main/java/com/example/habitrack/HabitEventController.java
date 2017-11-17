@@ -75,6 +75,8 @@ public class HabitEventController {
         addHabitEvent.execute(he);
         // Save event locally
         saveToFile();
+        // Increment the completed event counter for the habit type
+        htc.incrementHTCurrentCounter(habitTypeID);
     }
 
     public ArrayList<HabitEvent> getAllHabitEvent(){
