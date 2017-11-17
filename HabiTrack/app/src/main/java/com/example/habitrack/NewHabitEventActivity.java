@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Handles the creation of New Habit Events
@@ -33,6 +34,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
     Uri imageUri;
     Button addEvent;
     int typeID = 0;
+    Button map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         addImage = (Button) findViewById(R.id.button8);
         eventImage = (ImageView) findViewById(R.id.imageView);
         addEvent = (Button) findViewById(R.id.button7);
+        map = (Button) findViewById(R.id.mapButton) ;
         addImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,6 +83,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
 //                Log.d("ID", iterater.getID().toString());
 //                typeID = iterater.getID() ;
 //            }
+
         final String titleEvent = intent.getStringExtra("title");
         /*final String commentEvent = intent.getStringExtra("comment");
         if (commentEvent != null) {
@@ -92,7 +96,13 @@ public class NewHabitEventActivity extends AppCompatActivity {
 
 
 
-
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent gotoMap = new Intent(NewHabitEventActivity.this, MapsActivity.class);
+                NewHabitEventActivity.this.startActivity(gotoMap);
+            }
+        });
 
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
