@@ -2,6 +2,7 @@
     <string name="app_name">HabiTrack</string>
     <string name="title_activity_signup">SignupActivity</string>
     <string name="title_activity_all_habit_types">AllHabitTypesActivity</string>
-    <string-array name="forToday">
-    </string-array>
+    <string-array name="forToday"></string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="Map">Map</string>
 </resources>
