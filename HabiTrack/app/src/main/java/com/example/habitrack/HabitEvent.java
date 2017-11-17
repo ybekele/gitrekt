@@ -70,6 +70,14 @@ public class HabitEvent {
         return habitTypeID;
     }
 
+    public Boolean searchInComment(String key){
+        Boolean retVal = Boolean.FALSE;
+        if(this.comment.contains(key)){
+            retVal = Boolean.TRUE;
+        }
+        return retVal;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
