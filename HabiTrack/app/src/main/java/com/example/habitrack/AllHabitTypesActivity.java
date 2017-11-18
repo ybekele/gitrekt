@@ -58,6 +58,12 @@ public class AllHabitTypesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
     /**
      * Get IDs and reload data from File every time app is in onStart
      * Will populize the array for names that will be displayed
