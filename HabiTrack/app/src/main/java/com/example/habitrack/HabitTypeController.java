@@ -205,6 +205,15 @@ public class HabitTypeController {
         saveToFile();
     }
 
+    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setStartDate(newDate);
+        }
+        saveToFile();
+    }
+
     /**
      * Given an ID of a habit type and a new schedule, this method
      * edits the schedule, if the habit exists
