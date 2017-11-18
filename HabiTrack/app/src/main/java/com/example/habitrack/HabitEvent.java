@@ -1,5 +1,10 @@
 package com.example.habitrack;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
 import io.searchbox.annotations.JestId;
@@ -30,6 +35,7 @@ public class HabitEvent {
     private Calendar date;                      // date of the habit event
     @JestId
     private String id;
+    private String encodedPhoto;
 
 
     public HabitEvent(Integer heID, Integer htID) {
@@ -70,6 +76,14 @@ public class HabitEvent {
         return habitTypeID;
     }
 
+    public String getPhoto() {
+        return this.encodedPhoto;
+    }
+
+    public void setPhoto(String newEncodedPhoto) {
+        this.encodedPhoto = newEncodedPhoto;
+    }
+
     public Boolean searchInComment(String key){
         Boolean retVal = Boolean.FALSE;
         if(this.comment.contains(key)){
@@ -81,4 +95,5 @@ public class HabitEvent {
     public void setId(String id) {
         this.id = id;
     }
+
 }
