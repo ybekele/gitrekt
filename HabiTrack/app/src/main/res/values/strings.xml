@@ -2,6 +2,9 @@
     <string name="app_name">HabiTrack</string>
     <string name="title_activity_signup">SignupActivity</string>
     <string name="title_activity_all_habit_types">AllHabitTypesActivity</string>
-    <string-array name="forToday">
-    </string-array>
+    <string-array name="forToday"></string-array>
+
+    <!-- for heImageDisplay -->
+    <string name="BackButton">Back</string>
+    <!-- <string name=""></string> -->
 </resources>
