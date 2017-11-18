@@ -2,11 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.habitrack">
 
-    <uses-permission
-        android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     GOOGLE_MAPS_API_KEY = AIzaSyBYb9UFE6MbUnYKgSUT88F_oaOJViX2qQo
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +15,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,7 +26,8 @@
         <activity android:name=".AllHabitTypesActivity" />
         <activity android:name=".HabitTypeDetailsActivity" />
         <activity android:name=".HabitEventDetailsActivity" />
-        <activity android:name=".HabitHistory"></activity>
+        <activity android:name=".HabitHistory" />
+        <activity android:name=".heImageDisplay"></activity>
     </application>
 
 </manifest>
