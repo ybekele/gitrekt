@@ -6,51 +6,142 @@
     tools:context="com.example.habitrack.HabitTypeDetailsActivity">
 
     <EditText
-        android:id="@+id/editText8"
+        android:id="@+id/titleBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
+        android:layout_marginRight="40dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:maxLength="20"
-        app:layout_constraintBottom_toTopOf="@+id/editText9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/titleLabel"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@+id/editText9"
+        android:id="@+id/commentBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="40dp"
         android:ems="10"
         android:inputType="textMultiLine"
         android:maxLength="30"
-        app:layout_constraintBottom_toTopOf="@+id/editText10"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText8" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/commentLabel"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@+id/editText10"
+        android:id="@+id/startDateBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="7dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="date"
-        app:layout_constraintBottom_toTopOf="@+id/button9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText9" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/dateLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:layout_marginTop="8dp"
         android:text="EDIT"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.155"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText10" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        app:layout_constraintVertical_bias="0.621" />
+
+    <TextView
+        android:id="@+id/titleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Title:"
+        app:layout_constraintEnd_toStartOf="@+id/titleView"
+        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/commentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Comment:"
+        app:layout_constraintEnd_toStartOf="@+id/reasonView"
+        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleLabel" />
+
+    <TextView
+        android:id="@+id/dateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Start Date:"
+        app:layout_constraintEnd_toStartOf="@+id/dateView"
+        app:layout_constraintHorizontal_bias="0.085"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="210dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="28dp"
+        android:max="100"
+        android:progress="40"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateView" />
+
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/titleLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/reasonView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/commentLabel"
+        app:layout_constraintEnd_toEndOf="@+id/commentBox" />
+
+    <TextView
+        android:id="@+id/dateView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/dateLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Status:"
+        app:layout_constraintEnd_toStartOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateLabel" />
+
 </android.support.constraint.ConstraintLayout>
