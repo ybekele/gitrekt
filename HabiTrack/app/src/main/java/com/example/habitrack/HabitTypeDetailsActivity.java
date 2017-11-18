@@ -21,6 +21,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
     EditText dateEdit;
     ProgressBar progressBar;
     Button editButton;
+    Button deleteButton;
 
     TextView titleView;
     TextView reasonView;
@@ -76,6 +77,9 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
 
         // Edit button
         editButton = (Button) findViewById(R.id.button9);
+
+        // delete button
+        deleteButton = (Button) findViewById(R.id.deleteButton);
 
         titleView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -175,12 +179,22 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Invalid date", Toast.LENGTH_LONG).show();
                         }
                     }
+
                 });
                 return false;
             }
         });
         dateEdit.setVisibility(View.GONE);
         dateView.setVisibility(View.VISIBLE);
+
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                htc.deleteHabitType(htID);
+                finish();
+            }
+        });
 
 
         //final String titleString = intent.getStringExtra("HabitTitle");
