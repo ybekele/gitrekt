@@ -29,7 +29,10 @@ public class HabitTypeControllerTest extends TestCase {
     Context ctx;
 
 
-    // Function that runs before any tests
+    /**
+     *  Function that runs before any tests. Creates a basic habit type
+     *  for any simple testing
+     */
     protected void setUp(){
         this.ctx = InstrumentationRegistry.getContext();
         this.htc = new HabitTypeController(this.ctx);
@@ -39,56 +42,85 @@ public class HabitTypeControllerTest extends TestCase {
         this.reason = "testReason1";
         this.startDate = Calendar.getInstance();
         startDate.add(Calendar.DAY_OF_MONTH, -2);
+        //this.schedule.add(startDate.get(Calendar.DAY_OF_WEEK));
         this.schedule.add(Calendar.MONDAY);
-
-    }
-
-//    public void testCreateHabit(){
-//        htc.createNewHabitType(title, reason, startDate, schedule);
-//        this.ht = HabitTypeStateManager.getHTStateManager().getHabitType(1);
-//        Log.d("T:tch:title", ht.getTitle());
-//        Log.d("T:tch:Reason", ht.getReason());
-//        Log.d("T:tch:Schedule", ht.getSchedule().toString());
-//        Log.d("T:tch:StartDate", ht.getStartDate().toString());
-//        assertEquals(title, this.ht.getTitle());
-//        assertEquals(reason, this.ht.getReason());
-//        assertTrue(startDate.equals(this.ht.getStartDate()));
-//        assertTrue(schedule.equals(this.ht.getSchedule()));
-//
-//    }
-
-//    public void testgetAllHabits(){
-//        ArrayList<HabitType> habits = new ArrayList<HabitType>();
-//        assertEquals(habits.size(), 0);
-//        htc.createNewHabitType(title, reason, startDate, schedule);
-//        habits = htc.getAllHabitTypes();
-//        Log.d("T:tgah", habits.get(0).toString());
-//        assertEquals(habits.size(), 1);
-//        htc.createNewHabitType("testTitle2", reason, startDate, schedule);
-//        Log.d("T:tgah", habits.get(1).toString());
-//        assertEquals(habits.size(), 2);
-//
-//    }
-
-    public void testHabitsForToday(){
-        ArrayList<HabitType> habits = new ArrayList<HabitType>();
-        ArrayList<HabitType> ht = new ArrayList<HabitType>();
-        assertEquals(habits.size(), 0);
         htc.createNewHabitType(title, reason, startDate, schedule);
-        habits = htc.getAllHabitTypes();
-        //Log.d("T:thft:1", habits.get(0).toString());
-        assertEquals(habits.size(), 1);
-        htc.createNewHabitType("testTitle2", reason, Calendar.getInstance(), schedule);
-        //Log.d("T:thft:2", habits.get(1).toString());
-        assertEquals(habits.size(), 2);
-        // ---
-        ht = htc.getHabitTypesForToday();
-        //assertEquals(ht.size(), 0);
-        htc.generateHabitsForToday();
-        Log.d("T:thft:3", ht.get(0).toString());
-        //assertEquals(ht.size(), 1);
+        this.ht = HabitTypeStateManager.getHTStateManager().getHabitType(1);
     }
 
+    /**
+     * This function validates the basic habit type created
+     * by the setup function
+     */
+    public void testCreateHabit(){
+        assertEquals(this.title, this.ht.getTitle());
+        assertEquals(this.reason, this.ht.getReason());
+        assertTrue(this.startDate.equals(this.ht.getStartDate()));
+        assertTrue(this.schedule.equals(this.ht.getSchedule()));
+    }
+
+    /**
+     * This function will change the habit title of  basic
+     * habit type. And then it restores the title
+     */
+    public void testChangeHabitTitle(){
+        String newTitle = "changedTitle";
+        this.ht.setTitle(newTitle);
+        assertEquals(newTitle, this.ht.getTitle());
+        this.ht.setTitle(this.title);
+        assertEquals(this.title, this.ht.getTitle());
+    }
+
+    /**
+     * This function will change the reason of the basic
+     * habit type, and restores it, and verifies each change
+     */
+    public void testChangeHabitReason(){
+        String newReason = "changedReason";
+        this.ht.setReason(newReason);
+        assertEquals(newReason, this.ht.getReason());
+        this.ht.setReason(this.reason);
+        assertEquals(this.reason, this.ht.getReason());
+    }
+
+    /**
+     * This function will set the date of the basic habit type
+     * to 2 days behind, and then check the date, and then restore
+     * the date
+     */
+    public void testChangeStartDate(){
+        Calendar newCal = Calendar.getInstance();
+        newCal.add(Calendar.DATE, -2);
+        this.ht.setStartDate(newCal);
+        assertTrue(this.ht.getStartDate().equals(newCal));
+        this.ht.setStartDate(this.startDate);
+        assertTrue(this.ht.getStartDate().equals(this.startDate));
+    }
+
+    /**
+     * This function will check if the basic habit type is also
+     * in the habit types for today
+     */
+    public void testHabitsForToday1(){
+        this.htc.generateHabitsForToday();
+        ArrayList<HabitType> habits = this.htc.getHabitTypesForToday();
+        assertTrue(habits.contains(this.ht));
+    }
+
+    /**
+     * This function verifies that the allHabitTypes list is
+     * updated every time a new habit gets created
+     */
+
+    public void testgetAllHabits(){
+        ArrayList<HabitType> habits = new ArrayList<HabitType>();
+        assertEquals(habits.size(), 0);
+        habits = htc.getAllHabitTypes();
+        assertEquals(habits.size(), 1);
+        htc.createNewHabitType("testTitle2", reason, startDate, schedule);
+        assertEquals(habits.size(), 2);
+
+    }
 
     // Fucntion that runs after all tests
     protected void tearDown(){}

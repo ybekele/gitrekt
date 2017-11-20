@@ -1,41 +1,40 @@
 package com.example.habitrack;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.SimpleTimeZone;
 
 public class HabitHistory extends AppCompatActivity {
+    private ArrayList<HabitType> today = new ArrayList<HabitType>();
+    HabitTypeController hc = new HabitTypeController(this);
+    HabitEventController hec = new HabitEventController(this);
 
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
     Button start_over;
 
+    //Intializing arrays
+
     ArrayList<ArrayList<String>> historyList = new ArrayList<ArrayList<String>>();
-
-
-
     List<String> comments_list = new ArrayList<String>();
     List<String> habit_title = new ArrayList<String>();
     List<String> all_habit_titles = new ArrayList<String>();
+    List<HabitType> the_titles = new ArrayList<HabitType>();
     List<String> temp = new ArrayList<String>();
 
     int i;
@@ -51,13 +50,23 @@ public class HabitHistory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_habit_history);
         ListView lv = (ListView)findViewById(R.id.listView_history);
-        HabitTypeController hc = new HabitTypeController(this);
+        final HabitEventController hc = new HabitEventController(this);
+        HabitTypeController ht = new HabitTypeController(this);
 
-        Log.d("hello","came back in here my dude");
-        for (i = 0; i < hc.getAllHabitTypes().size(); i++) {
-            String title = hc.getAllHabitTypes().get(i).getTitle();
+
+
+        //Log.d("hello","came back in here my dude");
+
+        //Filling array with habit event titles
+        for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+            String title = hc.getAllHabitEvent().get(i).getTitle();
             all_habit_titles.add(title);
         }
+
+
+        the_titles = ht.getAllHabitTypes();
+
+
 
 
 
@@ -103,7 +112,7 @@ public class HabitHistory extends AppCompatActivity {
 
         lv.setAdapter(adapter);
 
-
+        //Following resets listview to all habit event titles
         start_over.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,6 +129,21 @@ public class HabitHistory extends AppCompatActivity {
         });
 
 
+        // Handles the pressing of Habits on the Main Activity to launch a new habit event
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
+                //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
+                //Log.d("position", displayNames.getItemAtPosition(i).toString());
+                intent.putExtra("habitID", the_titles.get(i).getID());
+                //intent.putExtra("comment", hc.getAllHabitEvent().get(i).getComment() );
+                intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
+                startActivity(intent);
+            }
+        });
+
         //temp.clear();
 
 
@@ -128,7 +152,7 @@ public class HabitHistory extends AppCompatActivity {
 
 
 
-
+    //Handles the filtering option for the listview
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -147,6 +171,9 @@ public class HabitHistory extends AppCompatActivity {
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+                //Onquerytextsubmit filters by comments in habit event
+                //following updates all_habit_titles accordingly
+
                 @Override
                 public boolean onQueryTextSubmit (String s){
                     Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
@@ -157,14 +184,17 @@ public class HabitHistory extends AppCompatActivity {
                     if(switchState){
                         Log.d("query","came into the query");
                         all_habit_titles.clear();
-                        HabitTypeController hc = new HabitTypeController(getApplicationContext());
-                        for(i=0;i<hc.getAllHabitTypes().size();i++) {
-                            String comment = hc.getAllHabitTypes().get(i).getReason();
-                            String title = hc.getAllHabitTypes().get(i).getTitle();
+                        HabitEventController hc = new HabitEventController(getApplicationContext());
+                        for(i=0;i<hc.getAllHabitEvent().size();i++) {
+                            String comment = hc.getAllHabitEvent().get(i).getComment();
+                            if(comment == null){
+                                comment = " ";
+                            }
+                            String title = hc.getAllHabitEvent().get(i).getTitle();
                             comments_list.add(comment);
                             habit_title.add(title);
 
-                            Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
+                            //Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
 
 
                         }
@@ -194,6 +224,8 @@ public class HabitHistory extends AppCompatActivity {
 
             }
 
+            //onQueryTextChange filters by habit titles
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
@@ -210,6 +242,9 @@ public class HabitHistory extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
+
+
+    //Following method fills an array with all habit titles and returns it.
 
     public ArrayList<String> update_array() {
         Log.d("checking","we updating array");
