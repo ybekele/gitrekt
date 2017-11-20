@@ -3,7 +3,6 @@ package com.example.habitrack;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.searchly.jestdroid.DroidClientConfig;
 import com.searchly.jestdroid.JestClientFactory;
 import com.searchly.jestdroid.JestDroidClient;
@@ -67,29 +66,6 @@ public class ElasticSearchController {
         }
     }
 
-/*
-    public static class AddMapCoordinates extends AsyncTask<MapsActivity, Void, Void> {
-
-        @Override
-        protected Void doInBackground(MapsActivity... mapsActivities) {
-            verifySettings();
-            for (MapsActivity mapsActivity : mapsActivities) {
-                Index index = new Index.Builder(mapsActivity).index("location").type("").build();
-                try {
-                    DocumentResult result = client.execute(index);
-                    if (result.isSucceeded()) {
-                        mapsActivity.setId(result.getId());
-                    } else {
-                        Log.i("Error", "Elasticsearch was not able to add the location coordinates");
-                    }
-                } catch (IOException e) {
-                    Log.i("Error", "The application failed to build and send the location coordinates");
-                }
-            }
-            return null;
-        }
-    }
-*/
     public static class GetHabitType extends AsyncTask<String, Void, ArrayList<HabitType>> {
         @Override
         protected ArrayList<HabitType> doInBackground(String... search_parameters) {
