@@ -6,51 +6,252 @@
     tools:context="com.example.habitrack.HabitTypeDetailsActivity">
 
     <EditText
-        android:id="@+id/editText8"
+        android:id="@+id/titleBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
+        android:layout_marginRight="40dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:maxLength="20"
-        app:layout_constraintBottom_toTopOf="@+id/editText9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/titleLabel"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@+id/editText9"
+        android:id="@+id/commentBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="40dp"
         android:ems="10"
         android:inputType="textMultiLine"
         android:maxLength="30"
-        app:layout_constraintBottom_toTopOf="@+id/editText10"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText8" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/commentLabel"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
-        android:id="@+id/editText10"
+        android:id="@+id/startDateBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="7dp"
+        android:layout_marginEnd="40dp"
         android:ems="10"
         android:inputType="date"
-        app:layout_constraintBottom_toTopOf="@+id/button9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText9" />
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@+id/htStartDateLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <!--<Button
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:layout_marginTop="8dp"
         android:text="EDIT"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.155"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText10" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        app:layout_constraintVertical_bias="0.621" />-->
+
+    <TextView
+        android:id="@+id/titleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Title:"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/titleView"
+        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/commentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Comment:"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/reasonView"
+        app:layout_constraintHorizontal_bias="0.034"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleLabel" />
+
+    <TextView
+        android:id="@+id/htStartDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Start Date:"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/dateView"
+        app:layout_constraintHorizontal_bias="0.085"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="210dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="28dp"
+        android:max="100"
+        android:progress="40"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateView" />
+
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/titleLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/reasonView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/commentLabel"
+        app:layout_constraintEnd_toEndOf="@+id/commentBox" />
+
+    <TextView
+        android:id="@+id/dateView"
+        android:layout_width="210dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/htStartDateLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:text="Status:"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toStartOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/htStartDateLabel" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginTop="8dp"
+        android:text="Delete Event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        app:layout_constraintVertical_bias="0.961" />
+
+    <CheckBox
+        android:id="@+id/sunCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Sun"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Schedule:"
+        android:textAllCaps="true"
+        android:textIsSelectable="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statusLabel" />
+
+    <CheckBox
+        android:id="@+id/wedCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Wed"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tuesCheckBox"
+        app:layout_constraintStart_toEndOf="@+id/tuesCheckBox" />
+
+    <CheckBox
+        android:id="@+id/monCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Mon"
+        app:layout_constraintBaseline_toBaselineOf="@+id/sunCheckBox"
+        app:layout_constraintStart_toEndOf="@+id/sunCheckBox" />
+
+    <CheckBox
+        android:id="@+id/tuesCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Tue"
+        app:layout_constraintBaseline_toBaselineOf="@+id/monCheckBox"
+        app:layout_constraintStart_toEndOf="@+id/monCheckBox" />
+
+    <CheckBox
+        android:id="@+id/thursCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Thu"
+        app:layout_constraintBaseline_toBaselineOf="@+id/wedCheckBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/wedCheckBox" />
+
+    <CheckBox
+        android:id="@+id/friCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:text="Fri"
+        app:layout_constraintEnd_toStartOf="@+id/satCheckBox"
+        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sunCheckBox" />
+
+    <CheckBox
+        android:id="@+id/satCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="124dp"
+        android:text="Sat"
+        app:layout_constraintBaseline_toBaselineOf="@+id/friCheckBox"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/editScheduleToggle"
+        android:layout_width="151dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="40dp"
+        android:checked="false"
+        android:textOff="Edit Schedule"
+        android:textOn="Editing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
 </android.support.constraint.ConstraintLayout>

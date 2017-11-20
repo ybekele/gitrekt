@@ -34,9 +34,7 @@ public class HabitEventStateManager {
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
 
 
-    public HabitEventStateManager(){
-        habitEventID = 0;
-    }
+    public HabitEventStateManager(){}
 
     public static HabitEventStateManager getHEStateManager(){
         return heManager;

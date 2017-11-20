@@ -72,7 +72,7 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
         solo.enterText((EditText) solo.getView(R.id.editText3), "test title");
         solo.enterText((EditText) solo.getView(R.id.editText4), "test Reason");
-        solo.enterText((EditText) solo.getView(R.id.editText5), "11/11/2017");
+        solo.enterText((EditText) solo.getView(R.id.htStartDateText), "11/11/2017");
         solo.clickOnView(solo.getView(R.id.sunday));
         solo.clickOnView(solo.getView(R.id.monday));
         solo.clickOnView(solo.getView(R.id.tuesday));

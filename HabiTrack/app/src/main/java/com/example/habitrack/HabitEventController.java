@@ -2,6 +2,8 @@ package com.example.habitrack;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -21,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.Calendar;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * HabitEventController
@@ -75,7 +78,35 @@ public class HabitEventController {
         addHabitEvent.execute(he);
         // Save event locally
         saveToFile();
+        // Increment the completed event counter for the habit type
+        htc.incrementHTCurrentCounter(habitTypeID);
     }
+
+    public void createNewHabitEvent(Integer habitTypeID, Bitmap newPhoto){
+        HabitTypeController htc = new HabitTypeController(hectx);
+        HabitEvent he = new
+                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
+        he.setTitle(htc.getHabitTitle(habitTypeID));
+        ImageHandler.Compressor compressor = new ImageHandler.Compressor();
+        compressor.execute(newPhoto);
+        try {
+            String encodedImage = compressor.get();
+            he.setPhoto(encodedImage);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+        // Save event on elastic search
+        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+        addHabitEvent.execute(he);
+        // Save event locally
+        saveToFile();
+        // Increment the completed event counter for the habit type
+        htc.incrementHTCurrentCounter(habitTypeID);
+    }
+
 
     public ArrayList<HabitEvent> getAllHabitEvent(){
         return HabitEventStateManager.getHEStateManager().getAllHabitEvents();
@@ -146,6 +177,16 @@ public class HabitEventController {
             saveToFile();
         }
     }
+
+//    public void editHabitEventPhoto(Integer requestedID, Bitmap newPhoto){
+//        HabitEvent he = this.getHabitEvent(requestedID);
+//        // If the habit event exists
+//        if(!he.getHabitEventID().equals(-1)){
+//            he.setPhoto(newPhoto);
+//            // Save event locally
+//            saveToFile();
+//        }
+//    }
 
     public void editHabitEventComment(Integer requestedID, String newComment){
         HabitEvent he = this.getHabitEvent(requestedID);
@@ -292,4 +333,5 @@ public class HabitEventController {
         }
         HabitEventStateManager.getHEStateManager().setID(loadedID);
     }
+
 }

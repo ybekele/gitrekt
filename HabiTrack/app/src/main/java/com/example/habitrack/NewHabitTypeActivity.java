@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -29,6 +32,16 @@ public class NewHabitTypeActivity extends AppCompatActivity {
     Switch fridaySwitch;
     Switch saturdaySwitch;
 
+    // Date var
+    Calendar date;
+    //EditText dateEntry;
+    TextView dateView;
+    Button dateSelect;
+    Button dateEdit;
+
+    // Request Code for date entry
+    private final Integer DATE_ENTRY = 101;
+
     /**
      * Handles the creation of Habit Types
      * @param savedInstanceState
@@ -39,6 +52,25 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_habit_type);
         final HabitTypeController htc = new HabitTypeController(this);
 
+        dateView = (TextView) findViewById(R.id.htStartDateText);
+        dateSelect = (Button) findViewById(R.id.selectDateButton);
+        dateEdit = (Button) findViewById(R.id.htStartDateEditButton);
+
+        dateSelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), DateSelector.class);
+                startActivityForResult(i, DATE_ENTRY);
+            }
+        });
+
+        dateEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), DateSelector.class);
+                startActivityForResult(i, DATE_ENTRY);
+            }
+        });
 
         /* Handles when user wishes to Create using the User input fields */
         Button createButton = (Button) findViewById(R.id.button6);
@@ -48,7 +80,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 /* Initializing */
                 EditText titleEntry = (EditText) findViewById(R.id.editText3);
                 EditText reasonEntry = (EditText) findViewById(R.id.editText4);
-                EditText dateEntry = (EditText) findViewById(R.id.editText5);
+                //dateEntry = (EditText) findViewById(R.id.editText5);
 
                 String title = titleEntry.getText().toString();
                 String reason = reasonEntry.getText().toString();
@@ -58,20 +90,20 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 Guide from https://alvinalexander.com/java/simpledateformat-convert-string-to-date-formatted-parse
                  to convert String to date
                  */
-                String dateString = dateEntry.getText().toString();
-                String expectedPattern = "MM/dd/yyyy";
-                SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern, Locale.CANADA);
-                Calendar date = Calendar.getInstance();
-                try {
-                    /* Using the previously described expected pattern, making sure it was inputted correctly */
-                    Date dateDate = formatter.parse(dateString);
-                    date.setTime(dateDate);
-
-                    /* exception, will make date of creation current date if not entered correctly or specified */
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    date = Calendar.getInstance();
-                }
+//                String dateString = dateEntry.getText().toString();
+//                String expectedPattern = "MM/dd/yyyy";
+//                SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern, Locale.CANADA);
+//                date = Calendar.getInstance();
+//                try {
+//                    /* Using the previously described expected pattern, making sure it was inputted correctly */
+//                    Date dateDate = formatter.parse(dateString);
+//                    date.setTime(dateDate);
+//
+//                    /* exception, will make date of creation current date if not entered correctly or specified */
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                    date = Calendar.getInstance();
+//                }
 
                 /* initialize switch toggles */
                 sundaySwitch = (Switch)findViewById(R.id.sunday);
@@ -125,6 +157,30 @@ public class NewHabitTypeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == DATE_ENTRY) {
+            if(resultCode == Activity.RESULT_OK){
+                Integer year = data.getIntExtra("year", -1);
+                Integer month = data.getIntExtra("month", -1);
+                Integer day = data.getIntExtra("day", -1);
+                if(!year.equals(-1) && !month.equals(-1) && !day.equals(-1)){
+                    date = Calendar.getInstance();
+                    date.set(Calendar.YEAR, year);
+                    date.set(Calendar.MONTH, month);
+                    date.set(Calendar.DATE, day);
+                    dateSelect.setVisibility(View.GONE);
+                    dateView.setVisibility(View.VISIBLE);
+                    dateEdit.setVisibility(View.VISIBLE);
+                    dateView.setText(month.toString() + "/" + day.toString() + "/" + year.toString());
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+
+            }
+        }
     }
 
     /* Experimental way of moving the switches and adding to a seperate function  */
