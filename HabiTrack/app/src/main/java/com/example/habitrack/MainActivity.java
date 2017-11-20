@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 Intent newType = new Intent(getApplicationContext(), HabitHistory.class);
+                //Intent newType = new Intent(getApplicationContext(), HistoryActivity.class);
                 startActivity(newType);
             }
         });
@@ -119,7 +120,26 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
         displayNames.setAdapter(adapter);
 
-        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 2. load
+//        htc.loadHTID();
+//        hec.loadHEID();
+//        // 3. Restore all HT and HE if saved
+//        htc.loadFromFile();
+//        hec.loadFromFile();
+        // 4. Get Recent events and HabitTypes for today
+        htc.generateHabitsForToday();
+        today = htc.getHabitTypesForToday();
+        hec.updateRecentHabitEvents();
+
+//        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
+//        displayNames.setAdapter(adapter);
 
     }
+
+}
 

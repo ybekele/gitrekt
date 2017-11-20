@@ -27,7 +27,8 @@
         <activity android:name=".HabitTypeDetailsActivity" />
         <activity android:name=".HabitEventDetailsActivity" />
         <activity android:name=".HabitHistory" />
-        <activity android:name=".heImageDisplay"></activity>
+        <activity android:name=".heImageDisplay" />
+        <activity android:name=".DateSelector"></activity>
     </application>
 
 </manifest>

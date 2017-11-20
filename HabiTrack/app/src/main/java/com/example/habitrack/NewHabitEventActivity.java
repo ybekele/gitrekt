@@ -156,7 +156,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 inputStream = getContentResolver().openInputStream(imageUri);
                 photo = BitmapFactory.decodeStream(inputStream);
                 Integer imgSize = photo.getByteCount();
-                if(imgSize > 65535){
+                if(imgSize > 65536){
                     Toast.makeText(NewHabitEventActivity.this, "Image is too large",
                             Toast.LENGTH_SHORT).show();
                     finish();
