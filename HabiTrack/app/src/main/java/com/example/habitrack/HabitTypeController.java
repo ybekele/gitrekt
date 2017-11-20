@@ -12,17 +12,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import io.searchbox.annotations.JestId;
 
 /**
  *
@@ -69,13 +62,11 @@ public class HabitTypeController {
                                    Calendar startDate, ArrayList<Integer> schedule) {
         // Generate the new habit type
         HabitType ht = new HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
-        // Save updated htID
-        saveHTID();
-        // Set its attributes
-        ht.setTitle(title);
-        ht.setReason(reason);
-        ht.setStartDate(startDate);
-        ht.setSchedule(schedule);
+        saveHTID();                     // Save updated htID
+        ht.setTitle(title);             // Set title
+        ht.setReason(reason);           // Set reason
+        ht.setStartDate(startDate);     // Set start date
+        ht.setSchedule(schedule);       // Set schedule
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
         // Add the habit type to elastic search
@@ -94,15 +85,30 @@ public class HabitTypeController {
         return HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
     }
 
+    /**
+     * This function calculates all the habit types for the current day. It also
+     * update the max occurrence counters for all habit types who have a new occurence
+     * on the current day, by checking a saved date from when it last increased the
+     * max occurrences.
+     */
+
     public void generateHabitsForToday(){
-        loadHTDate();
+        // Calculate the list for today
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+        // Check if we need to update the occurrence counters for habit types
+        // if it's a new day
+        loadHTDate();
         Calendar today = Calendar.getInstance();
         Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
-        //if(htDate.compareTo(today) < 0){
-        if(htDate.get(Calendar.DATE) < today.get(Calendar.DATE)
-                && htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
-                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)){
+        // If the stored date is less than current date, and stored month and year
+        // are less than or equal to current month and year respectively, then increase)
+        if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
+                || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
+                || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
+                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))){
+            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
             saveHTDate();
             ArrayList<HabitType> recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
             for(Integer count = 0; count < recent.size(); count++){
@@ -179,11 +185,50 @@ public class HabitTypeController {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if(!ht.getID().equals(-1)){
-
             ht.setTitle(newTitle);
         }
         saveToFile();
     }
+
+    /**
+     * Given an ID of a habit type and a new reason, this method
+     * edits the title, if the habit exists
+     * @param requestedID
+     * @param newReason
+     */
+    public void editHabitTypeReason(Integer requestedID, String newReason){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setReason(newReason);
+        }
+        saveToFile();
+    }
+
+    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setStartDate(newDate);
+        }
+        saveToFile();
+    }
+
+    /**
+     * Given an ID of a habit type and a new schedule, this method
+     * edits the schedule, if the habit exists
+     * @param requestedID
+     * @param newSchedule
+     */
+    public void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setSchedule(newSchedule);
+        }
+        saveToFile();
+    }
+
     /**
      * Given an ID of a habit type, this method return the habit's title, if it exists
      * @param requestedID
@@ -275,14 +320,13 @@ public class HabitTypeController {
      * @return
      */
     public Integer getMaxCounter(Integer requestedID) {
+        Integer ctr = -1;
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if (!ht.getID().equals(-1)) {
-            return ht.getCurrentMaxCounter();
-        } else {
-            // Otherwise return an empty string
-            return -1;
+            ctr = ht.getCurrentMaxCounter();
         }
+        return ctr;
     }
 
     public void incrementHTCurrentCounter(Integer requestedID) {
@@ -407,7 +451,11 @@ public class HabitTypeController {
             loadedDate = gson.fromJson(in, calType);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            loadedDate = Calendar.getInstance();
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(Calendar.DATE, 1);
+            newDate.set(Calendar.MONTH, 1);
+            newDate.set(Calendar.YEAR, 1);
+            loadedDate = newDate;
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException();

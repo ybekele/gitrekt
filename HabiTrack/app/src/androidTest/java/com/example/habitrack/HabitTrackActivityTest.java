@@ -32,7 +32,20 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
      * Will test an Invalid Type because User had not entered required fields
      * @throws Exception
      */
+    public void signUp() throws Exception {
+        solo.clickOnView(solo.getView(R.id.editText));
+        solo.enterText(0, "gitrekt");
+        solo.clickOnView(solo.getView(R.id.button9));
+        solo.clickOnView(solo.getView(R.id.button5));
+        solo.waitForActivity(MainActivity.class);
+        solo.assertCurrentActivity("Wrong activity, not main activity", MainActivity.class);
+    }
+
     public void testInvalidType() throws Exception {
+        solo.clickOnView(solo.getView(R.id.editText));
+        solo.enterText(0, "gitrekt");
+        solo.clickOnView(solo.getView(R.id.button5));
+        solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
 
         // Click on Create Button redirects to -> Habit Type Creation page
@@ -51,13 +64,15 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
      * @throws Exception
      */
     public void testValidType() throws Exception {
+        solo.clickOnView(solo.getView(R.id.button5));
+        solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.button));
         solo.waitForActivity(NewHabitTypeActivity.class);
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
         solo.enterText((EditText) solo.getView(R.id.editText3), "test title");
         solo.enterText((EditText) solo.getView(R.id.editText4), "test Reason");
-        solo.enterText((EditText) solo.getView(R.id.editText5), "11/11/2017");
+        solo.enterText((EditText) solo.getView(R.id.htStartDateText), "11/11/2017");
         solo.clickOnView(solo.getView(R.id.sunday));
         solo.clickOnView(solo.getView(R.id.monday));
         solo.clickOnView(solo.getView(R.id.tuesday));
@@ -75,6 +90,9 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.enterText((EditText) solo.getView(R.id.editText7), "test event");
         solo.clickOnView(solo.getView(R.id.checkBox));
     }
+
+
+
 
 
 
