@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
     Uri imageUri;
     Button addEvent;
     int typeID = 0;
+    public Integer htID;
     // Photo
     Boolean isPhoto = Boolean.FALSE;
     Bitmap photo;
@@ -49,11 +51,15 @@ public class NewHabitEventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //String titleString = intent.getStringExtra("HabitTitle");
         // Get incoming HT's ID
-        final Integer htID = intent.getIntExtra("habitID", -1);
+        htID = intent.getIntExtra("habitID", -1);
+        String the_comment = intent.getStringExtra("cm");
         // Get the interesting HT
-        HabitType currHT = htc.getHabitType(htID);
+        HabitEvent hcc = hec.getHabitEvent(htID);
+        //hc.getHabitEventID(htID);
+
         // Get interesting HT's attributes
-        String titleString = currHT.getTitle();
+        String titleString = hcc.getTitle();
+        Log.d("lt","this is "+htID.toString());
 
         /* initialize views */
         // Set title
@@ -67,6 +73,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         // Get comment text box heCommenteditText
         // comment = (EditText) findViewById(R.id.editText6);
         comment = (EditText) findViewById(R.id.heCommentBox);
+        comment.setText(the_comment);
         // Image button
         addImage = (Button) findViewById(R.id.addImageGallery);
         //eventImage = (ImageView) findViewById(R.id.imageView);

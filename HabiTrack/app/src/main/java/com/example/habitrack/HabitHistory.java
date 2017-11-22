@@ -34,7 +34,7 @@ public class HabitHistory extends AppCompatActivity {
     List<String> comments_list = new ArrayList<String>();
     List<String> habit_title = new ArrayList<String>();
     List<String> all_habit_titles = new ArrayList<String>();
-    List<HabitType> the_titles = new ArrayList<HabitType>();
+    List<HabitEvent> the_titles = new ArrayList<HabitEvent>();
     List<String> temp = new ArrayList<String>();
 
     int i;
@@ -46,6 +46,9 @@ public class HabitHistory extends AppCompatActivity {
 
 
     @Override
+    /**
+     * Oncreate, the habit events are obtained and put on the listview
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_habit_history);
@@ -64,7 +67,7 @@ public class HabitHistory extends AppCompatActivity {
         }
 
 
-        the_titles = ht.getAllHabitTypes();
+        the_titles = hc.getAllHabitEvent();
 
 
 
@@ -115,6 +118,10 @@ public class HabitHistory extends AppCompatActivity {
         //Following resets listview to all habit event titles
         start_over.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * If the user wants to reset the listview back to its original view, the following
+             * function handles that
+             */
             public void onClick(View view) {
                 HabitHistory attempt = new HabitHistory();
                 all_habit_titles.clear();
@@ -133,12 +140,17 @@ public class HabitHistory extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
+            /**
+             * if the user clicks on an item in the listview, ids, and the comments from the
+             * habit events are passed to newhabiteventactivity
+             */
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
-                intent.putExtra("habitID", the_titles.get(i).getID());
-                //intent.putExtra("comment", hc.getAllHabitEvent().get(i).getComment() );
+                intent.putExtra("habitID", the_titles.get(i).getHabitEventID());
+                Log.d("last","this is the id "+ the_titles.get(i).getHabitEventID().toString());
+                intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment() );
                 intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
                 startActivity(intent);
             }
@@ -175,11 +187,17 @@ public class HabitHistory extends AppCompatActivity {
                 //following updates all_habit_titles accordingly
 
                 @Override
+                /**
+                 * if the user clicks on the switch, and enters a search followed by pressing enter,
+                 * their search is filtered based on the habit event comments;handled by the following
+                 * If the switch isn't clicked, their search is filtered habit title, and is updated
+                 * a letter at at time.
+                 */
                 public boolean onQueryTextSubmit (String s){
                     Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
                     final Boolean switchState = simpleSwitch.isChecked();
 
-                    Toast.makeText(getApplicationContext(), "Total number of items: " + s, Toast.LENGTH_LONG).show();
+
                     Log.d("query2","this is the switch state= "+switchState);
                     if(switchState){
                         Log.d("query","came into the query");
@@ -194,7 +212,7 @@ public class HabitHistory extends AppCompatActivity {
                             comments_list.add(comment);
                             habit_title.add(title);
 
-                            //Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
+                            Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
 
 
                         }
@@ -246,13 +264,20 @@ public class HabitHistory extends AppCompatActivity {
 
     //Following method fills an array with all habit titles and returns it.
 
+    /**
+     * if a user calls this function, the listview is cleared, and updated with
+     * the names of all habit events created.
+     * this is usually accessed when a user filters their search, and wants to return back
+     * to their original listview.
+     * @return all_titles(names from each habit event created by a user)
+     */
     public ArrayList<String> update_array() {
         Log.d("checking","we updating array");
-        HabitTypeController hc = new HabitTypeController(this);
+        HabitEventController hc = new HabitEventController(this);
         ArrayList<String> all_titles = new ArrayList<String>();
         all_titles.clear();
-        for (i = 0; i < hc.getAllHabitTypes().size(); i++) {
-            String title = hc.getAllHabitTypes().get(i).getTitle();
+        for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+            String title = hc.getAllHabitEvent().get(i).getTitle();
             Log.d("checking","this is the title"+title);
             all_titles.add(title);
 
