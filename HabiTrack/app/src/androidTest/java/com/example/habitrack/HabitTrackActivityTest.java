@@ -77,7 +77,9 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.assertCurrentActivity("Failed to Switch to NewHabitTypeActivity",NewHabitTypeActivity.class);
         solo.enterText((EditText) solo.getView(R.id.editText3), "test title");
         solo.enterText((EditText) solo.getView(R.id.editText4), "test Reason");
-        solo.enterText((EditText) solo.getView(R.id.htStartDateText), "11/11/2017");
+        solo.clickOnText("Select Date");
+        solo.setDatePicker(0, 2017, 10, 16);
+        solo.clickOnText("Done");
         solo.clickOnView(solo.getView(R.id.sunday));
         solo.clickOnView(solo.getView(R.id.monday));
         solo.clickOnView(solo.getView(R.id.tuesday));
@@ -89,11 +91,11 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         assert(!solo.waitForText("Invalid Creation")); /* Asserts that the User has created a new Habit Type */
         solo.waitForActivity(MainActivity.class);
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
-        solo.clickInList(1);
-        solo.waitForActivity(NewHabitEventActivity.class);
-        solo.assertCurrentActivity("Failed to Go to new Habit Event", NewHabitEventActivity.class);
-        solo.enterText((EditText) solo.getView(R.id.heCommentBox), "test event");
-        solo.clickOnView(solo.getView(R.id.addEventButton));
+        //solo.clickInList(1);
+        //solo.waitForActivity(NewHabitEventActivity.class);
+        //solo.assertCurrentActivity("Failed to Go to new Habit Event", NewHabitEventActivity.class);
+        //solo.enterText((EditText) solo.getView(R.id.heCommentBox), "test event");
+        //solo.clickOnView(solo.getView(R.id.addEventButton));
     }
 
 
