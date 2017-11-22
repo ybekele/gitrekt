@@ -124,6 +124,7 @@ public class HabitEventStateManager {
 
     public void setID(Integer savedID){
         HabitEventStateManager.habitEventID = savedID;
+        Log.d("mm","last test "+ savedID.toString());
     }
 
     public Integer getIDToSave(){

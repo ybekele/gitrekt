@@ -34,7 +34,7 @@ public class HabitHistory extends AppCompatActivity {
     List<String> comments_list = new ArrayList<String>();
     List<String> habit_title = new ArrayList<String>();
     List<String> all_habit_titles = new ArrayList<String>();
-    List<HabitType> the_titles = new ArrayList<HabitType>();
+    List<HabitEvent> the_titles = new ArrayList<HabitEvent>();
     List<String> temp = new ArrayList<String>();
 
     int i;
@@ -64,7 +64,7 @@ public class HabitHistory extends AppCompatActivity {
         }
 
 
-        the_titles = ht.getAllHabitTypes();
+        the_titles = hc.getAllHabitEvent();
 
 
 
@@ -137,8 +137,9 @@ public class HabitHistory extends AppCompatActivity {
                 Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
-                intent.putExtra("habitID", the_titles.get(i).getID());
-                //intent.putExtra("comment", hc.getAllHabitEvent().get(i).getComment() );
+                intent.putExtra("habitID", the_titles.get(i).getHabitEventID());
+                Log.d("last","this is the id "+ the_titles.get(i).getHabitEventID().toString());
+                intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment() );
                 intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
                 startActivity(intent);
             }
@@ -179,7 +180,7 @@ public class HabitHistory extends AppCompatActivity {
                     Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
                     final Boolean switchState = simpleSwitch.isChecked();
 
-                    Toast.makeText(getApplicationContext(), "Total number of items: " + s, Toast.LENGTH_LONG).show();
+
                     Log.d("query2","this is the switch state= "+switchState);
                     if(switchState){
                         Log.d("query","came into the query");
@@ -194,7 +195,7 @@ public class HabitHistory extends AppCompatActivity {
                             comments_list.add(comment);
                             habit_title.add(title);
 
-                            //Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
+                            Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
 
 
                         }
@@ -248,11 +249,11 @@ public class HabitHistory extends AppCompatActivity {
 
     public ArrayList<String> update_array() {
         Log.d("checking","we updating array");
-        HabitTypeController hc = new HabitTypeController(this);
+        HabitEventController hc = new HabitEventController(this);
         ArrayList<String> all_titles = new ArrayList<String>();
         all_titles.clear();
-        for (i = 0; i < hc.getAllHabitTypes().size(); i++) {
-            String title = hc.getAllHabitTypes().get(i).getTitle();
+        for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+            String title = hc.getAllHabitEvent().get(i).getTitle();
             Log.d("checking","this is the title"+title);
             all_titles.add(title);
 
