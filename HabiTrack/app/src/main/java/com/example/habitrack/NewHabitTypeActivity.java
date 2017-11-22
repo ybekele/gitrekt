@@ -12,12 +12,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class NewHabitTypeActivity extends AppCompatActivity {
@@ -141,6 +137,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 /* Adds the new Habit Type to the Habit Type Controller */
                 if ((!(title.equals("")) && !(reason.equals("")) && plan != null)) {
                     htc.createNewHabitType(title, reason, date, plan);
+
 
 
                 }

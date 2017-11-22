@@ -115,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
         // 4. Get Recent events and HabitTypes for today
         htc.generateHabitsForToday();
         today = htc.getHabitTypesForToday();
+        for (Integer prog = 0; prog < today.size(); prog++) {
+            Integer typeID = today.get(prog).getID();
+            HabitType ht = new HabitType(typeID);
+            ht.incrementMaxCounter();
+        }
         hec.updateRecentHabitEvents();
 
         adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
