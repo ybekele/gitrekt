@@ -46,6 +46,9 @@ public class HabitHistory extends AppCompatActivity {
 
 
     @Override
+    /**
+     * Oncreate, the habit events are obtained and put on the listview
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_habit_history);
@@ -115,6 +118,10 @@ public class HabitHistory extends AppCompatActivity {
         //Following resets listview to all habit event titles
         start_over.setOnClickListener(new View.OnClickListener() {
             @Override
+            /**
+             * If the user wants to reset the listview back to its original view, the following
+             * function handles that
+             */
             public void onClick(View view) {
                 HabitHistory attempt = new HabitHistory();
                 all_habit_titles.clear();
@@ -133,6 +140,10 @@ public class HabitHistory extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
+            /**
+             * if the user clicks on an item in the listview, ids, and the comments from the
+             * habit events are passed to newhabiteventactivity
+             */
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
@@ -176,6 +187,12 @@ public class HabitHistory extends AppCompatActivity {
                 //following updates all_habit_titles accordingly
 
                 @Override
+                /**
+                 * if the user clicks on the switch, and enters a search followed by pressing enter,
+                 * their search is filtered based on the habit event comments;handled by the following
+                 * If the switch isn't clicked, their search is filtered habit title, and is updated
+                 * a letter at at time.
+                 */
                 public boolean onQueryTextSubmit (String s){
                     Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
                     final Boolean switchState = simpleSwitch.isChecked();
@@ -247,6 +264,13 @@ public class HabitHistory extends AppCompatActivity {
 
     //Following method fills an array with all habit titles and returns it.
 
+    /**
+     * if a user calls this function, the listview is cleared, and updated with
+     * the names of all habit events created.
+     * this is usually accessed when a user filters their search, and wants to return back
+     * to their original listview.
+     * @return all_titles(names from each habit event created by a user)
+     */
     public ArrayList<String> update_array() {
         Log.d("checking","we updating array");
         HabitEventController hc = new HabitEventController(this);
