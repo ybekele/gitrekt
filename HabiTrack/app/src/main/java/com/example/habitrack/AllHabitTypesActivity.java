@@ -3,7 +3,6 @@ package com.example.habitrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,12 +16,12 @@ import java.util.ArrayList;
  */
 public class AllHabitTypesActivity extends AppCompatActivity {
     // declare components
-    int typeID = 0;
+    // int typeID = 0;
     private ListView allTypes;
     //private ArrayAdapter<String> adapter;
     private ArrayAdapter<HabitType> adapter;
     private static ArrayList<HabitType> typeList = new ArrayList<HabitType>();
-    private static ArrayList<String> namesOfTypes = new ArrayList<String>();
+    // private static ArrayList<String> namesOfTypes = new ArrayList<String>();
 
     HabitTypeController htc = new HabitTypeController(this);
 
@@ -58,6 +57,12 @@ public class AllHabitTypesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
     /**
      * Get IDs and reload data from File every time app is in onStart
      * Will populize the array for names that will be displayed
@@ -67,14 +72,14 @@ public class AllHabitTypesActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Restore all HT
-        htc.loadFromFile();
+//        htc.loadFromFile();
 
         // Get Recent events and HabitTypes for today
         //htc.getHabitTypesForToday();
-        htc.generateHabitsForToday();
+//        htc.generateHabitsForToday();
         typeList = HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
-        Log.d("start", "Entered start");
-        Log.d("array", typeList.toString());
+//        Log.d("start", "Entered start");
+//        Log.d("array", typeList.toString());
 //        if (!(typeList.isEmpty())) {
 //            for (int i = 0; i < typeList.size(); i++) {
 //                HabitType tempHt = typeList.get(i);

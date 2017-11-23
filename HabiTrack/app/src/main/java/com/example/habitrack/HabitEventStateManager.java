@@ -34,9 +34,7 @@ public class HabitEventStateManager {
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
 
 
-    public HabitEventStateManager(){
-        habitEventID = 0;
-    }
+    public HabitEventStateManager(){}
 
     public static HabitEventStateManager getHEStateManager(){
         return heManager;
@@ -126,6 +124,7 @@ public class HabitEventStateManager {
 
     public void setID(Integer savedID){
         HabitEventStateManager.habitEventID = savedID;
+        Log.d("mm","last test "+ savedID.toString());
     }
 
     public Integer getIDToSave(){

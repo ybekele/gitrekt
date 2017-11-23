@@ -2,6 +2,7 @@ package com.example.habitrack;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.test.AndroidTestCase;
 import android.util.Log;
 
 import junit.framework.TestCase;
@@ -14,7 +15,7 @@ import java.util.Calendar;
  * Created by sshussai on 11/4/17.
  */
 
-public class HabitTypeControllerTest extends TestCase {
+public class HabitTypeControllerTest extends AndroidTestCase {
 
     // Properties of a test habit type
     private String title;
@@ -34,17 +35,19 @@ public class HabitTypeControllerTest extends TestCase {
      *  for any simple testing
      */
     protected void setUp(){
-        this.ctx = InstrumentationRegistry.getContext();
+        this.ctx = getContext();
         this.htc = new HabitTypeController(this.ctx);
-        htc.loadHTID();
-        htc.loadFromFile();
+        //this.htc.loadHTID();
+        HabitTypeStateManager.getHTStateManager().setID(0);
+        //htc.loadFromFile();
+        //HabitTypeStateManager.getHTStateManager().setHabitTypeDate(Calendar.getInstance());
+        this.htc.deleteAllHabitTypes();
         this.title = "testTitle1";
         this.reason = "testReason1";
         this.startDate = Calendar.getInstance();
-        startDate.add(Calendar.DAY_OF_MONTH, -2);
-        //this.schedule.add(startDate.get(Calendar.DAY_OF_WEEK));
-        this.schedule.add(Calendar.MONDAY);
-        htc.createNewHabitType(title, reason, startDate, schedule);
+        this.schedule.add(this.startDate.get(Calendar.DAY_OF_WEEK));
+        //startDate.add(Calendar.DATE, -2);
+        this.htc.createNewHabitType(title, reason, startDate, schedule);
         this.ht = HabitTypeStateManager.getHTStateManager().getHabitType(1);
     }
 
@@ -108,6 +111,20 @@ public class HabitTypeControllerTest extends TestCase {
     }
 
     /**
+     * This function will change the day so that it is not the current day,
+     * and then generate the habit types for today. The basic habit type should
+     * not be in the array
+     */
+    public void testHabitsForToday2(){
+        ArrayList<Integer> newSchedule = new ArrayList<>();
+        newSchedule.add(100);
+        this.ht.setSchedule(newSchedule);
+        assertTrue(this.ht.getSchedule().equals(newSchedule));
+        this.htc.generateHabitsForToday();
+        ArrayList<HabitType> habits = this.htc.getHabitTypesForToday();
+        assertFalse(habits.contains(this.ht));
+    }
+    /**
      * This function verifies that the allHabitTypes list is
      * updated every time a new habit gets created
      */
@@ -119,6 +136,62 @@ public class HabitTypeControllerTest extends TestCase {
         assertEquals(habits.size(), 1);
         htc.createNewHabitType("testTitle2", reason, startDate, schedule);
         assertEquals(habits.size(), 2);
+
+    }
+
+    /**
+     * This function will verify if the amx counter of the habit type
+     * is updated upon a new occurrence
+     */
+    public void testMaxCounterIncrement(){
+        // Set the date of the habit type to 3 weeks ago
+        Calendar newCal = Calendar.getInstance();
+        newCal.add(Calendar.DATE, -21);
+        this.ht.setStartDate(newCal);
+        assertTrue(this.ht.getStartDate().equals(newCal));
+        // set the occurence measured date to earlier than 3 weeks
+        Calendar newDate = Calendar.getInstance();
+        newDate.add(Calendar.DATE, -22);
+        HabitTypeStateManager.getHTStateManager().setHabitTypeDate(newDate);
+        this.htc.saveHTDate();
+        // Check first occurrence
+        this.htc.generateHabitsForToday();
+        assertEquals(1, this.htc.getMaxCounter(1).intValue());
+        // Set the date of the current ht to two weeks ago
+        newCal.add(Calendar.DATE, 7);
+        this.ht.setStartDate(newCal);
+        assertTrue(this.ht.getStartDate().equals(newCal));
+        // reset the occurrences measured date to earlier than 2 weeks
+        newDate.add(Calendar.DATE, 7);
+        HabitTypeStateManager.getHTStateManager().setHabitTypeDate(newDate);
+        this.htc.saveHTDate();
+        // check 2nd occurrence
+        this.htc.generateHabitsForToday();
+        assertEquals(2, this.htc.getMaxCounter(1).intValue());
+        // Set the date of the current ht to one week ago
+        newCal.add(Calendar.DATE, 7);
+        this.ht.setStartDate(newCal);
+        assertTrue(this.ht.getStartDate().equals(newCal));
+        // reset the occurrences measured date to earlier than 1 week
+        newDate.add(Calendar.DATE, 7);
+        HabitTypeStateManager.getHTStateManager().setHabitTypeDate(newDate);
+        this.htc.saveHTDate();
+        // check third occurrence
+        this.htc.generateHabitsForToday();
+        assertEquals(3, this.htc.getMaxCounter(1).intValue());
+    }
+
+    public void testSaveChanges(){
+        String changedTitle = "changedTitle";
+        String changedReason = "changedReason";
+        ArrayList<Integer> plan = new ArrayList<>();
+        plan.add(100);
+        this.htc.editHabitTypeTitle(1, changedTitle);
+        this.htc.editHabitTypeReason(1, changedReason);
+        this.htc.editHabitTypeSchedule(1, plan);
+        this.htc.incrementHTMaxCounter(1);
+        this.htc.incrementHTCurrentCounter(1);
+        this.htc.loadFromFile();
 
     }
 

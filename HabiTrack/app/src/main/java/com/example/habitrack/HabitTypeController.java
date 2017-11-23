@@ -28,16 +28,14 @@ import java.util.Calendar;
  *
  */
 
+/**
+ * This class is the main interface for the habit type entity. It can create a new habit type
+ * and delete it. It can also edit the title, reason, start date or schedule for a given
+ * habit type.
+ * Added load and save functions
+ * Added load and save functions for ID too
+ */
 public class HabitTypeController {
-
-    /**
-     * This class is the main interface for the habit type entity. It can create a new habit type
-     * and delete it. It can also edit the title, reason, start date or schedule for a given
-     * habit type.
-     * Added load and save functions
-     * Added load and save functions for ID too
-     */
-
     private Context ctx;
     private final String FILE_NAME = "habitTypes.sav";
     private final String ID_FILE_NAME = "htid.sav";
@@ -53,22 +51,20 @@ public class HabitTypeController {
      * start date, and ArrayList of Integers representing the days of the week for
      * its schedule
      *
-     * @param title
-     * @param reason
-     * @param startDate
-     * @param schedule
+     * @param title : Title of the habit
+     * @param reason : Reason for making the Habit
+     * @param startDate : the date that the Habit has been started
+     * @param schedule : the days the user wants to be do the Habit
      */
     public void createNewHabitType(String title, String reason,
                                    Calendar startDate, ArrayList<Integer> schedule) {
         // Generate the new habit type
         HabitType ht = new HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
-        // Save updated htID
-        saveHTID();
-        // Set its attributes
-        ht.setTitle(title);
-        ht.setReason(reason);
-        ht.setStartDate(startDate);
-        ht.setSchedule(schedule);
+        saveHTID();                     // Save updated htID
+        ht.setTitle(title);             // Set title
+        ht.setReason(reason);           // Set reason
+        ht.setStartDate(startDate);     // Set start date
+        ht.setSchedule(schedule);       // Set schedule
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
         // Add the habit type to elastic search
@@ -81,21 +77,35 @@ public class HabitTypeController {
 
     /**
      * This function returns the list of all habit types
-     * @return
+     * @return the list of all habit types
      */
     public ArrayList<HabitType> getAllHabitTypes(){
         return HabitTypeStateManager.getHTStateManager().getAllHabitTypes();
     }
 
+    /**
+     * This function calculates all the habit types for the current day. It also
+     * update the max occurrence counters for all habit types who have a new occurence
+     * on the current day, by checking a saved date from when it last increased the
+     * max occurrences.
+     */
     public void generateHabitsForToday(){
-        loadHTDate();
+        // Calculate the list for today
         HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+        // Check if we need to update the occurrence counters for habit types
+        // if it's a new day
+        loadHTDate();
         Calendar today = Calendar.getInstance();
         Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
-        //if(htDate.compareTo(today) < 0){
-        if(htDate.get(Calendar.DATE) < today.get(Calendar.DATE)
-                && htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
-                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)){
+        // If the stored date is less than current date, and stored month and year
+        // are less than or equal to current month and year respectively, then increase)
+        if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
+                || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
+                || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
+                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))){
+            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
             saveHTDate();
             ArrayList<HabitType> recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
             for(Integer count = 0; count < recent.size(); count++){
@@ -106,7 +116,7 @@ public class HabitTypeController {
 
     /**
      * This function returns the list of habit types for today
-     * @return
+     * @return the list of habit types for today
      */
     public ArrayList<HabitType> getHabitTypesForToday(){
         return HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
@@ -131,7 +141,7 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method
      * deletes it from the local storage
-     * @param requestedID
+     * @param requestedID the ID of the HabitType you wish to delete
      */
     public void deleteHabitType(Integer requestedID) {
         HabitTypeStateManager.getHTStateManager().removeHabitType(requestedID);
@@ -141,7 +151,7 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method
      * gets it from the local storage
-     * @param requestedID
+     * @param requestedID the ID of the habit type you wish to get
      * @return
      */
     public HabitType getHabitType(Integer requestedID) {
@@ -149,6 +159,10 @@ public class HabitTypeController {
         return ht;
     }
 
+    /**
+     * get the habit type from elastic search
+     * @return ht, the habit type
+     */
     public ArrayList<HabitType> getHabitTypeElasticSearch() {
         ArrayList<HabitType> ht = new ArrayList<>();
         ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
@@ -172,15 +186,59 @@ public class HabitTypeController {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if(!ht.getID().equals(-1)){
-
             ht.setTitle(newTitle);
         }
         saveToFile();
     }
+
+    /**
+     * Given an ID of a habit type and a new reason, this method
+     * edits the title, if the habit exists
+     * @param requestedID
+     * @param newReason
+     */
+    public void editHabitTypeReason(Integer requestedID, String newReason){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setReason(newReason);
+        }
+        saveToFile();
+    }
+
+    /**
+     * edits the start date
+     * @param requestedID the habit type id
+     * @param newDate the new date you wish to insert
+     */
+    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setStartDate(newDate);
+        }
+        saveToFile();
+    }
+
+    /**
+     * Given an ID of a habit type and a new schedule, this method
+     * edits the schedule, if the habit exists
+     * @param requestedID ID of the habit type you wish to edit
+     * @param newSchedule the new schedule you'd like the habit type to follow
+     */
+    public void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setSchedule(newSchedule);
+        }
+        saveToFile();
+    }
+
     /**
      * Given an ID of a habit type, this method return the habit's title, if it exists
-     * @param requestedID
-     * @return
+     * @param requestedID ID of the habit type you wish to get the title for
+     * @return the title of the Habit Type given
      */
     public String getHabitTitle(Integer requestedID){
         HabitType ht = this.getHabitType(requestedID);
@@ -195,7 +253,7 @@ public class HabitTypeController {
 
     /**
      * Given an ID of a habit type, this method return the habit's reason, if it exists
-     * @param requestedID
+     * @param requestedID ID of the habit type you wish to get the reason for
      * @return
      */
     public String getHabitReason(Integer requestedID){
@@ -212,8 +270,8 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method return the habit's start date, if it exists
      * Otherwise, it returns today's date with year = -1
-     * @param requestedID
-     * @return
+     * @param requestedID ID of the habit type you wish to get the start date for
+     * @return the start date
      */
     public Calendar getStartDate (Integer requestedID){
         HabitType ht = this.getHabitType(requestedID);
@@ -231,8 +289,8 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method return the habit's schedule, if it exists
      * Otherwise, it returns an empty array
-     * @param requestedID
-     * @return
+     * @param requestedID the habit type you wish to get the scheudle for
+     * @return the schedule
      */
     public ArrayList<Integer> getSchedule (Integer requestedID){
         HabitType ht = this.getHabitType(requestedID);
@@ -247,8 +305,8 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method return the habit's completed counter,
      * if it exists. Otherwise, it returns -1
-     * @param requestedID
-     * @return
+     * @param requestedID ID of the habit type you wish to get
+     * @return Integer, times completed
      */
     public Integer getCompletedCounter(Integer requestedID) {
         HabitType ht = this.getHabitType(requestedID);
@@ -264,20 +322,23 @@ public class HabitTypeController {
     /**
      * Given an ID of a habit type, this method return the habit's max counter,
      * if it exists. Otherwise, it returns -1
-     * @param requestedID
-     * @return
+     * @param requestedID ID of the habit type you wish to get max counter for
+     * @return integer of the max counter
      */
     public Integer getMaxCounter(Integer requestedID) {
+        Integer ctr = -1;
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if (!ht.getID().equals(-1)) {
-            return ht.getCurrentMaxCounter();
-        } else {
-            // Otherwise return an empty string
-            return -1;
+            ctr = ht.getCurrentMaxCounter();
         }
+        return ctr;
     }
 
+    /**
+     * increments the current counter
+     * @param requestedID ID of the habit type you wish to get
+     */
     public void incrementHTCurrentCounter(Integer requestedID) {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
@@ -287,6 +348,10 @@ public class HabitTypeController {
         saveToFile();
     }
 
+    /**
+     * increment the max counter
+     * @param requestedID ID of the habit type you wish to get
+     */
     public void incrementHTMaxCounter(Integer requestedID) {
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
@@ -296,6 +361,9 @@ public class HabitTypeController {
         saveToFile();
     }
 
+    /**
+     * loads from the file
+     */
     public void loadFromFile() {
         ArrayList<HabitType> habits;
         try {
@@ -400,7 +468,11 @@ public class HabitTypeController {
             loadedDate = gson.fromJson(in, calType);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            loadedDate = Calendar.getInstance();
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(Calendar.DATE, 1);
+            newDate.set(Calendar.MONTH, 1);
+            newDate.set(Calendar.YEAR, 1);
+            loadedDate = newDate;
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException();
