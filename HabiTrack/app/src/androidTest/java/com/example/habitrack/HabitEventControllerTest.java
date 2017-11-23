@@ -1,10 +1,7 @@
 package com.example.habitrack;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.test.AndroidTestCase;
-
-import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +10,9 @@ import java.util.Calendar;
  * Created by sshussai on 11/13/17.
  */
 
+/**
+ * Unit testing for HabitEventController
+ */
 public class HabitEventControllerTest extends AndroidTestCase {
 
     // Properties of a test habit type

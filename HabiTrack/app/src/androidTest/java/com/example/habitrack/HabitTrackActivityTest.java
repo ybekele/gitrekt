@@ -9,6 +9,9 @@ import com.robotium.solo.Solo;
  * Created by yonaelbekele on 2017-10-22.
  */
 
+/*
+Testing for Activities on the HabiTrack app
+ */
 public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<MainActivity>{
     private Solo solo;
 
@@ -27,7 +30,7 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
 
 
     /**
-     * Will test an Invalid Type because User had not entered required fields
+     * Meant to test sign up
      * @throws Exception
      */
     public void testSignUp() throws Exception {
@@ -108,6 +111,9 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.assertCurrentActivity("Failed to Switch back to MainActivity", MainActivity.class);
     }
 
+    /*
+    Tests history, making sure items are selectable
+     */
     public void testHistory() throws Exception {
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.historyButton));
@@ -134,6 +140,10 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.clickOnView(solo.getView(R.id.editSchedule));
     }
 
+    /**
+     * Makes sure that you can delete a Habit Type
+     * @throws Exception
+     */
     public void testRemoveType() throws Exception {
         solo.assertCurrentActivity("Wrong Activity, not main activity", MainActivity.class);
         solo.clickOnView(solo.getView(R.id.allButton));

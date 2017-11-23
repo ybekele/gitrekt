@@ -4,18 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import io.searchbox.core.DocumentResult;
-import io.searchbox.core.Index;
 
 /**
  * Created by sshussai on 11/17/17.
  */
 
+/**
+ * Handles the acceptance and compression of Images
+ */
 public class ImageHandler {
 
     public static class Compressor extends AsyncTask<Bitmap, Void, String> {
@@ -36,6 +34,9 @@ public class ImageHandler {
         }
     }
 
+    /**
+     * Decompresses the image
+     */
     public static class Decompressor extends AsyncTask<String, Void, Bitmap>{
 
         private Bitmap decodedByte;
