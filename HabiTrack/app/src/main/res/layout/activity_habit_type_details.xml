@@ -123,8 +123,9 @@
         android:layout_height="36dp"
         android:layout_marginEnd="40dp"
         android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/commentLabel"
-        app:layout_constraintEnd_toEndOf="@+id/commentBox" />
+        app:layout_constraintBottom_toBottomOf="@+id/commentLabel"
+        app:layout_constraintEnd_toEndOf="@+id/commentBox"
+        app:layout_constraintTop_toBottomOf="@+id/commentLabel" />
 
     <TextView
         android:id="@+id/dateView"
@@ -132,8 +133,9 @@
         android:layout_height="36dp"
         android:layout_marginEnd="40dp"
         android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/htStartDateLabel"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/htStartDateLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/htStartDateLabel" />
 
     <TextView
         android:id="@+id/statusLabel"
@@ -152,14 +154,14 @@
         android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="132dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:text="Delete Event"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar"
-        app:layout_constraintVertical_bias="0.961" />
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <CheckBox
         android:id="@+id/sunCheckBox"
@@ -187,7 +189,7 @@
         android:id="@+id/wedCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:text="Wed"
         app:layout_constraintBaseline_toBaselineOf="@+id/tuesCheckBox"
         app:layout_constraintStart_toEndOf="@+id/tuesCheckBox" />
@@ -238,20 +240,22 @@
         android:id="@+id/satCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="124dp"
+        android:layout_marginEnd="128dp"
         android:text="Sat"
         app:layout_constraintBaseline_toBaselineOf="@+id/friCheckBox"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/editScheduleToggle"
-        android:layout_width="151dp"
-        android:layout_height="38dp"
-        android:layout_marginEnd="40dp"
-        android:checked="false"
-        android:textOff="Edit Schedule"
-        android:textOn="Editing"
+    <Button
+        android:id="@+id/editSchedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Edit Schedule"
+        app:layout_constraintBottom_toTopOf="@+id/deleteButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

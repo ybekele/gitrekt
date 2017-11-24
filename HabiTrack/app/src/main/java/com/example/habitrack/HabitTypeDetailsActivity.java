@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -13,9 +14,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -37,9 +36,9 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
     CheckBox fridayBox;
     CheckBox saturdayBox;
     // Edit schedule toggle
-    ToggleButton editSchedule;
+    Button editSchedule;
     // Bool checker
-    Boolean canEditSchedule = Boolean.FALSE;
+    //Boolean canEditSchedule = Boolean.FALSE;
     // Date var
     Calendar date;
     // Request Code for date entry
@@ -88,9 +87,9 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         // Set the max, and the progress
         //progressBar.setMax(htc.getMaxCounter(htID));
-        progressBar.setMax(100);
-        //progressBar.setProgress(htc.getCompletedCounter(htID));
-        progressBar.setProgress(35);
+        progressBar.setMax(htc.getMaxCounter(htID));
+       
+        progressBar.setProgress(htc.getCompletedCounter(htID));
 
         // Get the edit text references
         titleEdit = (EditText) findViewById(R.id.titleBox);
@@ -109,7 +108,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         fridayBox = (CheckBox) findViewById(R.id.friCheckBox);
         saturdayBox = (CheckBox) findViewById(R.id.satCheckBox);
         // Get the edit toggle
-        editSchedule = (ToggleButton) findViewById(R.id.editScheduleToggle);
+        editSchedule = (Button) findViewById(R.id.editSchedule);
 
         // delete button
         deleteButton = (Button) findViewById(R.id.deleteButton);
@@ -253,21 +252,45 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
             }
         }
 
-        // Set the toggle functionality
+
         editSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editSchedule.isChecked()) {
-                    Toast.makeText(getApplicationContext(), "Editing Schedule",
-                            Toast.LENGTH_SHORT).show();
-                    canEditSchedule = Boolean.TRUE;
-                } else {
-                    Toast.makeText(getApplicationContext(), "Finished Schedule edit",
-                            Toast.LENGTH_SHORT).show();
-                    canEditSchedule = Boolean.FALSE;
+                ArrayList<Integer> newSchedule;
+                newSchedule = new ArrayList<>();
+                if (sundayBox.isChecked()) {
+                    newSchedule.add(Calendar.SUNDAY);
                 }
+
+                if (mondayBox.isChecked()) {
+                    newSchedule.add(Calendar.MONDAY);
+                }
+                if (tuesdayBox.isChecked()) {
+                    newSchedule.add(Calendar.TUESDAY);
+                }
+                if (wednesdayBox.isChecked()) {
+                    newSchedule.add(Calendar.WEDNESDAY);
+                }
+                if (thursdayBox.isChecked()) {
+                    newSchedule.add(Calendar.THURSDAY);
+                }
+                if (fridayBox.isChecked()) {
+                    newSchedule.add(Calendar.FRIDAY);
+                }
+                if (saturdayBox.isChecked()) {
+                    newSchedule.add(Calendar.SATURDAY);
+                }
+
+                Toast.makeText(getApplicationContext(), "Applying Edits",
+                        Toast.LENGTH_SHORT).show();
+                for (Integer log : newSchedule) {
+                    Log.v("tag", Integer.toString(log));
+                }
+                htc.editHabitTypeSchedule(htID, newSchedule);
             }
         });
+    }
+        /*
 
         sundayBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -481,7 +504,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
+*/
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

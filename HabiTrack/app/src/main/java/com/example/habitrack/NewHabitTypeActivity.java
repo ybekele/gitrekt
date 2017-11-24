@@ -12,14 +12,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
-
+/**
+ * Creates a New Habit Type
+ */
 public class NewHabitTypeActivity extends AppCompatActivity {
 
     /* declaring variables */
@@ -56,6 +54,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         dateSelect = (Button) findViewById(R.id.selectDateButton);
         dateEdit = (Button) findViewById(R.id.htStartDateEditButton);
 
+        // Handles the Date Selection
         dateSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,25 +84,6 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 String title = titleEntry.getText().toString();
                 String reason = reasonEntry.getText().toString();
 
-                /*
-                Expected format for date string : "MM/dd/yyy"
-                Guide from https://alvinalexander.com/java/simpledateformat-convert-string-to-date-formatted-parse
-                 to convert String to date
-                 */
-//                String dateString = dateEntry.getText().toString();
-//                String expectedPattern = "MM/dd/yyyy";
-//                SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern, Locale.CANADA);
-//                date = Calendar.getInstance();
-//                try {
-//                    /* Using the previously described expected pattern, making sure it was inputted correctly */
-//                    Date dateDate = formatter.parse(dateString);
-//                    date.setTime(dateDate);
-//
-//                    /* exception, will make date of creation current date if not entered correctly or specified */
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                    date = Calendar.getInstance();
-//                }
 
                 /* initialize switch toggles */
                 sundaySwitch = (Switch)findViewById(R.id.sunday);
@@ -141,6 +121,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 /* Adds the new Habit Type to the Habit Type Controller */
                 if ((!(title.equals("")) && !(reason.equals("")) && plan != null)) {
                     htc.createNewHabitType(title, reason, date, plan);
+
 
 
                 }
@@ -210,32 +191,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         }
 
     }
-    /*
 
-    public void CheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(sundaySwitch.isChecked()) {
-            plan.add(Calendar.SUNDAY);
-        }
-        if(mondaySwitch.isChecked()) {
-            plan.add(Calendar.MONDAY);
-        }
-        if(tuesdaySwitch.isChecked()) {
-            plan.add(Calendar.TUESDAY);
-        }
-        if(wednesdaySwitch.isChecked()) {
-            plan.add(Calendar.WEDNESDAY);
-        }
-        if(thursdaySwitch.isChecked()) {
-            plan.add(Calendar.THURSDAY);
-        }
-        if(fridaySwitch.isChecked()) {
-            plan.add(Calendar.FRIDAY);
-        }
-        if(saturdaySwitch.isChecked()) {
-            plan.add(Calendar.SATURDAY);
-        }
-    }
-    */
 
 
 }
