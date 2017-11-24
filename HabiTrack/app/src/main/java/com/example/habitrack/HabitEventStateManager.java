@@ -2,10 +2,8 @@ package com.example.habitrack;
 
 import android.util.Log;
 
-import java.lang.reflect.Array;
-import java.util.Calendar;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * HabitEventStateManager
@@ -134,6 +132,7 @@ public class HabitEventStateManager {
 
     public Integer getHabitEventID(){
         HabitEventStateManager.habitEventID++;
+        Log.d("tag", habitEventID.toString());
         return HabitEventStateManager.habitEventID;
     }
 
