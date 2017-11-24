@@ -115,36 +115,38 @@ public class MainActivity extends AppCompatActivity {
         // 4. Get Recent events and HabitTypes for today
         htc.generateHabitsForToday();
         today = htc.getHabitTypesForToday();
-        for (Integer prog = 0; prog < today.size(); prog++) {
-            Integer typeID = today.get(prog).getID();
-            HabitType ht = new HabitType(typeID);
-            ht.incrementMaxCounter();
+        if (today.size() != 0) {
+            for (Integer prog = 0; prog < today.size(); prog++) {
+                Integer typeID = today.get(prog).getID();
+                HabitType ht = new HabitType(typeID);
+                ht.incrementMaxCounter();
+            }
         }
-        hec.updateRecentHabitEvents();
+            hec.updateRecentHabitEvents();
 
-        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
-        displayNames.setAdapter(adapter);
+            adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
+            displayNames.setAdapter(adapter);
 
-    }
+        }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // 2. load
+        @Override
+        protected void onResume() {
+            super.onResume();
+            // 2. load
 //        htc.loadHTID();
 //        hec.loadHEID();
 //        // 3. Restore all HT and HE if saved
 //        htc.loadFromFile();
 //        hec.loadFromFile();
-        // 4. Get Recent events and HabitTypes for today
-        htc.generateHabitsForToday();
-        today = htc.getHabitTypesForToday();
-        hec.updateRecentHabitEvents();
+            // 4. Get Recent events and HabitTypes for today
+            htc.generateHabitsForToday();
+            today = htc.getHabitTypesForToday();
+            hec.updateRecentHabitEvents();
 
 //        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
 //        displayNames.setAdapter(adapter);
 
-    }
+        }
 
-}
+    }
 
