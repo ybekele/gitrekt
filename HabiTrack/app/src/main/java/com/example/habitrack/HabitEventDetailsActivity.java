@@ -3,6 +3,7 @@ package com.example.habitrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
     EditText heCommentView;
     ImageView heImageView;
     String typeName;
+    String eventName;
     String heComment;
     Calendar heDate;
     String heImage;
@@ -38,6 +40,7 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         heDate = he.getHabitEvent(heID).getDate();
         heComment = he.getHabitEvent(heID).getComment();
         heImage = he.getHabitEvent(heID).getPhoto();
+        eventName = he.getHabitEventTitle(heID);
 
         heTypeView = (TextView) findViewById(R.id.textView4);
         heDateView = (TextView) findViewById(R.id.eventDate);
@@ -45,7 +48,8 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         heImageView = (ImageView) findViewById(R.id.imageView2);
         editButton = (Button) findViewById(R.id.editHe);
 
-        heTypeView.setText(typeName);
+        Log.d("titles","this is the title "+ eventName);
+        heTypeView.setText(eventName);
         heDateView.setText(heDate.toString());
         heCommentView.setText(heComment);
 
