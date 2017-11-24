@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.Switch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HabitHistory extends AppCompatActivity {
@@ -65,8 +66,11 @@ public class HabitHistory extends AppCompatActivity {
             all_habit_titles.add(title);
         }
 
+        Collections.reverse(all_habit_titles);
 
         the_titles = hc.getAllHabitEvent();
+
+        Collections.reverse(the_titles);
 
 
 
