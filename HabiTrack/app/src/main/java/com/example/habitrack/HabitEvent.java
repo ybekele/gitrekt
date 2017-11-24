@@ -98,6 +98,6 @@ public class HabitEvent {
 
     @Override
     public String toString() {
-        return (getTitle() + "\n" + getComment());
+        return (getHabitEventID() + "\n" + getTitle() + "\n" + getComment());
     }
 }
