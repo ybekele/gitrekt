@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +144,8 @@ public class HabitHistory extends AppCompatActivity {
              * habit events are passed to newhabiteventactivity
              */
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
+                //Intent intent = new Intent(HabitHistory.this, NewHabitEventActivity.class);
+                Intent intent = new Intent(HabitHistory.this, HabitEventDetailsActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
                 intent.putExtra("habitID", the_titles.get(i).getHabitEventID());
