@@ -40,6 +40,8 @@ public class NewHabitTypeActivity extends AppCompatActivity {
     // Request Code for date entry
     private final Integer DATE_ENTRY = 101;
 
+    private SoundPlayer sound;
+
     /**
      * Handles the creation of Habit Types
      * @param savedInstanceState
@@ -49,6 +51,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_habit_type);
         final HabitTypeController htc = new HabitTypeController(this);
+        sound = new SoundPlayer(this);
 
         dateView = (TextView) findViewById(R.id.htStartDateText);
         dateSelect = (Button) findViewById(R.id.selectDateButton);
@@ -133,6 +136,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
 
 
                 }
+                sound.playHabitSound();
 
                 finish();
             }
