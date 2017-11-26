@@ -1,6 +1,7 @@
 package com.example.habitrack;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class HabitEventDetailsActivity extends AppCompatActivity {
     private Integer htID = -1;
@@ -25,7 +27,8 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
     String eventName;
     String heComment;
     Calendar heDate;
-    String heImage;
+    String encodedImage;
+    Bitmap decodedImage;
     String newComment;
     HabitTypeController htc = new HabitTypeController(this);
     HabitEventController he = new HabitEventController(this);
@@ -39,7 +42,18 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         typeName = htc.getHabitType(htID).getTitle();
         heDate = he.getHabitEvent(heID).getDate();
         heComment = he.getHabitEvent(heID).getComment();
-        heImage = he.getHabitEvent(heID).getPhoto();
+        encodedImage = he.getHabitEventEncodedPhoto(heID);
+        ImageHandler.Decompressor decompressor = new ImageHandler.Decompressor();
+        decompressor.execute(encodedImage);
+        try {
+            decodedImage = decompressor.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
         eventName = he.getHabitEventTitle(heID);
 
         heTypeView = (TextView) findViewById(R.id.textView4);
@@ -47,6 +61,7 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         heCommentView = (EditText) findViewById(R.id.editText11);
         heImageView = (ImageView) findViewById(R.id.imageView2);
         editButton = (Button) findViewById(R.id.editHe);
+        heImageView.setImageBitmap(decodedImage);
 
         Log.d("titles","this is the title "+ eventName);
         heTypeView.setText(eventName);

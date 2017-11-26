@@ -1,10 +1,13 @@
 package com.example.habitrack;
 
 import android.content.Context;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import junit.runner.TestRunListener;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -65,6 +68,12 @@ public class HabitTypeController {
         ht.setReason(reason);           // Set reason
         ht.setStartDate(startDate);     // Set start date
         ht.setSchedule(schedule);       // Set schedule
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        if(schedule.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
+            HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
+            HabitEventController hec = new HabitEventController(ctx);
+            hec.createNewHabitEvent(ht.getID());
+        }
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
         // Add the habit type to elastic search
@@ -84,32 +93,34 @@ public class HabitTypeController {
     }
 
     /**
-     * This function calculates all the habit types for the current day. It also
-     * update the max occurrence counters for all habit types who have a new occurence
-     * on the current day, by checking a saved date from when it last increased the
-     * max occurrences.
+     * This function is needed
      */
     public void generateHabitsForToday(){
-        // Calculate the list for today
-        HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-        // Check if we need to update the occurrence counters for habit types
-        // if it's a new day
+        // load previous date
         loadHTDate();
+        // get today's date, and previous date
         Calendar today = Calendar.getInstance();
         Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
-        // If the stored date is less than current date, and stored month and year
-        // are less than or equal to current month and year respectively, then increase)
+        //TEMP --- ONLY FOR TESTING AND ENSURING IT WORKS
+        htDate.add(Calendar.DAY_OF_MONTH, -1);
+        // if loaded date is behind today's date
         if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
                 || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
                 && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
                 || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
                 && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
                 && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))){
+            // Calculate the list for today
+            // HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+            // Save the new date
             HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
             saveHTDate();
-            ArrayList<HabitType> recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
-            for(Integer count = 0; count < recent.size(); count++){
-                incrementHTMaxCounter(recent.get(count).getID());
+            // get he controller
+            HabitEventController hec = new HabitEventController(ctx);
+            ArrayList<HabitType> recent;
+            recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
+            for(HabitType ht : recent){
+                hec.createNewHabitEvent(ht.getID());
             }
         }
     }
@@ -380,6 +391,15 @@ public class HabitTypeController {
             // TODO Auto-generated catch block
             throw new RuntimeException();
         }
+        ArrayList<HabitType> htForToday = new ArrayList<HabitType>();
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        for(HabitType ht : habits){
+            ArrayList<Integer> schedule = ht.getSchedule();
+            if(schedule.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
+                htForToday.add(ht);
+            }
+        }
+        HabitTypeStateManager.getHTStateManager().setHabitTypesForToday(htForToday);
         HabitTypeStateManager.getHTStateManager().setAllHabittypes(habits);
     }
 
