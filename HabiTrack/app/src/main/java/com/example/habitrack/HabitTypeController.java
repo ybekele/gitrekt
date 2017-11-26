@@ -102,7 +102,7 @@ public class HabitTypeController {
         Calendar today = Calendar.getInstance();
         Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
         //TEMP --- ONLY FOR TESTING AND ENSURING IT WORKS
-        htDate.add(Calendar.DAY_OF_MONTH, -1);
+        // htDate.add(Calendar.DAY_OF_MONTH, -1);
         // if loaded date is behind today's date
         if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
                 || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
