@@ -12,7 +12,7 @@
         android:layout_height="32dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:text="Habit Title"
+        android:text="Event Title"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -64,7 +64,7 @@
         android:text="Add Image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/imgPreview"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.555" />
 
@@ -74,15 +74,15 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="312dp"
         android:ems="10"
-        android:hint="Comment (Optional)"
         android:inputType="textNoSuggestions|textMultiLine"
         android:maxLength="20"
         app:layout_constraintBottom_toTopOf="@+id/addEventButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
+        <!--android:hint="Comment"
 
-    <!--<EditText
+    <!-<EditText
         android:id="@+id/editText7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

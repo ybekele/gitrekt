@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.Switch;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HabitHistory extends AppCompatActivity {
@@ -65,8 +66,11 @@ public class HabitHistory extends AppCompatActivity {
             all_habit_titles.add(title);
         }
 
+        Collections.reverse(all_habit_titles);
 
         the_titles = hc.getAllHabitEvent();
+
+        Collections.reverse(the_titles);
 
 
 
@@ -148,8 +152,8 @@ public class HabitHistory extends AppCompatActivity {
                 Intent intent = new Intent(HabitHistory.this, HabitEventDetailsActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
-                intent.putExtra("habitID", the_titles.get(i).getHabitEventID());
-                Log.d("last","this is the id "+ the_titles.get(i).getHabitEventID().toString());
+                intent.putExtra("habitEventID", the_titles.get(i).getHabitEventID());
+                Log.d("last","this is the id "+ the_titles.get(i).getHabitEventID());
                 intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment() );
                 intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
                 startActivity(intent);

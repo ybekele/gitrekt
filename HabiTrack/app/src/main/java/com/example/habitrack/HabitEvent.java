@@ -96,4 +96,8 @@ public class HabitEvent {
         this.id = id;
     }
 
+    @Override
+    public String toString() {
+        return (getHabitEventID() + "\n" + getTitle() + "\n" + getComment());
+    }
 }
