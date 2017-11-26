@@ -35,13 +35,42 @@ public class HabitEvent {
     private Calendar date;                      // date of the habit event
     @JestId
     private String id;
-    private String encodedPhoto;
+    // Photo related vars
+    private String encodedPhoto;                // compressed string representation of the photo
+    private Bitmap decodedPhoto;                // Contains the actual photo. Will be null when saved on elastic search
+    // isEmpty - true when event is default created by the app
+    private Boolean isEmpty;                    // default event or not
 
 
     public HabitEvent(Integer heID, Integer htID) {
         this.habitEventID = heID;
         this.habitTypeID = htID;
         this.date = Calendar.getInstance();
+        this.isEmpty = Boolean.TRUE;
+    }
+
+    public String getEncodedPhoto() {
+        return encodedPhoto;
+    }
+
+    public void setEncodedPhoto(String encodedPhoto) {
+        this.encodedPhoto = encodedPhoto;
+    }
+
+    public Bitmap getDecodedPhoto() {
+        return decodedPhoto;
+    }
+
+    public void setDecodedPhoto(Bitmap decodedPhoto) {
+        this.decodedPhoto = decodedPhoto;
+    }
+
+    public Boolean getEmpty() {
+        return isEmpty;
+    }
+
+    public void setEmpty(Boolean empty) {
+        isEmpty = empty;
     }
 
     public String getTitle() {
@@ -80,17 +109,9 @@ public class HabitEvent {
         return this.encodedPhoto;
     }
 
-    public void setPhoto(String newEncodedPhoto) {
-        this.encodedPhoto = newEncodedPhoto;
-    }
-
-    public Boolean searchInComment(String key){
-        Boolean retVal = Boolean.FALSE;
-        if(this.comment.contains(key)){
-            retVal = Boolean.TRUE;
-        }
-        return retVal;
-    }
+//    public void setPhoto(String newEncodedPhoto) {
+//        this.encodedPhoto = newEncodedPhoto;
+//    }
 
     public void setId(String id) {
         this.id = id;
