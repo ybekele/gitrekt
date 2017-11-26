@@ -3,6 +3,7 @@ package com.example.habitrack;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,24 +23,22 @@ import java.io.InputStream;
  */
 public class NewHabitEventActivity extends AppCompatActivity {
 
-    // declare components
+    // get controllers
     HabitEventController hec = new HabitEventController(this);
     HabitTypeController htc = new HabitTypeController(this);
-    //CheckBox completed;
+    // declare components
+    public Integer heID;
+    public Integer htID;
     TextView title;
     // Comment
     EditText comment;
     String commentString;
     Boolean isComment = Boolean.FALSE;
-    //
-    Button addImage;
     //ImageView eventImage;
+    Button addImage;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
     Button addEvent;
-    int typeID = 0;
-    public Integer htID;
-    // Photo
     Boolean isPhoto = Boolean.FALSE;
     Bitmap photo;
 
@@ -51,32 +50,23 @@ public class NewHabitEventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //String titleString = intent.getStringExtra("HabitTitle");
         // Get incoming HT's ID
-        htID = intent.getIntExtra("habitID", -1);
-        String the_comment = intent.getStringExtra("cm");
-        // Get the interesting HT
-        HabitEvent hcc = hec.getHabitEvent(htID);
-        //hc.getHabitEventID(htID);
+        heID = intent.getIntExtra("habitEventID", -1);
+        htID = intent.getIntExtra("habitTypeID", -1);
 
         // Get interesting HT's attributes
-        String titleString = hcc.getTitle();
-        Log.d("lt","this is "+htID.toString());
+        String titleString = hec.getHabitEventTitle(heID);
+        //String titleString = hcc.getTitle();
+        //Log.d("lt","this is "+htID.toString());
 
         /* initialize views */
         // Set title
-        //title = (TextView)findViewById(R.id.textView3);
         title = (TextView)findViewById(R.id.heTitleView);
         title.setText(titleString);
 
-        //completed = (CheckBox)findViewById(R.id.checkBox);
-        //title = (EditText) findViewById(R.id.editText7);
-
         // Get comment text box heCommenteditText
-        // comment = (EditText) findViewById(R.id.editText6);
         comment = (EditText) findViewById(R.id.heCommentBox);
-        comment.setText(the_comment);
         // Image button
         addImage = (Button) findViewById(R.id.addImageGallery);
-        //eventImage = (ImageView) findViewById(R.id.imageView);
 
         // Add event button & its functionality
         addEvent = (Button) findViewById(R.id.addEventButton);
@@ -92,50 +82,23 @@ public class NewHabitEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Verify comment
+                if(isPhoto){
+                    hec.setHabitEventDecodedPhoto(heID, photo);
+                    ImageHandler.Compressor compressor = new ImageHandler.Compressor();
+                    compressor.execute(hec.getHabitEvent(heID));
+                }
                 commentString = comment.getText().toString();
-                if(commentString.length() > 0){
-                    isComment = Boolean.TRUE;
+                if(commentString.length() > 0 && commentString.length() < 30){
+                    hec.editHabitEventComment(heID, commentString);
                 }
-
-                // call appropriate constructor for he
-                if(!isComment && !isPhoto){
-                    hec.createNewHabitEvent(htID);
-                } else if (isComment && !isPhoto){
-                    hec.createNewHabitEvent(htID, commentString);
-                } else if (!isComment && isPhoto){
-                    hec.createNewHabitEvent(htID, photo);
-                } else {
-                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event",
-                            Toast.LENGTH_SHORT).show();
-                }
-                finish();
-//                if(isPhoto){
-//                    hec.createNewHabitEvent(htID, photo);
-//                }
 //
-//                if ((commentString.length() == 0) && (typeID != -1)) {
-//                    Log.d("newID", Integer.toString(typeID));
-//                    hec.createNewHabitEvent(htID);
+//                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event",
+//                            Toast.LENGTH_SHORT).show();
 //                }
-                //}
+                htc.incrementHTCurrentCounter(htID);
+                hec.completeHabitEvent(heID);
+                finish();
 
-                // exception, if user did leave a comment
-                //if ((titleString.length() > 0) && (commentString.length() > 0) && (typeID != -1)) {
-//                else if ((commentString.length() > 0) && (typeID != -1)) {
-                    //habitEvent.createNewHabitEvent(typeID, commentString);
-//                    hec.createNewHabitEvent(htID, commentString);
-//                }
-
-                /* Handles any error that may occur when trying to create a new habit event */
-//                else {
-//                    Log.d("typeID", Integer.toString(typeID));
-                    //Log.d("title", titleString);
-
-//                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event", Toast.LENGTH_SHORT).show();
-//                }
-
-//                finish();
-                //startActivity(addingEvent);
             }
         });
     }
@@ -162,14 +125,15 @@ public class NewHabitEventActivity extends AppCompatActivity {
             try {
                 inputStream = getContentResolver().openInputStream(imageUri);
                 photo = BitmapFactory.decodeStream(inputStream);
-                Integer imgSize = photo.getByteCount();
-                if(imgSize > 65536){
-                    Toast.makeText(NewHabitEventActivity.this, "Image is too large",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    isPhoto = Boolean.TRUE;
-                }
+                isPhoto = Boolean.TRUE;
+//                Integer imgSize = photo.getByteCount();
+//                if(imgSize > 65536){
+//                    Toast.makeText(NewHabitEventActivity.this, "Image is too large",
+//                            Toast.LENGTH_SHORT).show();
+//                    finish();
+//                } else {
+//                    isPhoto = Boolean.TRUE;
+//                }
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

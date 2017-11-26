@@ -25,8 +25,10 @@ public class MainActivity extends AppCompatActivity {
     Button allButton;
     Button logoutButton;
     private ListView displayNames;
-    private ArrayList<HabitType> today = new ArrayList<HabitType>();
-    private ArrayAdapter<HabitType> adapter;
+    //private ArrayList<HabitType> today = new ArrayList<HabitType>();
+    private ArrayList<HabitEvent> today = new ArrayList<HabitEvent>();
+    //private ArrayAdapter<HabitType> adapter;
+    private ArrayAdapter<HabitEvent> adapter;
     // Preliminary Setup
     // 1. Get the controllers
     HabitTypeController htc = new HabitTypeController(this);
@@ -95,17 +97,20 @@ public class MainActivity extends AppCompatActivity {
         displayNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
-                intent.putExtra("habitID", today.get(i).getID());
+                //intent.putExtra("habitID", today.get(i).getID());
+                Intent intent;
+                Integer heID = today.get(i).getHabitEventID();
+                if(hec.getHabitEventIsEmpty(heID)) {
+                    intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
+                } else {
+                    intent = new Intent(MainActivity.this, HabitEventDetailsActivity.class);
+                }
+                intent.putExtra("habitEventID", heID);
+                intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 startActivity(intent);
             }
         });
-    }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         // 2. load
         htc.loadHTID();
         hec.loadHEID();
@@ -114,37 +119,24 @@ public class MainActivity extends AppCompatActivity {
         hec.loadFromFile();
         // 4. Get Recent events and HabitTypes for today
         htc.generateHabitsForToday();
-        today = htc.getHabitTypesForToday();
-        if (today.size() != 0) {
-            for (Integer prog = 0; prog < today.size(); prog++) {
-                Integer typeID = today.get(prog).getID();
-                HabitType ht = new HabitType(typeID);
-                ht.incrementMaxCounter();
-            }
-        }
-            hec.updateRecentHabitEvents();
+        hec.updateRecentHabitEvents();
 
-            adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
-            displayNames.setAdapter(adapter);
+    }
 
-        }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        today = hec.getHabitEventsForToday();
+
+        adapter = new ArrayAdapter<HabitEvent>(this, R.layout.list_item, today);
+        displayNames.setAdapter(adapter);
+
+    }
 
         @Override
         protected void onResume() {
             super.onResume();
-            // 2. load
-//        htc.loadHTID();
-//        hec.loadHEID();
-//        // 3. Restore all HT and HE if saved
-//        htc.loadFromFile();
-//        hec.loadFromFile();
-            // 4. Get Recent events and HabitTypes for today
-            htc.generateHabitsForToday();
-            today = htc.getHabitTypesForToday();
-            hec.updateRecentHabitEvents();
-
-//        adapter = new ArrayAdapter<HabitType>(this, R.layout.list_item, today);
-//        displayNames.setAdapter(adapter);
 
         }
 
