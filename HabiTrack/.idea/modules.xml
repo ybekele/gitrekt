@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HabiTrack.iml" filepath="$PROJECT_DIR$/HabiTrack.iml" />
+      <module fileurl="file://C:\Users\austi_sjgf257\Desktop\CMPUT-301\project\gitrekt\HabiTrack\HabiTrack.iml" filepath="C:\Users\austi_sjgf257\Desktop\CMPUT-301\project\gitrekt\HabiTrack\HabiTrack.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\austi_sjgf257\Desktop\CMPUT-301\project\gitrekt\HabiTrack\app\app.iml" filepath="C:\Users\austi_sjgf257\Desktop\CMPUT-301\project\gitrekt\HabiTrack\app\app.iml" />
     </modules>
   </component>
 </project>
