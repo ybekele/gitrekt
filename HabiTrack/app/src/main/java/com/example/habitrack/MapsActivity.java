@@ -1,5 +1,8 @@
 package com.example.habitrack;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -8,6 +11,9 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -59,6 +65,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLocationPermission();
         updateLocationUI();
         getDeviceLocation();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                createMarker(latLng);
+            }
+        });
     }
 
 
@@ -88,6 +100,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
+
+
+    private void createMarker(final LatLng latLng) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.add_marker_title, latLng.latitude, latLng.longitude));
+        View view = LayoutInflater.from(this).inflate(R.layout.add_marker_dialog, null, false);
+        final EditText editTextTitle = (EditText) view.findViewById(R.id.edit_text_title);
+        final EditText editTextSnippet = (EditText) view.findViewById(R.id.edit_text_snippet);
+        builder.setView(view);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = editTextTitle.getText().toString();
+                String snippet = editTextSnippet.getText().toString();
+                mMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(snippet));
+            }
+        });
+        builder.create().show();
+    }
+
+
+
+
 
 
 
