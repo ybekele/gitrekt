@@ -43,14 +43,16 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         heDate = he.getHabitEvent(heID).getDate();
         heComment = he.getHabitEvent(heID).getComment();
         encodedImage = he.getHabitEventEncodedPhoto(heID);
-        ImageHandler.Decompressor decompressor = new ImageHandler.Decompressor();
-        decompressor.execute(encodedImage);
-        try {
-            decodedImage = decompressor.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        if(encodedImage != null) {
+            ImageHandler.Decompressor decompressor = new ImageHandler.Decompressor();
+            decompressor.execute(encodedImage);
+            try {
+                decodedImage = decompressor.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
 
 
