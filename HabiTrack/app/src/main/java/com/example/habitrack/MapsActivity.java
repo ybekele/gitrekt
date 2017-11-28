@@ -3,6 +3,7 @@ package com.example.habitrack;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -28,7 +29,7 @@ import com.google.android.gms.tasks.Task;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-
+    Integer htID;
     private GoogleMap mMap;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -39,6 +40,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        //String titleString = intent.getStringExtra("HabitTitle");
+        // Get incoming HT's ID
+        htID = intent.getIntExtra("habitID", -1);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -65,14 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLocationPermission();
         updateLocationUI();
         getDeviceLocation();
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                createMarker(latLng);
-            }
-        });
     }
-
 
     private void getDeviceLocation() {
         /*
@@ -90,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             mLastKnownLocation = task.getResult();
                             if(mLastKnownLocation != null){
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+
                             }
 
                         }
@@ -99,26 +98,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
-    }
-
-
-
-    private void createMarker(final LatLng latLng) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.add_marker_title, latLng.latitude, latLng.longitude));
-        View view = LayoutInflater.from(this).inflate(R.layout.add_marker_dialog, null, false);
-        final EditText editTextTitle = (EditText) view.findViewById(R.id.edit_text_title);
-        final EditText editTextSnippet = (EditText) view.findViewById(R.id.edit_text_snippet);
-        builder.setView(view);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String title = editTextTitle.getText().toString();
-                String snippet = editTextSnippet.getText().toString();
-                mMap.addMarker(new MarkerOptions().position(latLng).title(title).snippet(snippet));
-            }
-        });
-        builder.create().show();
     }
 
 

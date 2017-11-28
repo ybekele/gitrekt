@@ -97,6 +97,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent goToMap =  new Intent(NewHabitEventActivity.this, MapsActivity.class);
+                goToMap.putExtra("htID", htID);
                 startActivity(goToMap);
 
             }
