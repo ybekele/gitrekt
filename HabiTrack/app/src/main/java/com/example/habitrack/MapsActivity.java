@@ -41,13 +41,21 @@ import static android.widget.Toast.LENGTH_LONG;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener{
 
     Integer htID;
-    private GoogleMap mMap;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private boolean mLocationPermissionGranted;
-    private Location mLastKnownLocation;
-    private static final int DEFAULT_ZOOM = 10;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
+    private GoogleMap mMap;
+
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
+    private boolean mLocationPermissionGranted;
+
+    // The geographical location where the device is currently located. That is, the last-known
+    // location retrieved by the Fused Location Provider.
+    private Location mLastKnownLocation;
+
+    private static final int DEFAULT_ZOOM = 10;
+
+    // The entry point to the Fused Location Provider.
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     //widgets
     private EditText mSearchText;
@@ -68,9 +76,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
+        // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
+        // Search box text
         mSearchText = (EditText)findViewById(R.id.input_search);
     }
 
@@ -93,18 +101,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.setPadding(0,150,0,0);
-
-
         mMap.getUiSettings().setZoomControlsEnabled(true);
-
         Toast.makeText(this, "Map is ready", LENGTH_LONG).show();
-
-        getLocationPermission();
-        updateLocationUI();
         mMap.setOnMyLocationButtonClickListener(this);
+
+        // Prompt the user for permission.
+        getLocationPermission();
+
+        // Turn on the My Location layer and the related control on the map.
+        updateLocationUI();
+
+        // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
-
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -114,8 +122,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         init();
-
-
     }
 
     private void getDeviceLocation() {
@@ -139,7 +145,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 //Log.d(, "onComplete: current location is null");
                                 Toast.makeText(MapsActivity.this, "Unable to get current location", LENGTH_LONG ).show();
                             }
-
                         }
                     }
                 });
@@ -191,7 +196,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ).show();
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
@@ -229,8 +233,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
     //Search for a location or title of a maker
     public void geoLocate(){
         String searchString = mSearchText.getText().toString();
@@ -253,8 +255,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
     private void init(){
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -268,9 +268,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
-
-
 
     @Override
     public boolean onMyLocationButtonClick() {
