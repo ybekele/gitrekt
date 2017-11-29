@@ -76,13 +76,13 @@ public class ElasticSearchController {
             ArrayList<HabitType> habitTypes = new ArrayList<HabitType>();
             String text = search_parameters[0];
 
-            String query = "{\n" +
-                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
 
 //            String query = "{\n" +
 //                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
-//            String query = "{\n" +
-//                    "  \"query\": { \"match_all\": {} }\n" + "}";
+            String query = "{\n" +
+                    "  \"query\": { \"match_all\": {} }\n" + "}";
 
 
             Search search = new Search.Builder(query)
@@ -115,16 +115,16 @@ public class ElasticSearchController {
             ArrayList<HabitEvent> habitEvents = new ArrayList<HabitEvent>();
             String text = search_parameters[0];
 
-            String query = "{\n" +
-                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
 
 //            String query = "{\n" +
 //                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
-//            String query = "{\n" +
-//                    "  \"query\": { \"match_all\": {} }\n" + "}";
+            String query = "{\n" +
+                    "  \"query\": { \"match_all\": {} }\n" + "}";
 
 
-            Search search = new Search.Builder(search_parameters[0])
+            Search search = new Search.Builder(query)
                     .addIndex("gitrekt_htrack")
                     .addType("habit_event")
                     .build();
