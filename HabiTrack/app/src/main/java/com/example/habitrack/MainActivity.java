@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 /**
@@ -110,6 +111,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+//        ArrayList<Integer> schedule = new ArrayList<>();
+//        schedule.add(Calendar.SUNDAY);
+//        HabitType ht = new HabitType(201);
+//        ht.setTitle("ssh200");
+//        ht.setReason("ssh200");
+//        ht.setSchedule(schedule);
+//        ht.setStartDate(Calendar.getInstance());
+//        htc.addHabitTypeToElasticSearch(ht);
+//        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
+
 
         // 2. load
         htc.loadHTID();
