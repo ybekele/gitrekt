@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import io.searchbox.annotations.JestId;
+
 /**
  * Created by Abdul on 2017-11-29.
  */
@@ -7,7 +9,8 @@ package com.example.habitrack;
 public class NewUser {
 
     private String userName;
-    private String userID = null;
+    @JestId
+    private String userID;
 
 
 
