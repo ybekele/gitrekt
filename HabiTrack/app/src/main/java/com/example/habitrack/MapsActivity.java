@@ -1,5 +1,8 @@
 package com.example.habitrack;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -32,6 +35,8 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.widget.Toast.LENGTH_LONG;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener{
 
@@ -67,8 +72,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         mSearchText = (EditText)findViewById(R.id.input_search);
-
-
     }
 
 
@@ -94,12 +97,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Map is ready", LENGTH_LONG).show();
 
         getLocationPermission();
         updateLocationUI();
         mMap.setOnMyLocationButtonClickListener(this);
         getDeviceLocation();
+
+
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                createMarker(latLng);
+            }
+        });
+
         init();
 
 
@@ -124,7 +137,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                             else{
                                 //Log.d(, "onComplete: current location is null");
-                                Toast.makeText(MapsActivity.this, "Unable to get current location", Toast.LENGTH_LONG ).show();
+                                Toast.makeText(MapsActivity.this, "Unable to get current location", LENGTH_LONG ).show();
                             }
 
                         }
@@ -151,14 +164,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
-    /*
-    public void createMaker(){
 
-
-        MarkerOptions options = new MarkerOptions().position(latLng).title("tITLE");
-        mMap.addMarker(options);
+    public void createMarker(final LatLng latLng){
+        new AlertDialog.Builder(this).setTitle("Confirm")
+                .setMessage("Do you want to add Marker?")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton)
+                            {
+                                mMap.addMarker(new MarkerOptions().position(latLng).title("Mans not hot"));
+                                // Here you will have to save lat lng in string and save it in the shared preferences with incremented id
+                                //  then add the number of markers in the sharedPreferences.
+                                dialog.dismiss();
+                            }
+                        }
+                )
+                .setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton)
+                            {
+                                //do nothing
+                                dialog.dismiss();
+                            }
+                        }
+                ).show();
     }
-    */
 
 
     @Override
@@ -213,6 +244,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e("TAG", "geoLocate IOException " + e.getMessage());
 
         }
+
         if(list.size() > 0){
             Address address = list.get(0);
             Log.d("MAPP", "GEOLOCATE: found a location " + address.toString());
@@ -242,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "MyLocation button clicked", LENGTH_LONG).show();
         return false;
     }
 }
