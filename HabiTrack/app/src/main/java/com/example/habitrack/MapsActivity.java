@@ -88,8 +88,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         mMap.setPadding(0,150,0,0);
+
+
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+
         Toast.makeText(this, "Map is ready", Toast.LENGTH_LONG).show();
+
         getLocationPermission();
         updateLocationUI();
         mMap.setOnMyLocationButtonClickListener(this);
@@ -145,11 +151,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
+    /*
+    public void createMaker(){
 
-    public void createMaker(LatLng latLng){
+
         MarkerOptions options = new MarkerOptions().position(latLng).title("tITLE");
         mMap.addMarker(options);
     }
+    */
 
 
     @Override
@@ -196,6 +205,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String searchString = mSearchText.getText().toString();
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
+        //List<Marker>  markerList = new ArrayList<>();
+
         try{
             list = geocoder.getFromLocationName(searchString, 1);
         }catch(IOException e){
