@@ -6,21 +6,29 @@ package com.example.habitrack;
 
 public class NewUser {
 
-    private String title;
-    private Integer ID;
+    private String userName;
+    private String userID = null;
 
 
-    public NewUser(String title, Integer ID){
-        this.ID = ID;
-        this.title = title;
+
+    public NewUser(String userName){
+        this.userName = userName;
 
     }
 
     public String getTitle(){
-        return title;
+        return userName;
     }
 
-    public Integer getID(){
-        return ID;
+    public String getId(){
+        return userID;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }
