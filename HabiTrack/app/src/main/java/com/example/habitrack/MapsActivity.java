@@ -1,21 +1,18 @@
 package com.example.habitrack;
 
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.nfc.Tag;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -25,11 +22,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener{
 
     Integer htID;
     private GoogleMap mMap;
@@ -38,6 +34,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastKnownLocation;
     private static final int DEFAULT_ZOOM = 15;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+
+
+    //widgets
+    private EditText mSearchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mSearchText = (EditText)findViewById(R.id.input_search);
+
+
     }
 
+    private void init(){
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+               if(actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER || keyEvent.getAction() == keyEvent.ACTION_DOWN ){
+
+                  //execute method for searching
+               }
+                return false;
+            }
+        });
+    }
 
     /**
      * Manipulates the map once available.
@@ -69,11 +85,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0,150,0,0);
         Toast.makeText(this, "Map is ready", Toast.LENGTH_LONG).show();
         getLocationPermission();
         updateLocationUI();
+        mMap.setOnMyLocationButtonClickListener(this);
         getDeviceLocation();
-
+        init();
     }
 
     private void getDeviceLocation() {
@@ -106,12 +124,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e("Exception: %s", e.getMessage());
         }
     }
-
-
-
-
-
-
 
     private void getLocationPermission() {
     /*
@@ -168,4 +180,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_LONG).show();
+        return false;
+    }
 }
