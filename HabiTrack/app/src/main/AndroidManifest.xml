@@ -29,6 +29,8 @@
         <activity android:name=".HabitHistory" />
         <activity android:name=".heImageDisplay" />
         <activity android:name=".DateSelector"></activity>
+        <activity android:name=".SocialActivity"/>
+        <activity android:name=".FollowersActivity"/>
     </application>
 
 </manifest>
