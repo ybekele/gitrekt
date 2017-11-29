@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         ht.setReason("ssh200");
         ht.setSchedule(schedule);
         ht.setStartDate(Calendar.getInstance());
-        htc.addHabitTypeToElasticSearch(ht);
+//        htc.addHabitTypeToElasticSearch(ht);
         ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 
 
