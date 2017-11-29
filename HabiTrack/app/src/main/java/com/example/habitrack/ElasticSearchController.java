@@ -29,7 +29,7 @@ public class ElasticSearchController {
         protected Void doInBackground(HabitType... habitTypes) {
             verifySettings();
             for (HabitType habitType : habitTypes) {
-                Index index = new Index.Builder(habitType).index("habit_type").type("").build();
+                Index index = new Index.Builder(habitType).index("gitrekt_htrack").type("habit_type").build();
                 try {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
@@ -45,12 +45,13 @@ public class ElasticSearchController {
         }
     }
 
+
     public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Void> {
         @Override
         protected Void doInBackground(HabitEvent... habitEvents) {
             verifySettings();
             for (HabitEvent habitEvent : habitEvents) {
-                Index index = new Index.Builder(habitEvent).index("habit_event").type("").build();
+                Index index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").build();
                 try {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
@@ -69,17 +70,24 @@ public class ElasticSearchController {
     public static class GetHabitType extends AsyncTask<String, Void, ArrayList<HabitType>> {
         @Override
         protected ArrayList<HabitType> doInBackground(String... search_parameters) {
+
             verifySettings();
 
             ArrayList<HabitType> habitTypes = new ArrayList<HabitType>();
+            String text = search_parameters[0];
+
+            String query = "{\n" +
+                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
+
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
+//            String query = "{\n" +
+//                    "  \"query\": { \"match_all\": {} }\n" + "}";
 
 
-
-            String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"reason\", \"Schedule\"], \n" + "}";
-
-            Search search = new Search.Builder(search_parameters[0])
-                    .addIndex("habit_type")
-                    .addType("habitType")
+            Search search = new Search.Builder(query)
+                    .addIndex("gitrekt_htrack")
+                    .addType("habit_type")
                     .build();
 
             try {
@@ -98,19 +106,27 @@ public class ElasticSearchController {
         }
     }
 
+
     public static class GetHabitEvent extends AsyncTask<String, Void, ArrayList<HabitEvent>> {
         @Override
         protected ArrayList<HabitEvent> doInBackground(String... search_parameters) {
             verifySettings();
 
             ArrayList<HabitEvent> habitEvents = new ArrayList<HabitEvent>();
+            String text = search_parameters[0];
 
+            String query = "{\n" +
+                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
 
-            String query = "{\n" + "   \"query\": {\"match_all\":{} },\n" + " \"_source\": [\"title\", \"comment\", \"Calender\"], \n" + "}";
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
+//            String query = "{\n" +
+//                    "  \"query\": { \"match_all\": {} }\n" + "}";
+
 
             Search search = new Search.Builder(search_parameters[0])
-                    .addIndex("habit_event")
-                    .addType("habitEvent")
+                    .addIndex("gitrekt_htrack")
+                    .addType("habit_event")
                     .build();
 
             try {
@@ -134,7 +150,8 @@ public class ElasticSearchController {
 
     public static void verifySettings() {
         if (client == null) {
-            DroidClientConfig.Builder builder = new DroidClientConfig.Builder("http://cmput301.softwareprocess.es:8080/gitrekt_habitrack");
+            //DroidClientConfig.Builder builder = new DroidClientConfig.Builder("http://cmput301.softwareprocess.es:8080/gitrekt_habitrack");
+            DroidClientConfig.Builder builder = new DroidClientConfig.Builder("http://cmput301.softwareprocess.es:8080");
             DroidClientConfig config = builder.build();
             JestClientFactory factory = new JestClientFactory();
             factory.setDroidClientConfig(config);
