@@ -112,15 +112,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        ArrayList<Integer> schedule = new ArrayList<>();
-//        schedule.add(Calendar.SUNDAY);
-//        HabitType ht = new HabitType(201);
-//        ht.setTitle("ssh200");
-//        ht.setReason("ssh200");
-//        ht.setSchedule(schedule);
-//        ht.setStartDate(Calendar.getInstance());
+        ArrayList<Integer> schedule = new ArrayList<>();
+        schedule.add(Calendar.SUNDAY);
+        HabitType ht = new HabitType(201);
+        ht.setTitle("ssh200");
+        ht.setReason("ssh200");
+        ht.setSchedule(schedule);
+        ht.setStartDate(Calendar.getInstance());
 //        htc.addHabitTypeToElasticSearch(ht);
-//        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
+        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 
 
         // 2. load
