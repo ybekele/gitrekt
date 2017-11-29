@@ -176,14 +176,26 @@ public class HabitTypeController {
      */
     public ArrayList<HabitType> getHabitTypeElasticSearch() {
         ArrayList<HabitType> ht = new ArrayList<>();
+//                    String query = "{\n" +
+//                    "  \"query\": { \"match_all\": {} },\n" +
+//                    "  \"sort\": { \"date\": { \"order\": \"desc\" } },\n" +
+//                    "  \"size\": 10\n" +
+//                    "}";
+        String text = "ssh200";
+        String query = "{\n" + " \"query\": { \"term\": {\"title\":\"" + text + "\"} }\n" + "}";
         ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
-        getHabitType.execute("");
+        getHabitType.execute(text);
         try {
             ht = getHabitType.get();
         } catch (Exception e) {
             Log.i("Error", "Failed to get the tweets from the async object");
         }
         return ht;
+    }
+
+    public void addHabitTypeToElasticSearch(HabitType ht){
+        ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
+        addHabitType.execute(ht);
     }
 
 
