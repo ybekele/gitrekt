@@ -42,6 +42,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Integer htID;
 
+    Marker m;  //reference to the marker
+
     private GoogleMap mMap;
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -59,6 +61,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //widgets
     private EditText mSearchText;
+
+    //Markers list
+    List<Marker> Markerslist = new ArrayList<Marker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +86,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Search box text
         mSearchText = (EditText)findViewById(R.id.input_search);
     }
-
-
-
-
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -100,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.setPadding(0,150,0,0);
+        mMap.setPadding(0,200,0,0);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         Toast.makeText(this, "Map is ready", LENGTH_LONG).show();
         mMap.setOnMyLocationButtonClickListener(this);
@@ -113,7 +112,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -178,9 +176,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton)
                             {
-                                mMap.addMarker(new MarkerOptions().position(latLng).title("Mans not hot"));
-                                // Here you will have to save lat lng in string and save it in the shared preferences with incremented id
-                                //  then add the number of markers in the sharedPreferences.
+                                if (m != null) {
+                                    m.setPosition(latLng);
+                                }else{
+                                   m = mMap.addMarker(new MarkerOptions().position(latLng).title("A"));
+                                   Markerslist.add(m);
+                                    Log.d("frass", "MarkersList" + Markerslist.toString());
+
+                                }
                                 dialog.dismiss();
                             }
                         }
@@ -195,7 +198,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                 ).show();
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
@@ -205,6 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+
                 }
             }
         }
@@ -238,19 +241,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String searchString = mSearchText.getText().toString();
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
-        //List<Marker>  markerList = new ArrayList<>();
-
         try{
             list = geocoder.getFromLocationName(searchString, 1);
         }catch(IOException e){
             Log.e("TAG", "geoLocate IOException " + e.getMessage());
 
         }
+        if(list.size() > 0 ){
 
-        if(list.size() > 0){
             Address address = list.get(0);
             Log.d("MAPP", "GEOLOCATE: found a location " + address.toString());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM));
+        }
+
+        if(Markerslist.size() > 0){
+            for(Marker m : Markerslist) {
+                if(m.getTitle().equals(searchString)) {
+                    Log.d("MARKER", "GEOLOCATE: found a marker " + m.toString());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(m.getPosition(), DEFAULT_ZOOM));
+                    break; // stop the loop
+                }
+            }
+
 
         }
     }
@@ -260,7 +272,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER || keyEvent.getAction() == keyEvent.ACTION_DOWN ){
-
                     //execute method for searching
                     geoLocate();
                 }
