@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -112,17 +113,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ArrayList<Integer> schedule = new ArrayList<>();
-        schedule.add(Calendar.SUNDAY);
-        HabitType ht = new HabitType(201);
-        ht.setTitle("ssh200");
-        ht.setReason("ssh200");
-        ht.setSchedule(schedule);
-        ht.setStartDate(Calendar.getInstance());
+//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
+//        ArrayList<Integer> schedule = new ArrayList<>();
+//        schedule.add(Calendar.SUNDAY);
+//        HabitType ht = new HabitType(201);
+//        ht.setTitle("ssh200");
+//        ht.setReason("ssh200");
+//        ht.setSchedule(schedule);
+//        ht.setStartDate(Calendar.getInstance());
 //        htc.addHabitTypeToElasticSearch(ht);
-        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
-
-
+//        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
+//
+//        NewUser user = new NewUser("testUser3");
+//        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+//        addNewUser.execute(user);
+//        NewUser user2 = new NewUser("testUser2");
+//        addNewUser.execute(user2);
+//        ElasticSearchController.GetUser getUser = new ElasticSearchController.GetUser();
+//        getUser.execute();
+//        try {
+//            ArrayList<NewUser> allUsers = getUser.get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
         // 2. load
         htc.loadHTID();
         hec.loadHEID();
@@ -146,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-        @Override
-        protected void onResume() {
-            super.onResume();
-
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
+
+}
 

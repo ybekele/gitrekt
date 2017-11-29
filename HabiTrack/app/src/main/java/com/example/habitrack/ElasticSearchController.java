@@ -23,6 +23,72 @@ import io.searchbox.core.SearchResult;
 public class ElasticSearchController {
     private static JestDroidClient client;
 
+    public static class AddNewUser extends AsyncTask<NewUser, Void, Void> {
+
+        @Override
+        protected Void doInBackground(NewUser... newUsers) {
+            verifySettings();
+            for (NewUser usr : newUsers) {
+                Index index = new Index.Builder(usr).index("gitrekt_htrack").type("htr_user").build();
+                try {
+                    DocumentResult result = client.execute(index);
+                    if (result.isSucceeded()) {
+                        usr.setUserID(result.getId());
+                    } else {
+                        Log.i("Error", "Elasticsearch was not able to add the user");
+                    }
+                } catch (IOException e) {
+                    Log.i("Error", "The application failed to build and send the user");
+                }
+            }
+            return null;
+        }
+    }
+
+
+    public static class GetUser extends AsyncTask<String, Void, ArrayList<NewUser>> {
+        @Override
+        protected ArrayList<NewUser> doInBackground(String... search_parameters) {
+
+            verifySettings();
+
+            ArrayList<NewUser> allUsers = new ArrayList<NewUser>();
+//            String text = search_parameters[0];
+
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"userName\": \"" + text + "\"} }\n" + "}";
+
+//            String query = "{\n" +
+//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
+
+            String query = "{\n" +
+                    "  \"query\": { \"match_all\": {} }\n" + "}";
+
+
+            Search search = new Search.Builder(query)
+                    .addIndex("gitrekt_htrack")
+                    .addType("htr_user")
+                    .build();
+
+            try {
+                SearchResult result = client.execute(search);
+                if (result.isSucceeded()) {
+                    List<NewUser> foundUsers = result.getSourceAsObjectList(NewUser.class);
+                    allUsers.addAll(foundUsers);
+                } else {
+                    Log.i("Error", "The search query failed to find any users that matched");
+                }
+            } catch (Exception e) {
+                Log.i("Error", "Something went wrong when we tried to communicate with the elasticsearch server!");
+            }
+
+            return allUsers;
+        }
+    }
+
+
+
+
     public static class AddHabitType extends AsyncTask<HabitType, Void, Void> {
 
         @Override
