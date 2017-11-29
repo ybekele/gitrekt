@@ -22,14 +22,13 @@ public class HabitEventStateManager {
      */
 
     private static Integer habitEventID;
-
-
-    public static HabitEventStateManager heManager = new HabitEventStateManager();
+    private static HabitEventStateManager heManager = new HabitEventStateManager();
 
     //private static final ArrayList<Integer> ALL_HABITEVENTS_ID = new ArrayList<Integer>();
 
     private static ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> HABITEVENTS_FOR_TODAY = new ArrayList<HabitEvent>();
 
 
     public HabitEventStateManager(){}
@@ -49,8 +48,16 @@ public class HabitEventStateManager {
             if (currCal.before(cal)){
                 RECENT_HABITEVENTS.remove(count.intValue());
             }
-
         }
+    }
+
+    // setter and getter for HABITEVENTS_FOR_TODAY
+    public ArrayList<HabitEvent> getALlHabitEventsForToday() {
+        return HABITEVENTS_FOR_TODAY;
+    }
+
+    public void setAllHabitEventsForToday(ArrayList<HabitEvent> habiteventsForToday) {
+        HABITEVENTS_FOR_TODAY = habiteventsForToday;
     }
 
     public ArrayList<HabitEvent> getAllHabitEvents(){
@@ -79,6 +86,7 @@ public class HabitEventStateManager {
     }
 
     public void storeHabitEvent(HabitEvent he){
+        HABITEVENTS_FOR_TODAY.add(he);
         ALL_HABITEVENTS.add(he);
         Log.d("seen",ALL_HABITEVENTS.toString());
 //        ALL_HABITEVENTS_ID.add(he.getHabitEventID());
@@ -128,7 +136,6 @@ public class HabitEventStateManager {
     public Integer getIDToSave(){
         return HabitEventStateManager.habitEventID;
     }
-
 
     public Integer getHabitEventID(){
         HabitEventStateManager.habitEventID++;

@@ -16,21 +16,23 @@ import java.io.ByteArrayOutputStream;
  */
 public class ImageHandler {
 
-    public static class Compressor extends AsyncTask<Bitmap, Void, String> {
+    //public static class Compressor extends AsyncTask<Bitmap, Void, String> {
+    public static class Compressor extends AsyncTask<HabitEvent, Void, Void> {
         private final int COMPRESSION_QUALITY = 100;
         private String encodedImage;
         ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
 
-        // Code taken from: http://mobile.cs.fsu.edu/converting-images-to-json-objects/
         @Override
-        protected String doInBackground(Bitmap... bitmaps) {
-            for(Bitmap bitmap : bitmaps){
-                bitmap.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
-                        byteArrayBitmapStream);
+        protected Void doInBackground(HabitEvent... habitEvents) {
+            for(HabitEvent he : habitEvents){
+                Bitmap photo = he.getDecodedPhoto();
+                he.setDecodedPhoto(null);
+                photo.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY, byteArrayBitmapStream);
                 byte[] b = byteArrayBitmapStream.toByteArray();
                 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+                he.setEncodedPhoto(encodedImage);
             }
-            return encodedImage;
+            return null;
         }
     }
 
