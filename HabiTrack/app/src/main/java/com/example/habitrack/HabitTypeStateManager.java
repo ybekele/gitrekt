@@ -58,8 +58,6 @@ public class HabitTypeStateManager {
                         if (schedule.get(cnt) == cal.get(Calendar.DAY_OF_WEEK)) {
                             // If today matches a day, then add to habit types for today
                             HABITTYPES_FOR_TODAY.add(ALL_HABITTYPES.get(count));
-
-
                             break;
                         }
                     }
@@ -77,7 +75,6 @@ public class HabitTypeStateManager {
     }
 
     public ArrayList<HabitType> getHabitTypesForToday(){
-        calculateHabitsForToday();
         return HABITTYPES_FOR_TODAY;
     }
 
@@ -123,12 +120,20 @@ public class HabitTypeStateManager {
         }
     }
 
+    public void addHabitTypeForToday(HabitType habitType){
+        HABITTYPES_FOR_TODAY.add(habitType);
+    }
+
     public Calendar getHabitTypeDate() {
         return habitTypeDate;
     }
 
     public void setHabitTypeDate(Calendar habitTypeDate) {
         HabitTypeStateManager.habitTypeDate = habitTypeDate;
+    }
+
+    public void setHabitTypesForToday(ArrayList<HabitType> htForToday){
+        HABITTYPES_FOR_TODAY = htForToday;
     }
 
     public void setID(Integer savedID){

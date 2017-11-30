@@ -43,6 +43,8 @@ public class HabitEventController {
     private Context hectx;
     private final String FILE_NAME = "habitEvents.sav";
     private final String ID_FILE_NAME = "heid.sav";
+    private final String DATE_FILE_NAME = "hedate.sav";
+    private final String HE_TODAY_FILE_NAME = "heForToday.sav";
 
     public HabitEventController(Context ctx){
         this.hectx = ctx;
@@ -63,50 +65,13 @@ public class HabitEventController {
         // Save event locally
         saveToFile();
         // Increment the completed event counter for the habit type
-        htc.incrementHTCurrentCounter(habitTypeID);
+        htc.incrementHTMaxCounter(habitTypeID);
     }
-
-    public void createNewHabitEvent(Integer habitTypeID, String comment){
-        HabitTypeController htc = new HabitTypeController(hectx);
-        HabitEvent he = new
-                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
-        he.setTitle(htc.getHabitTitle(habitTypeID));
-        he.setComment(comment);
-        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-        // Save event on elastic search
-        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
-        addHabitEvent.execute(he);
-        // Save event locally
-        saveToFile();
-        // Increment the completed event counter for the habit type
-        htc.incrementHTCurrentCounter(habitTypeID);
+    
+    public ArrayList<HabitEvent> getHabitEventsForToday(){
+        //generateEventsForToday();
+        return HabitEventStateManager.getHEStateManager().getALlHabitEventsForToday();
     }
-
-    public void createNewHabitEvent(Integer habitTypeID, Bitmap newPhoto){
-        HabitTypeController htc = new HabitTypeController(hectx);
-        HabitEvent he = new
-                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
-        he.setTitle(htc.getHabitTitle(habitTypeID));
-        ImageHandler.Compressor compressor = new ImageHandler.Compressor();
-        compressor.execute(newPhoto);
-        try {
-            String encodedImage = compressor.get();
-            he.setPhoto(encodedImage);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-        // Save event on elastic search
-        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
-        addHabitEvent.execute(he);
-        // Save event locally
-        saveToFile();
-        // Increment the completed event counter for the habit type
-        htc.incrementHTCurrentCounter(habitTypeID);
-    }
-
 
     public ArrayList<HabitEvent> getAllHabitEvent(){
         return HabitEventStateManager.getHEStateManager().getAllHabitEvents();
@@ -261,6 +226,62 @@ public class HabitEventController {
         }
     }
 
+    public void setHabitEventEncodedPhoto(Integer requestedID, String encodedPhoto){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            he.setEncodedPhoto(encodedPhoto);
+        }
+    }
+
+    public String getHabitEventEncodedPhoto(Integer requestedID){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            return he.getEncodedPhoto();
+        } else {
+            return "";
+        }
+    }
+
+    public void setHabitEventDecodedPhoto(Integer requestedID, Bitmap photo){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            he.setDecodedPhoto(photo);
+        }
+    }
+
+    public Bitmap getHabitEventDecodedPhoto(Integer requestedID){
+        Bitmap ret = null;
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            return he.getDecodedPhoto();
+        } else {
+            return ret;
+        }
+    }
+
+    public void completeHabitEvent(Integer requestedID){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            he.setEmpty(Boolean.FALSE);
+        }
+        saveToFile();
+    }
+
+    public Boolean getHabitEventIsEmpty(Integer requestedID){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            return he.getEmpty();
+        } else {
+            return Boolean.TRUE;
+        }
+    }
+
     public void loadFromFile() {
         ArrayList<HabitEvent> heList = new ArrayList<HabitEvent>();
         try {
@@ -277,6 +298,18 @@ public class HabitEventController {
             // TODO Auto-generated catch block
             throw new RuntimeException();
         }
+
+        ArrayList<HabitEvent> heForToday = new ArrayList<HabitEvent>();
+        Calendar today = Calendar.getInstance();
+        for(HabitEvent he : heList){
+            Calendar heDate = he.getDate();
+            if(heDate.get(Calendar.YEAR) == today.get(Calendar.YEAR)
+                    && heDate.get(Calendar.MONTH) == today.get(Calendar.MONTH)
+                    && heDate.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH)){
+                heForToday.add(he);
+            }
+        }
+        HabitEventStateManager.getHEStateManager().setAllHabitEventsForToday(heForToday);
         HabitEventStateManager.getHEStateManager().setAllHabitEvents(heList);
     }
 
@@ -333,5 +366,6 @@ public class HabitEventController {
         }
         HabitEventStateManager.getHEStateManager().setID(loadedID);
     }
+
 
 }
