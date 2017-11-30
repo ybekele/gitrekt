@@ -1,14 +1,19 @@
 package com.example.habitrack;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     HabitTypeController htc = new HabitTypeController(this);
     HabitEventController hec = new HabitEventController(this);
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +53,19 @@ public class MainActivity extends AppCompatActivity {
         historybutton = (Button) findViewById(R.id.historyButton);
         logoutButton = (Button) findViewById(R.id.button10);
         displayNames = (ListView) findViewById(R.id.listView);
+
+
+        final ConnectivityManager connMgr = (ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifi.isConnectedOrConnecting ()) {
+            Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
+        } else if (mobile.isConnectedOrConnecting ()) {
+            Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
+        }
 // ------------------
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
         SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
