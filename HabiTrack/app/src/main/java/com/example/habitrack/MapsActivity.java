@@ -168,7 +168,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
                             if(mLastKnownLocation != null){
+
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                createMarker(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
                             }
                             else{
                                 //Log.d(, "onComplete: current location is null");
@@ -255,7 +257,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }).show();
         }
-        //I removed this call because the app will close and crash before display the dialog
+        //I removed this call because the app will close and crash before displaying the dialog, Don't if it affects the saving.
         // finish();
     }
 
