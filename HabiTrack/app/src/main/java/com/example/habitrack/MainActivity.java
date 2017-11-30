@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button historybutton;
     Button allButton;
     Button logoutButton;
+    Button socialButton;
     private ListView displayNames;
     //private ArrayList<HabitType> today = new ArrayList<HabitType>();
     private ArrayList<HabitEvent> today = new ArrayList<HabitEvent>();
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         allButton = (Button) findViewById(R.id.allButton);
         historybutton = (Button) findViewById(R.id.historyButton);
         logoutButton = (Button) findViewById(R.id.button10);
+        socialButton = (Button) findViewById(R.id.button4);
         displayNames = (ListView) findViewById(R.id.listView);
 // ------------------
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
@@ -55,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
         if(!isLoggedIn) {
             startActivity(toLogIn);
         }
+
+        //if Social button --> to social activity to interact with other participants
+        socialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent social = new Intent(getApplicationContext(), SocialActivity.class);
+                startActivity(social);
+            }
+        });
 
         //If logoutButton is clicked, change loggedIn to false and go to SignupAcitivty
         logoutButton.setOnClickListener(new View.OnClickListener() {
