@@ -90,7 +90,6 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         //progressBar.setMax(htc.getMaxCounter(htID));
         progressBar.setMax(htc.getMaxCounter(htID));
         progressBar.setProgress(htc.getCompletedCounter(htID));
-        Log.d("prog", htc.getCompletedCounter(htID).toString());
         progressNum.setText(htc.getCompletedCounter(htID).toString());
 
         // Get the edit text references
