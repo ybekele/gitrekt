@@ -237,25 +237,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         super.onBackPressed();
         HabitEventController hec = new HabitEventController(this);
-        /*
-        if(m.getPosition() != null){
+
+        if(m != null && m.getPosition() != null){
             hec.setHabitEventLocation(heID, m.getPosition());
        }
-       */
-       if(m.getPosition() == null){
-           new AlertDialog.Builder(this)
-                   .setTitle("Really Exit?")
-                   .setMessage("Are you sure you want to exit, without creating a marker?")
-                   .setNegativeButton(android.R.string.no, null)
-                   .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                       public void onClick(DialogInterface dialog, int whichButton) {
-                           MapsActivity.super.onBackPressed();
-                           dialog.dismiss();
 
-                       }
-                   }).show();
-       }
-        finish();
+        if(m == null || m.getPosition() == null){
+            new AlertDialog.Builder(this)
+                    .setTitle("Really Exit?")
+                    .setMessage("Are you sure you want to exit, without creating a marker?")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                            MapsActivity.super.onBackPressed();
+
+                        }
+                    }).show();
+        }
+        //I removed this call because the app will close and crash before display the dialog
+        // finish();
     }
 
     @Override
