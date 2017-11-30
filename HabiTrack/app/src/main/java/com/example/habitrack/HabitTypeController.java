@@ -40,12 +40,14 @@ import java.util.Calendar;
  */
 public class HabitTypeController {
     private Context ctx;
+    private FileManager fileManager;
     private final String FILE_NAME = "habitTypes.sav";
     private final String ID_FILE_NAME = "htid.sav";
     private final String DATE_FILE_NAME = "htdate.sav";
 
     public HabitTypeController(Context givenContext){
         this.ctx = givenContext;
+        this.fileManager = new FileManager(givenContext);
     }
 
     /**
@@ -60,27 +62,39 @@ public class HabitTypeController {
      * @param schedule : the days the user wants to be do the Habit
      */
     public void createNewHabitType(String title, String reason,
-                                   Calendar startDate, ArrayList<Integer> schedule) {
+                                   Calendar startDate, ArrayList<Integer> schedule, Boolean isConnected, String userID) {
         // Generate the new habit type
         HabitType ht = new HabitType(HabitTypeStateManager.getHTStateManager().getHabitTypeID());
         saveHTID();                     // Save updated htID
+        ht.setUserID(userID);           // Set userID
         ht.setTitle(title);             // Set title
         ht.setReason(reason);           // Set reason
         ht.setStartDate(startDate);     // Set start date
         ht.setSchedule(schedule);       // Set schedule
+        // Save the metadata of the HT
+        HabitTypeStateManager.getHTStateManager().addMetadata(ht);
+        // If connected to internet, then add the ht to es
+        if(isConnected) {
+            ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
+            addHabitType.execute(ht);
+        }
+        // save the metadata
+        fileManager.save(fileManager.HT_METADATA_MODE);
+        // Check if an event needs to be created
         Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        if(schedule.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
+        if(schedule.contains(today)){
             HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
             HabitEventController hec = new HabitEventController(ctx);
-            hec.createNewHabitEvent(ht.getID());
+            hec.createNewHabitEvent(ht.getID(), isConnected, userID);
         }
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
-        // Add the habit type to elastic search
-        ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
-        addHabitType.execute(ht);
         // Save to local
         saveToFile();
+    }
+
+    public void getElasticSearchIDs(){
+
     }
 
 
@@ -95,7 +109,7 @@ public class HabitTypeController {
     /**
      * This function is needed
      */
-    public void generateHabitsForToday(){
+    public void generateHabitsForToday(Boolean isConnected, String userID){
         // load previous date
         loadHTDate();
         // get today's date, and previous date
@@ -120,9 +134,18 @@ public class HabitTypeController {
             ArrayList<HabitType> recent;
             recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
             for(HabitType ht : recent){
-                hec.createNewHabitEvent(ht.getID());
+                hec.createNewHabitEvent(ht.getID(), isConnected, userID);
             }
         }
+    }
+
+    public void setHabitTypeMostRecentEvent(Integer requestedID, HabitEvent he){
+        HabitType ht = this.getHabitType(requestedID);
+        // If the habit exists
+        if(!ht.getID().equals(-1)){
+            ht.setMostRecentEvent(he);
+        }
+        saveToFile();
     }
 
     /**
