@@ -118,6 +118,10 @@ public class HabitEvent {
         this.id = id;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getUserID() {
         return userID;
     }
