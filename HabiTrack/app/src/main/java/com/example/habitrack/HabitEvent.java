@@ -43,10 +43,6 @@ public class HabitEvent {
     // isEmpty - true when event is default created by the app
     private Boolean isEmpty;                    // default event or not
 
-    public void setLocation(LatLng location) {
-        this.location = location;
-    }
-
     public HabitEvent(Integer heID, Integer htID) {
         this.habitEventID = heID;
         this.habitTypeID = htID;
