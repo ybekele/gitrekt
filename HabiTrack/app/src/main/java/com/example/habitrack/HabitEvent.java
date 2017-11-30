@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
@@ -41,6 +43,9 @@ public class HabitEvent {
     // isEmpty - true when event is default created by the app
     private Boolean isEmpty;                    // default event or not
 
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
 
     public HabitEvent(Integer heID, Integer htID) {
         this.habitEventID = heID;

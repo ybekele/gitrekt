@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -31,8 +32,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +46,7 @@ import static android.widget.Toast.LENGTH_LONG;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener{
 
     Integer htID;
+    String titleString;
 
     Marker m;  //reference to the marker
 
@@ -63,18 +69,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private EditText mSearchText;
 
     //Markers list
-    List<Marker> Markerslist = new ArrayList<Marker>();
+    List<Marker> Markerslist = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        //String titleString = intent.getStringExtra("HabitTitle");
         // Get incoming HT's ID
-        //htID = intent.getIntExtra("habitID", -1);
+        htID = intent.getIntExtra("htID", -1);
         //Log.d("COOL", String.valueOf(htID));
 
         HabitTypeController hc = new HabitTypeController(this);
+        titleString = hc.getHabitTitle(htID);
+
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -86,6 +93,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Search box text
         mSearchText = (EditText)findViewById(R.id.input_search);
     }
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -112,15 +121,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+
+        //TEMPORARY MAYBE
+        //Marker();
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 createMarker(latLng);
+
             }
         });
 
-        init();
+
+        //Search bar
+        searchBar();
+
     }
+    /*
+    private void Marker(){
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                createMarker(latLng);
+
+            }
+        });
+    }
+    */
+
 
     private void getDeviceLocation() {
         /*
@@ -169,6 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void createMarker(final LatLng latLng){
+        //Creates a dialog, prompts the user to create a marker or not.
         new AlertDialog.Builder(this).setTitle("Confirm")
                 .setMessage("Do you want to add Marker?")
                 .setCancelable(false)
@@ -176,13 +205,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton)
                             {
+                                //If location is not null, set position/marker to location clicked on the map.
+                                //Else if a marker already exist overwrite it and add a new marker.
                                 if (m != null) {
                                     m.setPosition(latLng);
                                 }else{
-                                   m = mMap.addMarker(new MarkerOptions().position(latLng).title("A"));
+                                    //Get specific habitType title
+                                   m = mMap.addMarker(new MarkerOptions().position(latLng).title(titleString));
                                    Markerslist.add(m);
                                     Log.d("frass", "MarkersList" + Markerslist.toString());
-
                                 }
                                 dialog.dismiss();
                             }
@@ -198,16 +229,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                 ).show();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
-
                 }
             }
         }
@@ -227,7 +257,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
@@ -241,19 +271,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String searchString = mSearchText.getText().toString();
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
+
         try{
             list = geocoder.getFromLocationName(searchString, 1);
         }catch(IOException e){
             Log.e("TAG", "geoLocate IOException " + e.getMessage());
 
         }
+
+        //Search for an address, place, city, etc.
         if(list.size() > 0 ){
 
             Address address = list.get(0);
             Log.d("MAPP", "GEOLOCATE: found a location " + address.toString());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM));
+
         }
 
+
+        //Search for a marker title.
         if(Markerslist.size() > 0){
             for(Marker m : Markerslist) {
                 if(m.getTitle().equals(searchString)) {
@@ -267,7 +303,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void init(){
+    private void searchBar(){
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -285,4 +321,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(this, "MyLocation button clicked", LENGTH_LONG).show();
         return false;
     }
+
+
 }
