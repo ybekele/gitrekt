@@ -113,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
+//  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
+//        HabitEvent testHE = new HabitEvent(1000, 2000);
+//        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+//        addHabitEvent.execute(testHE);
+//
+//        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+//        getHabitEvent.execute("");
 //        ArrayList<Integer> schedule = new ArrayList<>();
 //        schedule.add(Calendar.SUNDAY);
 //        HabitType ht = new HabitType(201);
@@ -138,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (ExecutionException e) {
 //            e.printStackTrace();
 //        }
-//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
+//  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
         // 2. load
         htc.loadHTID();
         hec.loadHEID();
