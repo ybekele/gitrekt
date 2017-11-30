@@ -68,7 +68,7 @@ public class HabitEventController {
         // Increment the completed event counter for the habit type
         htc.incrementHTMaxCounter(habitTypeID);
     }
-    
+
     public ArrayList<HabitEvent> getHabitEventsForToday(){
         //generateEventsForToday();
         return HabitEventStateManager.getHEStateManager().getALlHabitEventsForToday();
@@ -207,6 +207,26 @@ public class HabitEventController {
         return cal;
     }
 
+    public void setHabitEventLocation(Integer requestedID, LatLng loc){
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            he.setLocation(loc);
+        }
+    }
+
+    public LatLng getHabitEventLocation(Integer requestedID){
+        LatLng ret = null;
+        HabitEvent he = this.getHabitEvent(requestedID);
+        // If the habit event exists
+        if(!he.getHabitEventID().equals(-1)){
+            return he.getLocation();
+        } else {
+            return ret;
+        }
+    }
+
+
     public Integer getHabitEventID(Integer requestedID){
         HabitEvent he = this.getHabitEvent(requestedID);
         // If the habit event exists
@@ -226,6 +246,7 @@ public class HabitEventController {
             return -1;
         }
     }
+
 
     public void setHabitEventEncodedPhoto(Integer requestedID, String encodedPhoto){
         HabitEvent he = this.getHabitEvent(requestedID);

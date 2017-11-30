@@ -89,6 +89,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 Intent goToMap =  new Intent(NewHabitEventActivity.this, MapsActivity.class);
                 //Log.d("COOL", String.valueOf(htID));
                 goToMap.putExtra("htID", htID);
+                goToMap.putExtra("heID", heID);
                 startActivity(goToMap);
 
             }

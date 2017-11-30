@@ -46,6 +46,7 @@ import static android.widget.Toast.LENGTH_LONG;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener{
 
     Integer htID;
+    Integer heID;
     String titleString;
 
     Marker m;  //reference to the marker
@@ -77,11 +78,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         // Get incoming HT's ID
         htID = intent.getIntExtra("htID", -1);
+        heID = intent.getIntExtra("heID", -1);
+        LatLng test;
         //Log.d("COOL", String.valueOf(htID));
 
         HabitTypeController hc = new HabitTypeController(this);
         titleString = hc.getHabitTitle(htID);
+        //
+        HabitEventController hec = new HabitEventController(this);
+        test = hec.getHabitEventLocation(heID);
 
+
+        /*
+       ----HABITT HISTORY--
+        ArrayList<LatLng> testArray = null;
+        for(LatLng loc : testArray) {
+            if (loc != null) {
+                createMarker(test);
+            }
+        }
+        */
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -123,7 +139,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getDeviceLocation();
 
         //TEMPORARY MAYBE
-        //Marker();
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -137,18 +152,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchBar();
 
     }
-    /*
-    private void Marker(){
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                createMarker(latLng);
-
-            }
-        });
-    }
-    */
-
 
     private void getDeviceLocation() {
         /*
@@ -228,6 +231,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         }
                 ).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        HabitEventController hec = new HabitEventController(this);
+        /*
+        if(m.getPosition() != null){
+            hec.setHabitEventLocation(heID, m.getPosition());
+       }
+       */
+       if(m.getPosition() == null){
+           new AlertDialog.Builder(this)
+                   .setTitle("Really Exit?")
+                   .setMessage("Are you sure you want to exit, without creating a marker?")
+                   .setNegativeButton(android.R.string.no, null)
+                   .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                       public void onClick(DialogInterface dialog, int whichButton) {
+                           MapsActivity.super.onBackPressed();
+                           dialog.dismiss();
+
+                       }
+                   }).show();
+       }
+        finish();
     }
 
     @Override
