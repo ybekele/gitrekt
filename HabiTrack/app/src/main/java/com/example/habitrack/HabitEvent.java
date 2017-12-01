@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
@@ -33,6 +35,7 @@ public class HabitEvent {
     private String title;                       // title of the habit event
     private String comment;                     // comment for the habit event
     private Calendar date;                      // date of the habit event
+    private String userID;                      // userId of the he maker
     @JestId
     private String id;
     // Photo related vars
@@ -40,7 +43,15 @@ public class HabitEvent {
     private Bitmap decodedPhoto;                // Contains the actual photo. Will be null when saved on elastic search
     // isEmpty - true when event is default created by the app
     private Boolean isEmpty;                    // default event or not
+    private LatLng location;
 
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
 
     public HabitEvent(Integer heID, Integer htID) {
         this.habitEventID = heID;
@@ -115,6 +126,18 @@ public class HabitEvent {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     @Override

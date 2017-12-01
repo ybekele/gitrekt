@@ -23,6 +23,8 @@ import java.io.InputStream;
  */
 public class NewHabitEventActivity extends AppCompatActivity {
 
+    // connection status
+    Boolean isConnected;
     // get controllers
     HabitEventController hec = new HabitEventController(this);
     HabitTypeController htc = new HabitTypeController(this);
@@ -42,6 +44,9 @@ public class NewHabitEventActivity extends AppCompatActivity {
     Boolean isPhoto = Boolean.FALSE;
     Bitmap photo;
 
+    //Map
+    Button Map;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         // Get incoming HT's ID
         heID = intent.getIntExtra("habitEventID", -1);
         htID = intent.getIntExtra("habitTypeID", -1);
+        isConnected = intent.getBooleanExtra("connection", Boolean.FALSE);
 
         // Get interesting HT's attributes
         String titleString = hec.getHabitEventTitle(heID);
@@ -74,6 +80,21 @@ public class NewHabitEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openGallery();
+            }
+        });
+
+
+
+        Map = (Button) findViewById(R.id.mapButton);
+        Map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToMap =  new Intent(NewHabitEventActivity.this, MapsActivity.class);
+                //Log.d("COOL", String.valueOf(htID));
+                goToMap.putExtra("htID", htID);
+                goToMap.putExtra("heID", heID);
+                startActivity(goToMap);
+
             }
         });
 

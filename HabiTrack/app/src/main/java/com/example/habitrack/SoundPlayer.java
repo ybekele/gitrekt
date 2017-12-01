@@ -13,8 +13,10 @@ public class SoundPlayer {
 
     private static SoundPool soundPool;
     private static int habitSound;
+    Boolean soundON = false;
 
     public SoundPlayer(Context context){
+
 
        //SoundPool (int maxStreams,int streamType, int srcQuality)
 

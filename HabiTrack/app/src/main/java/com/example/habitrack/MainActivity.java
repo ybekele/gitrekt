@@ -26,11 +26,17 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
+    // bool var for connection status
+    Boolean isConnected;
+    // userID
+    String currentUserID;
+
     // declare components
     Button createTypeButton;
     Button historybutton;
     Button allButton;
     Button logoutButton;
+    Button socialButton;
     private ListView displayNames;
     //private ArrayList<HabitType> today = new ArrayList<HabitType>();
     private ArrayList<HabitEvent> today = new ArrayList<HabitEvent>();
@@ -40,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     // 1. Get the controllers
     HabitTypeController htc = new HabitTypeController(this);
     HabitEventController hec = new HabitEventController(this);
+    // Get Filemanager
+    FileManager fileManager = new FileManager(this);
 
 
 
@@ -48,10 +56,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Get connection status
+        isConnected = isOnline();
+
         createTypeButton = (Button) findViewById(R.id.createHabitButton);
         allButton = (Button) findViewById(R.id.allButton);
         historybutton = (Button) findViewById(R.id.historyButton);
         logoutButton = (Button) findViewById(R.id.button10);
+        socialButton = (Button) findViewById(R.id.button4);
         displayNames = (ListView) findViewById(R.id.listView);
 
 
@@ -76,6 +88,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(toLogIn);
         }
 
+
+        //if Social button --> to social activity to interact with other participants
+        socialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent social = new Intent(getApplicationContext(), SocialActivity.class);
+                startActivity(social);
+            }
+        });
+
         //If logoutButton is clicked, change loggedIn to false and go to SignupAcitivty
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,11 +109,17 @@ public class MainActivity extends AppCompatActivity {
         });
 // ------------------
 
+//        ------------------- TEMP USER ID
+        currentUserID = "testUserID";
+
+
         // Handles if user pressed CREATE button , redirects to create a new habit type class
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent newType = new Intent(getApplicationContext(), NewHabitTypeActivity.class);
+                newType.putExtra("connection", isConnected);
+                newType.putExtra("currentUserID", currentUserID);
                 startActivity(newType);
             }
         });
@@ -129,11 +157,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
+                intent.putExtra("connection", isConnected);
                 startActivity(intent);
             }
         });
 
-//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
+//  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
+//        HabitEvent testHE = new HabitEvent(1000, 2000);
+//        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+//        addHabitEvent.execute(testHE);
+//
+//        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+//        getHabitEvent.execute("");
 //        ArrayList<Integer> schedule = new ArrayList<>();
 //        schedule.add(Calendar.SUNDAY);
 //        HabitType ht = new HabitType(201);
@@ -158,7 +193,12 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (ExecutionException e) {
 //            e.printStackTrace();
 //        }
-//  --------------------------------TEST COMMANDS -- MUST BE REMOVED ------------------
+//  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
+
+        // load HT Metadata
+        fileManager.load(fileManager.HT_METADATA_MODE);
+        // Start a new thread to get elastic search IDs if possible
+        // htc.getElasticSearchIDs();
         // 2. load
         htc.loadHTID();
         hec.loadHEID();
@@ -166,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         htc.loadFromFile();
         hec.loadFromFile();
         // 4. Get Recent events and HabitTypes for today
-        htc.generateHabitsForToday();
+        htc.generateHabitsForToday(isConnected, currentUserID);
         hec.updateRecentHabitEvents();
 
     }
@@ -186,6 +226,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 }

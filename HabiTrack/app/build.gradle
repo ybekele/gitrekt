@@ -9,12 +9,17 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        defaultConfig {
+            multiDexEnabled true
         }
     }
 }
@@ -29,5 +34,7 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile 'junit:junit:4.12'
     compile 'com.jayway.android.robotium:robotium-solo:5.2.1'
+    compile 'com.google.android.gms:play-services:11.2.0'
     implementation files('src/include/jest-droid-2.0.1-SNAPSHOT.jar')
+    implementation 'com.google.android.gms:play-services-games:11.6.0'
 }

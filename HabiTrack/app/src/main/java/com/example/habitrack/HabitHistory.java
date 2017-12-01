@@ -154,12 +154,14 @@ public class HabitHistory extends AppCompatActivity {
                 Intent intent = new Intent(HabitHistory.this, HabitEventDetailsActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
+
                 if(the_titles.get(i).getEmpty()== Boolean.FALSE) {
                     intent.putExtra("habitEventID", the_titles.get(i).getHabitEventID());
                     Log.d("last", "this is the id " + the_titles.get(i).getHabitEventID());
                     intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment());
                     intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
                 }
+
                 startActivity(intent);
             }
         });
