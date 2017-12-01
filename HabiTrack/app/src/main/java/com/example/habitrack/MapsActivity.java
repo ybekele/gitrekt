@@ -42,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Integer htID;
     Integer heID;
     String titleString;
+    ArrayList<String> friends_locations;
 
     Marker m;  //reference to the marker
 
@@ -76,6 +77,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng test;
         //Log.d("COOL", String.valueOf(htID));
 
+        //Following is a list of IDs that belong on the map
+        friends_locations = intent.getStringArrayListExtra("tracker");
+
+        
         HabitTypeController hc = new HabitTypeController(this);
         titleString = hc.getHabitTitle(htID);
         //
