@@ -1,5 +1,6 @@
 package com.example.habitrack;
 
+import android.accessibilityservice.FingerprintGestureController;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,8 @@ public class HabitHistory extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
     Button start_over;
+    Button show_map;
+
 
     //Intializing arrays
 
@@ -36,14 +39,11 @@ public class HabitHistory extends AppCompatActivity {
     List<String> all_habit_titles = new ArrayList<String>();
     List<HabitEvent> the_titles = new ArrayList<HabitEvent>();
     List<String> temp = new ArrayList<String>();
+    List<Integer> listview_tracker = new ArrayList<Integer>();
+    List<Integer> temp_tracker = new ArrayList<Integer>();
 
     int i;
-
-
-
-
-
-
+    int a;
 
     @Override
     /**
@@ -57,18 +57,17 @@ public class HabitHistory extends AppCompatActivity {
         HabitTypeController ht = new HabitTypeController(this);
 
 
-
-        //Log.d("hello","came back in here my dude");
-
         //Filling array with habit event titles
         for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
             if(hc.getAllHabitEvent().get(i).getEmpty() == Boolean.FALSE) {
                 String title = hc.getAllHabitEvent().get(i).getTitle();
                 all_habit_titles.add(title);
+                listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
             }
         }
 
         Collections.reverse(all_habit_titles);
+
 
         the_titles = hc.getAllHabitEvent();
 
@@ -79,46 +78,41 @@ public class HabitHistory extends AppCompatActivity {
 
 
         start_over = (Button) findViewById(R.id.reset);
+        show_map = (Button) findViewById(R.id.map);
 
 
 
 
 
 
-
-        //Log.d("hello","histhee"+all_habit_titles.get(0).toString());
-
-
-        //MAKE A TEMPORARY ARRAYLIST EQUAL THE ORIGINAL ARRAYLIST SO WHEN YOU YOU ARE LONGER
-        //FILTERING YOUR SEARCH, YOU GET BACK YOUR ORIGINAL LISTVIEW
-
-       /* if(temp.isEmpty()) {
-            Log.d("temp","temp is empty");
-            temp = all_habit_titles;
-        }
-        else{
-            Log.d("temp","temp IS NOT empty");
-            all_habit_titles = temp;
-        }
-*/
         adapter = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, all_habit_titles)));
-
-        //adapter = new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, arrayHabits);
-        //adapter2 = new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, arrayComments);
-
-        //lv.setAdapter(adapter);
-        //lv.setAdapter(adapter2);
-
-
-
-        //Log.d("State", name_comments.toString());
-
-
-        //adapter2 = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, R.id.text1)));
 
 
 
         lv.setAdapter(adapter);
+
+        show_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            /**
+             * If the user wants to reset the listview back to its original view, the following
+             * function handles that
+             */
+            public void onClick(View view) {
+                Intent intent = new Intent(HabitHistory.this, MapsActivity.class);
+
+
+
+                intent.putExtra("tracker",listview_tracker.toString());
+
+
+            }
+        });
+
+
+
+
+
+
 
         //Following resets listview to all habit event titles
         start_over.setOnClickListener(new View.OnClickListener() {
@@ -130,7 +124,13 @@ public class HabitHistory extends AppCompatActivity {
             public void onClick(View view) {
                 HabitHistory attempt = new HabitHistory();
                 all_habit_titles.clear();
+                listview_tracker.clear();
                 all_habit_titles = attempt.update_array();
+
+
+                for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                    listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
+                }
                 //adapter.notifyDataSetChanged();
                 adapter = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, all_habit_titles)));
                 ListView lv = (ListView)findViewById(R.id.listView_history);
@@ -212,6 +212,7 @@ public class HabitHistory extends AppCompatActivity {
                     if(switchState){
                         Log.d("query","came into the query");
                         all_habit_titles.clear();
+                        listview_tracker.clear();
                         HabitEventController hc = new HabitEventController(getApplicationContext());
                         for(i=0;i<hc.getAllHabitEvent().size();i++) {
                             String comment = hc.getAllHabitEvent().get(i).getComment();
@@ -221,6 +222,7 @@ public class HabitHistory extends AppCompatActivity {
                             String title = hc.getAllHabitEvent().get(i).getTitle();
                             comments_list.add(comment);
                             habit_title.add(title);
+                            temp_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
 
                             Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
 
@@ -232,12 +234,10 @@ public class HabitHistory extends AppCompatActivity {
                                 {
                                     if(!(all_habit_titles.contains(habit_title.get(i)))) {
                                         all_habit_titles.add(habit_title.get(i));
+                                        listview_tracker.add(temp_tracker.get(i));
                                     }
                                 }
-
                             }
-
-
                 }
 
                 adapter.notifyDataSetChanged();
