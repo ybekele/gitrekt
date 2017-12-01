@@ -4,24 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/orangemult" android:alpha="0.9"
+    android:alpha="0.9"
+    android:background="@drawable/orangemult"
     tools:context="com.example.habitrack.AllHabitTypesActivity">
-
-    <ListView
-        android:id="@+id/historyListView"
-        android:layout_width="352dp"
-        android:layout_height="355dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:focusableInTouchMode="false"
-        android:isScrollContainer="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/allHtTile" />
 
     <TextView
         android:id="@+id/historyTitle"
@@ -73,5 +58,17 @@
         app:layout_constraintBottom_toTopOf="@+id/historyListView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBox" />
+
+    <ListView
+        android:id="@+id/historyListView"
+        android:layout_width="265dp"
+        android:layout_height="363dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:focusableInTouchMode="false"
+        android:isScrollContainer="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/allHtTile" />
 
 </android.support.constraint.ConstraintLayout>
