@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
@@ -51,7 +53,11 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         heDate = he.getHabitEvent(heID).getDate();
         heComment = he.getHabitEvent(heID).getComment();
         encodedImage = he.getHabitEventEncodedPhoto(heID);
+
+        LatLng test = he.getHabitEventLocation(heID);
+
         shareButton = (Button) findViewById(R.id.shareBut);
+     
         if(encodedImage != null) {
             ImageHandler.Decompressor decompressor = new ImageHandler.Decompressor();
             decompressor.execute(encodedImage);

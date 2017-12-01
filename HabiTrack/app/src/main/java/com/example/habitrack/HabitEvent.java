@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
@@ -41,7 +43,15 @@ public class HabitEvent {
     private Bitmap decodedPhoto;                // Contains the actual photo. Will be null when saved on elastic search
     // isEmpty - true when event is default created by the app
     private Boolean isEmpty;                    // default event or not
+    private LatLng location;
 
+    public LatLng getLocation() {
+        return location;
+    }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
 
     public HabitEvent(Integer heID, Integer htID) {
         this.habitEventID = heID;

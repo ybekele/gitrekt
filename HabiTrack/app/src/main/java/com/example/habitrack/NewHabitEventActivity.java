@@ -44,6 +44,9 @@ public class NewHabitEventActivity extends AppCompatActivity {
     Boolean isPhoto = Boolean.FALSE;
     Bitmap photo;
 
+    //Map
+    Button Map;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,21 @@ public class NewHabitEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openGallery();
+            }
+        });
+
+
+
+        Map = (Button) findViewById(R.id.mapButton);
+        Map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToMap =  new Intent(NewHabitEventActivity.this, MapsActivity.class);
+                //Log.d("COOL", String.valueOf(htID));
+                goToMap.putExtra("htID", htID);
+                goToMap.putExtra("heID", heID);
+                startActivity(goToMap);
+
             }
         });
 
