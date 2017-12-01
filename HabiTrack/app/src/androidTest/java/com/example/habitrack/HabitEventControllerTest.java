@@ -49,10 +49,11 @@ public class HabitEventControllerTest extends AndroidTestCase {
         hec.createNewHabitEvent(1);
         // make 2nd test habit event with comment for same habit type
         this.comment = "testComment1";
-        hec.createNewHabitEvent(1, comment);
+        hec.editHabitEventComment(1, comment);
         // set pointers for the two habit events
         this.he = hec.getHabitEvent(1);
         this.secondhe = hec.getHabitEvent(2);
+        hec.editHabitEventComment(2, comment);
     }
 
     /**
