@@ -62,8 +62,10 @@ public class HabitHistory extends AppCompatActivity {
 
         //Filling array with habit event titles
         for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
-            String title = hc.getAllHabitEvent().get(i).getTitle();
-            all_habit_titles.add(title);
+            if(hc.getAllHabitEvent().get(i).getEmpty() == Boolean.FALSE) {
+                String title = hc.getAllHabitEvent().get(i).getTitle();
+                all_habit_titles.add(title);
+            }
         }
 
         Collections.reverse(all_habit_titles);
@@ -152,10 +154,14 @@ public class HabitHistory extends AppCompatActivity {
                 Intent intent = new Intent(HabitHistory.this, HabitEventDetailsActivity.class);
                 //intent.putExtra("HabitTitle", displayNames.getItemAtPosition(i).toString());
                 //Log.d("position", displayNames.getItemAtPosition(i).toString());
-                intent.putExtra("habitEventID", the_titles.get(i).getHabitEventID());
-                Log.d("last","Clicked title "+ the_titles.get(i).getHabitEventID());
-                intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment() );
-                intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
+
+                if(the_titles.get(i).getEmpty()== Boolean.FALSE) {
+                    intent.putExtra("habitEventID", the_titles.get(i).getHabitEventID());
+                    Log.d("last", "this is the id " + the_titles.get(i).getHabitEventID());
+                    intent.putExtra("cm", hc.getAllHabitEvent().get(i).getComment());
+                    intent.putExtra("title", hc.getAllHabitEvent().get(i).getTitle());
+                }
+
                 startActivity(intent);
             }
         });

@@ -3,8 +3,11 @@ package com.example.habitrack;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +39,7 @@ public class SignupActivity extends AppCompatActivity {
         userInput = (EditText) findViewById(R.id.editText);
         loginButton = (Button) findViewById(R.id.button5);
         signUpButton = (Button) findViewById(R.id.button9);
+
 
         /*
         * Shared Preference files to store values of the users ID as well as the logged in state of the app
