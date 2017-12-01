@@ -23,6 +23,8 @@ import java.io.InputStream;
  */
 public class NewHabitEventActivity extends AppCompatActivity {
 
+    // connection status
+    Boolean isConnected;
     // get controllers
     HabitEventController hec = new HabitEventController(this);
     HabitTypeController htc = new HabitTypeController(this);
@@ -55,6 +57,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         // Get incoming HT's ID
         heID = intent.getIntExtra("habitEventID", -1);
         htID = intent.getIntExtra("habitTypeID", -1);
+        isConnected = intent.getBooleanExtra("connection", Boolean.FALSE);
 
         // Get interesting HT's attributes
         String titleString = hec.getHabitEventTitle(heID);

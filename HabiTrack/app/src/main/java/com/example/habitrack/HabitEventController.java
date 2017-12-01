@@ -51,7 +51,7 @@ public class HabitEventController {
         this.hectx = ctx;
     }
 
-    public void createNewHabitEvent(Integer habitTypeID){
+    public void createNewHabitEvent(Integer habitTypeID, Boolean isConnected, String userID){
         Log.d("seen","itcame here");
         HabitTypeController htc = new HabitTypeController(hectx);
         HabitEvent he = new
@@ -59,10 +59,14 @@ public class HabitEventController {
         // Save the new HE ID
         saveHEID();
         he.setTitle(htc.getHabitTitle(habitTypeID));
+        he.setUserID(userID);
+        htc.setHabitTypeMostRecentEvent(habitTypeID, he);
         HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-        // Save event on elastic search
-        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
-        addHabitEvent.execute(he);
+        // Save event on elastic search if connected
+        if(isConnected) {
+            ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+            addHabitEvent.execute(he);
+        }
         // Save event locally
         saveToFile();
         // Increment the completed event counter for the habit type
