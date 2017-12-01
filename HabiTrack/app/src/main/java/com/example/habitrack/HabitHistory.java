@@ -39,7 +39,7 @@ public class HabitHistory extends AppCompatActivity {
     List<String> all_habit_titles = new ArrayList<String>();
     List<HabitEvent> the_titles = new ArrayList<HabitEvent>();
     List<String> temp = new ArrayList<String>();
-    List<Integer> listview_tracker = new ArrayList<Integer>();
+    ArrayList<String> listview_tracker = new ArrayList<String>();
     List<Integer> temp_tracker = new ArrayList<Integer>();
 
     int i;
@@ -62,7 +62,7 @@ public class HabitHistory extends AppCompatActivity {
             if(hc.getAllHabitEvent().get(i).getEmpty() == Boolean.FALSE) {
                 String title = hc.getAllHabitEvent().get(i).getTitle();
                 all_habit_titles.add(title);
-                listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
+                listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
             }
         }
 
@@ -78,7 +78,7 @@ public class HabitHistory extends AppCompatActivity {
 
 
         start_over = (Button) findViewById(R.id.reset);
-        show_map = (Button) findViewById(R.id.map);
+        show_map = (Button) findViewById(R.id.mapid);
 
 
 
@@ -102,8 +102,13 @@ public class HabitHistory extends AppCompatActivity {
 
 
 
-                intent.putExtra("tracker",listview_tracker.toString());
+                if(listview_tracker==null){
+                    Log.d("ooo", "MarkersList" + "uuuuuuu");
+                }
+                Log.d("ooo", "MarkersList" + listview_tracker.get(0).toString());
+                intent.putStringArrayListExtra("tracker",listview_tracker);
 
+                startActivity(intent);
 
             }
         });
@@ -129,7 +134,7 @@ public class HabitHistory extends AppCompatActivity {
 
 
                 for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
-                    listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
+                    listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
                 }
                 //adapter.notifyDataSetChanged();
                 adapter = ((new ArrayAdapter<String>(HabitHistory.this, android.R.layout.simple_list_item_1, all_habit_titles)));
@@ -234,7 +239,7 @@ public class HabitHistory extends AppCompatActivity {
                                 {
                                     if(!(all_habit_titles.contains(habit_title.get(i)))) {
                                         all_habit_titles.add(habit_title.get(i));
-                                        listview_tracker.add(temp_tracker.get(i));
+                                        listview_tracker.add(temp_tracker.get(i).toString());
                                     }
                                 }
                             }

@@ -63,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //widgets
     private EditText mSearchText;
+    int i;
 
     //Markers list
     List<Marker> Markerslist = new ArrayList<>();
@@ -78,9 +79,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Log.d("COOL", String.valueOf(htID));
 
         //Following is a list of IDs that belong on the map
-        friends_locations = intent.getStringArrayListExtra("tracker");
+        friends_locations = getIntent().getStringArrayListExtra("tracker");
 
-        
+
+        if(friends_locations == null){
+            Log.d("rrr", "MarkersList" + "still null");
+        }
+
+        //Log.d("rrr", "MarkersList" + "mnbbmnbkk");
+
+
+        if(friends_locations!= null) {
+            for (i = 0; i < friends_locations.size(); i++) {
+                Log.d("rrr", "MarkersList" + friends_locations.get(i));
+
+            }
+        }
+
+
         HabitTypeController hc = new HabitTypeController(this);
         titleString = hc.getHabitTitle(htID);
         //
