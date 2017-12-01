@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 /**
  *
  * SignupActivity
@@ -26,9 +28,10 @@ import android.widget.Toast;
 public class SignupActivity extends AppCompatActivity {
 
     String userName, uID;
+    Boolean userNameExists;
     EditText userInput;
     Button loginButton, signUpButton;
-    //ArrayList<String> userIDs = new ArrayList<>();
+    ArrayList<NewUser> existingUserIDs = new ArrayList<>();
     //private int userIDKey = 2000;
 
     @Override
@@ -41,21 +44,31 @@ public class SignupActivity extends AppCompatActivity {
         signUpButton = (Button) findViewById(R.id.button9);
 
 
+        ElasticSearchController esc = new ElasticSearchController();
+
+        existingUserIDs = getUserIDs();
+
         /*
         * Shared Preference files to store values of the users ID as well as the logged in state of the app
         */
         final SharedPreferences sharedLoggedInStatus = getSharedPreferences("loggedInStatus", Context.MODE_PRIVATE);
-        final SharedPreferences sharedUserIDs = getSharedPreferences("userID", Context.MODE_PRIVATE);
+        //final SharedPreferences sharedUserIDs = getSharedPreferences("userID", Context.MODE_PRIVATE);
         final SharedPreferences.Editor loggedInStatusEditor = sharedLoggedInStatus.edit();
-        final SharedPreferences.Editor userIDEditor = sharedUserIDs.edit();
+        //final SharedPreferences.Editor userIDEditor = sharedUserIDs.edit();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /*Checks if a username key already exists in sharedUserIDs*/
                 userName = userInput.getText().toString();
-                if (sharedUserIDs.contains("USERNAME")) {
-                    uID = sharedUserIDs.getString("USERNAME", null);
+                for (int i = 0; i < existingUserIDs.size(); i++){
+                    String uTitle = existingUserIDs.get(i).getTitle();
+                    if(userName.equals(uTitle)){
+                        userNameExists = true;
+                    }
+                }
+                if (userNameExists) {
+                    //uID = sharedUserIDs.getString("USERNAME", null);
                     /*Check to see if the username entered by user matches what was signed up.
                     * If it does, go to MainActivity
                     */
@@ -86,16 +99,46 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 userName = userInput.getText().toString();
-                if(sharedUserIDs.contains("USERNAME")) {
+                for (int j = 0; j < existingUserIDs.size(); j++){
+                    String uTitle = existingUserIDs.get(j).getTitle();
+                    if(userName.equals(uTitle)){
+                        userNameExists = true;
+                    }
+                }
+                if(userNameExists) {
                     Toast.makeText(getApplicationContext(),"Account already exists. Please Login.", Toast.LENGTH_LONG).show();
                 } else {
                     //userIDs.add(userName);
-                    userIDEditor.putString("USERNAME", userName);
-                    userIDEditor.apply();
+                    //userIDEditor.putString("USERNAME", userName);
+                    //userIDEditor.apply();
+                    uID = userName;
+                    NewUser thisUser = new NewUser(userName);
+                    ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+                    addNewUser.execute(thisUser);
                     Toast.makeText(getApplicationContext(),"Welcome to HabiTrack! You may now login.", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
     }
+
+    public ArrayList<NewUser> getUserIDs(){
+
+        ArrayList<NewUser> nu = new ArrayList<>();
+        ElasticSearchController.GetUser getExistingUsers = new ElasticSearchController.GetUser();
+        // may be changed
+        getExistingUsers.execute("");
+        try {
+            nu = getExistingUsers.get();
+        }
+        catch (Exception e)
+        {
+            Log.i("Error","Failed to get existing user ID's");
+        }
+
+        return nu;
+    }
+
+
+
 }
