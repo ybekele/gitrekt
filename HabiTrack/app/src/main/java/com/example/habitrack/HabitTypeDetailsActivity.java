@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class HabitTypeDetailsActivity extends AppCompatActivity {
-
+    TextView progressNum;
     EditText titleEdit;
     EditText reasonEdit;
     EditText dateEdit;
@@ -77,6 +77,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         titleView = (TextView) findViewById(R.id.titleView);
         reasonView = (TextView) findViewById(R.id.reasonView);
         dateView = (TextView) findViewById(R.id.dateView);
+        progressNum = (TextView) findViewById(R.id.statPercent);
 
         // Display the text
         titleView.setText(titleString); // title
@@ -88,8 +89,8 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         // Set the max, and the progress
         //progressBar.setMax(htc.getMaxCounter(htID));
         progressBar.setMax(htc.getMaxCounter(htID));
-       
         progressBar.setProgress(htc.getCompletedCounter(htID));
+        progressNum.setText(htc.getCompletedCounter(htID).toString());
 
         // Get the edit text references
         titleEdit = (EditText) findViewById(R.id.titleBox);

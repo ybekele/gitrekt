@@ -45,9 +45,7 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit_event_details);
         Intent intent = getIntent();
         htID = intent.getIntExtra("title", -1);
-        Log.d("passed", "passed htID = " + htID);
         heID = intent.getIntExtra("habitEventID", -1);
-        Log.d("passed", "passed heID = " + heID);
         typeName = he.getHabitEventTitle(heID);
 
         heDate = he.getHabitEvent(heID).getDate();
