@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
                     intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 } else {
                     intent = new Intent(MainActivity.this, HabitEventDetailsActivity.class);
-                   // intent = new Intent(MainActivity.this, HabitEventDetailsActivity.class);
                 }
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
