@@ -13,9 +13,8 @@
     <string name="edit_text_title_hint">Title</string>
     <string name="edit_text_snippet_hint">Enter a description (Optional)</string>
     <string name="add_marker_title">Add a marker for (%1$.1f, %2$.1f)</string>
+    <string name="title_activity_maps2">Map</string>
     <!-- <string name=""></string> -->
-
-
 
 
 </resources>

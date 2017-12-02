@@ -38,7 +38,6 @@
         <activity android:name=".HabitHistory" />
         <activity android:name=".heImageDisplay" />
 
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -53,14 +52,13 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-
-        </activity>
-
+            android:label="@string/title_activity_maps"></activity>
         <activity android:name=".DateSelector" />
         <activity android:name=".SocialActivity" />
-        <activity android:name=".MyFollowers"></activity>
-
+        <activity android:name=".MyFollowers" />
+        <activity
+            android:name=".MapsActivity2"
+            android:label="@string/title_activity_maps2"></activity>
     </application>
 
 </manifest>

@@ -29,6 +29,7 @@ public class HabitHistory extends AppCompatActivity {
     ArrayAdapter<String> adapter2;
     Button start_over;
     Button show_map;
+    Integer changing = 1;
 
 
     //Intializing arrays
@@ -67,6 +68,7 @@ public class HabitHistory extends AppCompatActivity {
         }
 
         Collections.reverse(all_habit_titles);
+        Collections.reverse(listview_tracker);
 
 
         the_titles = hc.getAllHabitEvent();
@@ -98,15 +100,16 @@ public class HabitHistory extends AppCompatActivity {
              * function handles that
              */
             public void onClick(View view) {
-                Intent intent = new Intent(HabitHistory.this, MapsActivity.class);
+                Intent intent = new Intent(HabitHistory.this, MapsActivity2.class);
 
 
 
                 if(listview_tracker==null){
                     Log.d("ooo", "MarkersList" + "uuuuuuu");
                 }
-                Log.d("ooo", "MarkersList" + listview_tracker.get(0).toString());
+               // Log.d("ooo", "MarkersList" + listview_tracker.get(0).toString());
                 intent.putStringArrayListExtra("tracker",listview_tracker);
+
 
                 startActivity(intent);
 
@@ -261,6 +264,8 @@ public class HabitHistory extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                HabitEventController hc = new HabitEventController(getApplicationContext());
+                listview_tracker.clear();
                 Switch simpleSwitch = (Switch) findViewById(R.id.switch2);
                 final Boolean switchState = simpleSwitch.isChecked();
 
@@ -268,6 +273,12 @@ public class HabitHistory extends AppCompatActivity {
                     adapter.getFilter().filter(newText);
                 }
                 Log.d("checking","we came to the super");
+
+                for(int i=0;i<all_habit_titles.size();i++){
+                    if(all_habit_titles.get(i).startsWith(newText)){
+                        listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+                    }
+                }
 
                 return false;
             }
