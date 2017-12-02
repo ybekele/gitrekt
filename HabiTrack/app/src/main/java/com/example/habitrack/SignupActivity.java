@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class SignupActivity extends AppCompatActivity {
 
-    String userName, uID;
+    String userName, liuName, liuID;
     Boolean userNameExists;
     EditText userInput;
     Button loginButton, signUpButton;
@@ -39,14 +39,13 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        userInput = (EditText) findViewById(R.id.editText);
-        loginButton = (Button) findViewById(R.id.button5);
-        signUpButton = (Button) findViewById(R.id.button9);
+        userInput = findViewById(R.id.editText);
+        loginButton = findViewById(R.id.button5);
+        signUpButton = findViewById(R.id.button9);
 
+        //ElasticSearchController esc = new ElasticSearchController();
 
-        ElasticSearchController esc = new ElasticSearchController();
-
-        existingUserIDs = getUserIDs();
+        //existingUserIDs = getUserIDs();
 
         /*
         * Shared Preference files to store values of the users ID as well as the logged in state of the app
@@ -60,35 +59,54 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 /*Checks if a username key already exists in sharedUserIDs*/
+                existingUserIDs = getUserIDs();
+                userNameExists = Boolean.FALSE;
                 userName = userInput.getText().toString();
-                for (int i = 0; i < existingUserIDs.size(); i++){
-                    String uTitle = existingUserIDs.get(i).getTitle();
-                    if(userName.equals(uTitle)){
-                        userNameExists = true;
+                if(existingUserIDs.size() > 0) {
+                    for (int i = 0; i < existingUserIDs.size(); i++) {
+                        String uTitle = existingUserIDs.get(i).getTitle();
+                        //Toast.makeText(getApplicationContext(), "uTitle = " + uTitle, Toast.LENGTH_SHORT).show();
+                        if (userName.equals(uTitle)) {
+                            userNameExists = true;
+                            liuName = existingUserIDs.get(i).getTitle();
+                            liuID = existingUserIDs.get(i).getId();
+                            Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
+                            loggedInStatusEditor.putBoolean("loggedIn", true);
+                            loggedInStatusEditor.apply();
+                            Intent loggedIn = new Intent (SignupActivity.this, MainActivity.class);
+                            startActivity(loggedIn);
+                        }
+                    }
+                    if(userNameExists == Boolean.FALSE){
+                        Toast.makeText(getApplicationContext(), "Login Unsuccessful: Username incorrect.", Toast.LENGTH_LONG).show();
                     }
                 }
-                if (userNameExists) {
+                else {
+                    Toast.makeText(getApplicationContext(), "No exisitng user. Please Sign Up!", Toast.LENGTH_LONG).show();
+                }
+                /*
+                if (userNameExists == Boolean.TRUE) {
                     //uID = sharedUserIDs.getString("USERNAME", null);
                     /*Check to see if the username entered by user matches what was signed up.
                     * If it does, go to MainActivity
-                    */
-                    if(userName.equals(uID)){
+                    *
+                    if(userName.equals(uName)){
                         Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
                         loggedInStatusEditor.putBoolean("loggedIn", true);
                         loggedInStatusEditor.apply();
                         Intent loggedIn = new Intent (SignupActivity.this, MainActivity.class);
                         startActivity(loggedIn);
-                    } else /*If username doesn't match what was saved, don't sign in.*/
+                    } else /*If username doesn't match what was saved, don't sign in.*
                     {
                         Toast.makeText(getApplicationContext(), "Login Unsuccessful: Username incorrect. Username = " + uID, Toast.LENGTH_LONG).show();
 
                     }
 
-                } else /*If no such key exists, user has not signed up yet*/
+                } else /*If no such key exists, user has not signed up yet*
                 {
                     Toast.makeText(getApplicationContext(), "Username not found. Please sign up.",
                             Toast.LENGTH_LONG).show();
-                }
+                }*/
             }
         });
 
@@ -99,24 +117,39 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 userName = userInput.getText().toString();
-                for (int j = 0; j < existingUserIDs.size(); j++){
-                    String uTitle = existingUserIDs.get(j).getTitle();
-                    if(userName.equals(uTitle)){
-                        userNameExists = true;
+                userNameExists = Boolean.FALSE;
+                existingUserIDs = getUserIDs();
+                if(existingUserIDs.size() > 0) {
+                    for(int j = 0; j < existingUserIDs.size(); j++) {
+                        String uTitle = existingUserIDs.get(j).getTitle();
+                        if (userName.equals(uTitle)) {
+                            userNameExists = Boolean.TRUE;
+                            Toast.makeText(getApplicationContext(),"Account already exists. Please Login.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
-                if(userNameExists) {
+                if(userNameExists == Boolean.FALSE){
+                    NewUser thisUser = new NewUser(userName);
+                    ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+                    addNewUser.execute(thisUser);
+                    Toast.makeText(getApplicationContext(),"Welcome to HabiTrack! You may now login.", Toast.LENGTH_LONG).show();
+                    //existingUserIDs = getUserIDs();
+                }
+
+                /*
+                if(userNameExists == Boolean.TRUE) {
                     Toast.makeText(getApplicationContext(),"Account already exists. Please Login.", Toast.LENGTH_LONG).show();
                 } else {
                     //userIDs.add(userName);
                     //userIDEditor.putString("USERNAME", userName);
                     //userIDEditor.apply();
-                    uID = userName;
+                    //uName = userName;
                     NewUser thisUser = new NewUser(userName);
                     ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
                     addNewUser.execute(thisUser);
                     Toast.makeText(getApplicationContext(),"Welcome to HabiTrack! You may now login.", Toast.LENGTH_LONG).show();
                 }
+                */
             }
         });
 
@@ -128,8 +161,10 @@ public class SignupActivity extends AppCompatActivity {
         ElasticSearchController.GetUser getExistingUsers = new ElasticSearchController.GetUser();
         // may be changed
         getExistingUsers.execute("");
+        Log.d("entered", nu.toString());
         try {
             nu = getExistingUsers.get();
+            Log.d("existing", nu.toString());
         }
         catch (Exception e)
         {
