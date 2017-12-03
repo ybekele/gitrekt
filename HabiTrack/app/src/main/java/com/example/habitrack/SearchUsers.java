@@ -72,7 +72,7 @@ public class SearchUsers extends AppCompatActivity {
                 for (int j = 0; j < matchedUsers.size(); j++){
                     if (matchedUsers.get(j).getTitle().equals(displayNames.get(i))) {
                         //matchedUsers.get(j).addRequest(PUT THE USERS OWN ID HERE );
-                        
+
                     }
                 }
 //                AlertDialog.Builder adb = new AlertDialog.Builder(
