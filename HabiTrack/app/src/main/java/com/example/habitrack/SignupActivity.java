@@ -3,10 +3,8 @@ package com.example.habitrack;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -82,7 +80,7 @@ public class SignupActivity extends AppCompatActivity {
                     }
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "No exisitng user. Please Sign Up!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No existing user. Please Sign Up!", Toast.LENGTH_LONG).show();
                 }
                 /*
                 if (userNameExists == Boolean.TRUE) {

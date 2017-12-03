@@ -24,6 +24,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
     EditText reasonEdit;
     EditText dateEdit;
     ProgressBar progressBar;
+    Integer progressPercent;
     //Button editButton;
     Button deleteButton;
 
@@ -90,7 +91,8 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
         //progressBar.setMax(htc.getMaxCounter(htID));
         progressBar.setMax(htc.getMaxCounter(htID));
         progressBar.setProgress(htc.getCompletedCounter(htID));
-        progressNum.setText(htc.getCompletedCounter(htID).toString());
+        progressPercent = htc.getCompletedCounter(htID)/htc.getMaxCounter(htID) * 100;
+        progressNum.setText(progressPercent.toString() + "%");
 
         // Get the edit text references
         titleEdit = (EditText) findViewById(R.id.titleBox);
