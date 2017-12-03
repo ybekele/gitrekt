@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
         });
 // ------------------
 
-//        ------------------- TEMP USER ID
         currentUserID = liUserID;
+
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("habitID", today.get(i).getID());
                 Intent intent;
                 Integer heID = today.get(i).getHabitEventID();
+                String esID = today.get(i).getHabitTypeEsID();
                 if(hec.getHabitEventIsEmpty(heID)) {
                     intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 } else {
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 intent.putExtra("connection", isConnected);
+                intent.putExtra("habitTypeEsID", esID);
                 startActivity(intent);
             }
         });
@@ -198,9 +200,13 @@ public class MainActivity extends AppCompatActivity {
 //        hec.doOfflineTasks();
 //  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
 
-        // load HT Metadata
+        // 1. load HT Metadata
         fileManager.load(fileManager.HT_METADATA_MODE);
-        // 2. load
+        // 2. calculate all the hts for today, using htmds
+        htc.getHabitTypesForToday();
+        // 3. calculate the hes for today, using the previously created htmdfortoday list
+        hec.generateEventsForToday(isConnected, currentUserID);
+        // 2. load IDs
         htc.loadHTID();
         hec.loadHEID();
         // 3. Restore all HT and HE if saved

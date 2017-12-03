@@ -31,7 +31,10 @@ public class HabitTypeStateManager {
     private static ArrayList<HabitType> ALL_HABITTYPES = new ArrayList<HabitType>();
     private static ArrayList<HabitType> HABITTYPES_FOR_TODAY = new ArrayList<HabitType>();
     // ArrayList to store the Metadata for the HabitType
-    private static ArrayList<HabitTypeMetadata> htMetadata = new ArrayList<HabitTypeMetadata>();
+    private static ArrayList<HabitTypeMetadata> htMetadataAll = new ArrayList<HabitTypeMetadata>();
+    // ArrayList to store htmd for today
+    private static ArrayList<HabitTypeMetadata> htMetadataToday = new ArrayList<HabitTypeMetadata>();
+
 
 
     private HabitTypeStateManager(){}
@@ -68,27 +71,41 @@ public class HabitTypeStateManager {
         }
     }
 
-    public void addMetadata(HabitType ht){
-        this.htMetadata.add(ht.getMyData());
+    public void addMetadata(HabitTypeMetadata ht){
+        htMetadataAll.add(ht);
     }
 
     public HabitTypeMetadata getHtMetadata(String esID){
-        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
-        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
-            if(habitTypeMetadata.getEsID() == esID){
-                htMD = habitTypeMetadata;
+        for(Integer count = 0; count < htMetadataAll.size(); count++){
+            String testESID = htMetadataAll.get(count).getEsID();
+            if(testESID.equals(esID)){
+//            if(htMetadata.get(count).getEsID() == esID){
+                return htMetadataAll.get(count);
             }
         }
+//        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
+//            if(habitTypeMetadata.getEsID() == esID){
+//                return habitTypeMetadata;
+//            }
+//        }
+        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
         return htMD;
     }
 
-
-    public static ArrayList<HabitTypeMetadata> getAllMetadata() {
-        return htMetadata;
+    public void setHtMetadataAll(ArrayList<HabitTypeMetadata> htmdList){
+        htMetadataAll = htmdList;
     }
 
-    public static void setHtMetadata(ArrayList<HabitTypeMetadata> htMetadata) {
-        HabitTypeStateManager.htMetadata = htMetadata;
+    public ArrayList<HabitTypeMetadata> getHtMetadataAll() {
+        return htMetadataAll;
+    }
+
+    public void setHtMetadataToday(ArrayList<HabitTypeMetadata> htmdList){
+        htMetadataToday = htmdList;
+    }
+
+    public ArrayList<HabitTypeMetadata> getHtMetadataToday() {
+        return htMetadataToday;
     }
 
     public ArrayList<HabitType> getAllHabitTypes(){
