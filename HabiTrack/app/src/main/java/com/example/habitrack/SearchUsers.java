@@ -13,9 +13,10 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class SearchUsers extends AppCompatActivity {
+
+    ListView searchedUsersListView;
+    Button searchUsersButton;
     private EditText searchedUsersEditText;
-    private ListView searchedUsersListView;
-    private Button searchUsersButton;
     private String searchText;
     private ArrayAdapter<String>  adapter;
     private ArrayList<NewUser> currentUsers = new ArrayList<>();
@@ -69,6 +70,12 @@ public class SearchUsers extends AppCompatActivity {
         searchedUsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int j = 0; j < matchedUsers.size(); j++){
+                    if (matchedUsers.get(j).getTitle().equals(displayNames.get(i))) {
+                        //matchedUsers.get(j).addRequest(PUT THE USERS OWN ID HERE );
+                        
+                    }
+                }
 //                AlertDialog.Builder adb = new AlertDialog.Builder(
 //                        MainActivity.this);
             }
@@ -94,6 +101,7 @@ public class SearchUsers extends AppCompatActivity {
         super.onStart();
     }
 
+
     public ArrayList<NewUser> getCurrentUsers() {
 
         ArrayList<NewUser> eu = new ArrayList<>();
@@ -102,10 +110,10 @@ public class SearchUsers extends AppCompatActivity {
         getExistingUsers.execute("");
         Log.d("entered", eu.toString());
         try {
-            eu = getExistingUsers.get();
-            Log.d("existing", eu.toString());
+        eu = getExistingUsers.get();
+        Log.d("existing", eu.toString());
         } catch (Exception e) {
-            Log.i("Error", "Failed to get existing user ID's");
+        Log.i("Error", "Failed to get existing user ID's");
         }
         return eu;
     }
