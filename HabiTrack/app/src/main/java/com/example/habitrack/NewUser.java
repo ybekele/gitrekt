@@ -1,5 +1,7 @@
 package com.example.habitrack;
 
+import java.util.ArrayList;
+
 import io.searchbox.annotations.JestId;
 
 /**
@@ -11,6 +13,9 @@ public class NewUser {
     private String userName;
     @JestId
     private String userID;
+    private ArrayList<NewUser> followRequests = new ArrayList<>();
+    private ArrayList<NewUser> usersFollowed = new ArrayList<>();
+
 
 
 
@@ -33,5 +38,20 @@ public class NewUser {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public void addUsersFollowed(NewUser follower) {
+        usersFollowed.add(follower);
+    }
+    public void addRequest(NewUser requester) {
+        followRequests.add(requester);
+    }
+
+    public ArrayList<NewUser> getUsersFollowed() {
+        return usersFollowed;
+    }
+
+    public ArrayList<NewUser> getFollowRequests() {
+        return followRequests;
     }
 }
