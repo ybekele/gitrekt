@@ -173,8 +173,17 @@ public class HabitTypeController {
      * This function returns the list of habit types for today
      * @return the list of habit types for today
      */
-    public ArrayList<HabitType> getHabitTypesForToday(){
-        return HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
+    public void getHabitTypesForToday(){
+        ArrayList<HabitTypeMetadata> habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
+        ArrayList<HabitTypeMetadata> htmdForToday = new ArrayList<HabitTypeMetadata>();
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        for(HabitTypeMetadata htmd : habitTypeMetadata){
+            ArrayList<Integer> schedule = htmd.getSchedule();
+            if(schedule.contains(today)){
+                htmdForToday.add(htmd);
+            }
+        }
+        HabitTypeStateManager.getHTStateManager().setHtMetadataToday(htmdForToday);
     }
 
     /**
