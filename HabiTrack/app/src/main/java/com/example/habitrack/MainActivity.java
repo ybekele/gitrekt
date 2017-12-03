@@ -164,19 +164,15 @@ public class MainActivity extends AppCompatActivity {
 
 //  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
 //        HabitEvent testHE = new HabitEvent(1000, 2000);
+//        testHE.setUserID("test");
 //        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
 //        addHabitEvent.execute(testHE);
 //
 //        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
-//        getHabitEvent.execute("");
-//        ArrayList<Integer> schedule = new ArrayList<>();
-//        schedule.add(Calendar.SUNDAY);
-//        HabitType ht = new HabitType(201);
-//        ht.setTitle("ssh200");
-//        ht.setReason("ssh200");
-//        ht.setSchedule(schedule);
-//        ht.setStartDate(Calendar.getInstance());
-//        htc.addHabitTypeToElasticSearch(ht);
+//        getHabitEvent.execute("user", "test");
+//
+//        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
+//        users.execute("");
 //        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 //
 //        NewUser user = new NewUser("testUser3");
@@ -193,12 +189,15 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (ExecutionException e) {
 //            e.printStackTrace();
 //        }
+        // 2. load
+//        htc.loadHTID();
+//        hec.loadHEID();
+//        hec.createNewHabitEvent(1000, isConnected, currentUserID);
+//        hec.doOfflineTasks();
 //  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
 
         // load HT Metadata
         fileManager.load(fileManager.HT_METADATA_MODE);
-        // Start a new thread to get elastic search IDs if possible
-        // htc.getElasticSearchIDs();
         // 2. load
         htc.loadHTID();
         hec.loadHEID();
@@ -228,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Code taken from: https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
