@@ -1,16 +1,23 @@
 package com.example.habitrack;
 
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -18,9 +25,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,8 +47,10 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
     String titleString;
     ArrayList<LatLng> friends_locations = new ArrayList<LatLng>();
     ArrayList<String> friends_IDs;
+    ArrayList<String> all_IDs;
     Integer method_check;
-
+    ToggleButton toggle;
+    Boolean test;
     Marker m;  //reference to the marker
 
 
@@ -46,6 +60,8 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
 
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
+    private Location mLastKnownLocation;
+    private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
 
 
     private static final int DEFAULT_ZOOM = 10;
@@ -76,9 +92,12 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         HabitTypeController hc = new HabitTypeController(this);
         HabitEventController hec = new HabitEventController(this);
 
+        toggle = (ToggleButton)findViewById(R.id.toggleButton);
+        test = true;
 
 
         friends_IDs = getIntent().getStringArrayListExtra("tracker");
+        all_IDs = getIntent().getStringArrayListExtra("tracker2");
 
         //titleString = hc.getHabitTitle(htID);
 
@@ -86,6 +105,53 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         // Search box text
         mSearchText = (EditText) findViewById(R.id.input_search);
 
+
+
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            Circle circle;
+
+
+
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d("wtf", "caamamasmfasefa");
+
+
+
+
+                if (isChecked) {
+                    //     getLocationPermission();
+                    //     updateLocationUI();
+                    //     getDeviceLocation();
+                    Log.d("hiiii","not removed");
+                    circle = mMap.addCircle(new CircleOptions()
+                            .center(new LatLng(-33.87365, 151.20689))
+                            .radius(5000)
+                            .strokeColor(Color.RED)
+                            .fillColor(Color.BLUE));
+
+
+                    //highlight();
+                }
+                else {
+
+                        circle.remove();
+                        Log.d("hiiii","removed");
+
+                    // The toggle is disabled
+//                    circle = mMap.addCircle(new CircleOptions()
+//                            .center(mDefaultLocation)
+//                            .radius(5000)
+//                            .visible(true)
+//                            .strokeColor(Color.rgb(150, 0, 0))
+//                            .fillColor(Color.argb(20, 0, 136, 255)));
+                    ;
+
+
+                }
+            }
+        });
 
 
 
@@ -130,9 +196,155 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         }
 
         //Search bar
+        Log.d("eeee", "i told you souu");
         searchBar();
+        //switchButton();
 
 
+    }
+
+
+
+
+    public void highlight(){
+
+
+
+        HabitEventController hec = new HabitEventController(getApplication());
+        friends_locations.clear();
+
+        if (all_IDs != null) {
+            for (i = 0; i < all_IDs.size(); i++) {
+                Log.d("rrr", "MarkersList" + all_IDs.get(i));
+                the_id = all_IDs.get(i);
+                Log.d("free", "ids" + the_id.toString());
+                friends_locations.add(hec.getHabitEventLocation(Integer.parseInt(the_id)));
+                Log.d("rrr", "the lcoation" + hec.getHabitEventLocation(Integer.parseInt(the_id)).toString());
+
+            }
+
+            //Get specific habitType title
+            for (i = 0; i < friends_locations.size(); i++) {
+                m = mMap.addMarker(new MarkerOptions().visible(false).position(friends_locations.get(i)).title(hec.getAllHabitEvent().get(i).getTitle()));
+                Markerslist.add(m);
+            }
+        }
+
+
+        //Draw your circle
+        Circle circle = mMap.addCircle(new CircleOptions()
+                .center(mDefaultLocation)
+                .radius(5000)
+                .visible(true)
+                .strokeColor(Color.rgb(0, 136, 255))
+                .fillColor(Color.argb(20, 0, 136, 255)));
+
+        for (Marker marker : Markerslist) {
+            if (SphericalUtil.computeDistanceBetween(mDefaultLocation, marker.getPosition()) < 5000) {
+                marker.setVisible(true);
+            }
+        }
+
+    }
+
+    public void switchButton(){
+        Log.d("eeee", "i told you so");
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+               //     getLocationPermission();
+               //     updateLocationUI();
+               //     getDeviceLocation();
+                    highlight();
+                }
+                else {
+                    // The toggle is disabled
+                    Circle circle = mMap.addCircle(new CircleOptions()
+                            .center(mDefaultLocation)
+                            .radius(5000)
+                            .visible(false)
+                            .strokeColor(Color.rgb(0, 136, 255))
+                            .fillColor(Color.argb(20, 0, 136, 255)));
+
+                }
+            }
+        });
+    }
+
+
+    private void getDeviceLocation() {
+
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            if (mLocationPermissionGranted) {
+                Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful()) {
+                            // Set the map's camera position to the current location of the device.
+                            mLastKnownLocation = task.getResult();
+                            if (mLastKnownLocation != null) {
+
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+
+                            } else {
+                                //Log.d(, "onComplete: current location is null");
+                                Toast.makeText(MapsActivity2.this, "Unable to get current location", LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    private void updateLocationUI() {
+        if (mMap == null) {
+            return;
+        }
+        try {
+            if (mLocationPermissionGranted) {
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            } else {
+                mMap.setMyLocationEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mLastKnownLocation = null;
+                getLocationPermission();
+            }
+        } catch (SecurityException e) {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+
+    private void getLocationPermission() {
+    /*
+     * Request location permission, so that we can get the location of the
+     * device. The result of the permission request is handled by a callback,
+     * onRequestPermissionsResult.
+     */
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
     }
 
     //Search for a location or title of a maker

@@ -42,6 +42,8 @@ public class HabitHistory extends AppCompatActivity {
     List<String> temp = new ArrayList<String>();
     ArrayList<String> listview_tracker = new ArrayList<String>();
     List<Integer> temp_tracker = new ArrayList<Integer>();
+    ArrayList<String> listview_tracker2 = new ArrayList<String>();
+
 
     int i;
     int a;
@@ -64,6 +66,7 @@ public class HabitHistory extends AppCompatActivity {
                 String title = hc.getAllHabitEvent().get(i).getTitle();
                 all_habit_titles.add(title);
                 listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+                listview_tracker2.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
             }
         }
 
@@ -109,6 +112,7 @@ public class HabitHistory extends AppCompatActivity {
                 }
                // Log.d("ooo", "MarkersList" + listview_tracker.get(0).toString());
                 intent.putStringArrayListExtra("tracker",listview_tracker);
+                intent.putStringArrayListExtra("tracker2",listview_tracker2);
 
 
                 startActivity(intent);
