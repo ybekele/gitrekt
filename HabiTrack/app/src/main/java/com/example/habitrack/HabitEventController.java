@@ -85,7 +85,6 @@ public class HabitEventController {
     }
 
     public ArrayList<HabitEvent> getHabitEventsForToday(){
-        //generateEventsForToday();
         return HabitEventStateManager.getHEStateManager().getALlHabitEventsForToday();
     }
 
@@ -95,6 +94,19 @@ public class HabitEventController {
 
     public void updateRecentHabitEvents(){
         HabitEventStateManager.getHEStateManager().updateRecentHabitEvents();
+    }
+
+    public void generateEventsForToday(Boolean isConnected, String userID){
+        ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        for(HabitTypeMetadata htmd : htmdList){
+            ArrayList<Integer> schedule = htmd.getSchedule();
+            if(schedule.contains(today)){
+                String esID = htmd.getEsID();
+                Integer htID = htmd.getLocalID();
+                createNewHabitEvent(esID, htID, isConnected, userID);
+            }
+        }
     }
 
     /**
