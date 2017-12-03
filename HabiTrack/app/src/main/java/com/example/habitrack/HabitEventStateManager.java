@@ -24,8 +24,6 @@ public class HabitEventStateManager {
     private static Integer habitEventID;
     private static HabitEventStateManager heManager = new HabitEventStateManager();
 
-    //private static final ArrayList<Integer> ALL_HABITEVENTS_ID = new ArrayList<Integer>();
-
     private static ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> HABITEVENTS_FOR_TODAY = new ArrayList<HabitEvent>();
@@ -126,7 +124,7 @@ public class HabitEventStateManager {
                 return ALL_HABITEVENTS.get(count);
             }
         }
-        HabitEvent he = new HabitEvent(-1, -1);
+        HabitEvent he = new HabitEvent(-1, -1, "");
         return he;
     }
 
