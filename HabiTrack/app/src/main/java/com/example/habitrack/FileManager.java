@@ -35,13 +35,16 @@ public class FileManager {
 
     // 1. Base objects
     private ArrayList<HabitTypeMetadata> habitTypeMetadata;
+    private ArrayList<HabitEvent> recentHabitEvents;
 
     // 2. MODES
     public final Integer HT_METADATA_MODE = 100;
+    public final Integer RECENT_HE_MODE = 200;
 
     // 3. FILENAMES
     private String filename;
     private final String HT_METADATA_FILE = "htmetadata.sav";
+    private final String RECENT_HE_FILE = "recenthabitevents.sav";
 
     // Constructor
     public FileManager(Context context) {
@@ -53,6 +56,9 @@ public class FileManager {
         if(mode == HT_METADATA_MODE){
             habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getAllMetadata();
             filename = HT_METADATA_FILE;
+        } else if(mode == RECENT_HE_MODE){
+            recentHabitEvents = HabitEventStateManager.getHEStateManager().getRecentHabitevents();
+            filename = RECENT_HE_FILE;
         }
         try {
             FileOutputStream fos = ctx.openFileOutput(filename,0);
@@ -60,6 +66,8 @@ public class FileManager {
             Gson gson = new Gson();
             if(mode == HT_METADATA_MODE) {
                 gson.toJson(habitTypeMetadata, writer);
+            } else if (mode == RECENT_HE_MODE){
+                gson.toJson(recentHabitEvents, writer);
             }
             writer.flush();
         } catch (FileNotFoundException e) {
@@ -75,6 +83,8 @@ public class FileManager {
         // 5. If cases for load function
         if(mode == HT_METADATA_MODE){
             filename = HT_METADATA_FILE;
+        } else if(mode == RECENT_HE_MODE){
+            filename = RECENT_HE_FILE;
         }
         try {
             FileInputStream fis = ctx.openFileInput(filename);
@@ -84,18 +94,25 @@ public class FileManager {
             if(mode == HT_METADATA_MODE) {
                 Type calType = new TypeToken<ArrayList<HabitTypeMetadata>>() {}.getType();
                 habitTypeMetadata = gson.fromJson(in, calType);
+            } else if (mode == RECENT_HE_MODE){
+                Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
+                recentHabitEvents = gson.fromJson(in, calType);
             }
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             if(mode == HT_METADATA_MODE){
                 habitTypeMetadata = new ArrayList<HabitTypeMetadata>();
+            } else if(mode == RECENT_HE_MODE){
+                recentHabitEvents = new ArrayList<HabitEvent>();
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException();
         }
         if(mode == HT_METADATA_MODE){
-            HabitTypeStateManager.setHtMetadata(habitTypeMetadata);
+            HabitTypeStateManager.getHTStateManager().setHtMetadata(habitTypeMetadata);
+        } else if(mode == RECENT_HE_MODE){
+            HabitEventStateManager.getHEStateManager().setRecentHabitEvents(recentHabitEvents);
         }
     }
 
