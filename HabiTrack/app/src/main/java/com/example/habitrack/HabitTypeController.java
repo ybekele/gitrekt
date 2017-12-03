@@ -86,7 +86,7 @@ public class HabitTypeController {
         if(schedule.contains(today)){
             HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
             HabitEventController hec = new HabitEventController(ctx);
-            hec.createNewHabitEvent(ht.getID(), isConnected, userID);
+            hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
         }
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
@@ -152,6 +152,7 @@ public class HabitTypeController {
     }
 
     public void setHabitTypeMostRecentEvent(Integer requestedID, HabitEvent he){
+
         HabitType ht = this.getHabitType(requestedID);
         // If the habit exists
         if(!ht.getID().equals(-1)){
@@ -200,9 +201,9 @@ public class HabitTypeController {
      * @param requestedID the ID of the habit type you wish to get
      * @return
      */
-    public HabitType getHabitType(Integer requestedID) {
-        HabitType ht = HabitTypeStateManager.getHTStateManager().getHabitType(requestedID);
-        return ht;
+    public HabitTypeMetadata getHabitTypeMetadata(String requestedESID) {
+        HabitTypeMetadata htmd = HabitTypeStateManager.getHTStateManager().getHtMetadata(requestedESID);
+        return htmd;
     }
 
     /**
@@ -269,11 +270,11 @@ public class HabitTypeController {
      * @param requestedID ID of the habit type you wish to get the title for
      * @return the title of the Habit Type given
      */
-    public String getHabitTitle(Integer requestedID){
-        HabitType ht = this.getHabitType(requestedID);
+    public String getHabitTitle(String requestedID){
+        HabitTypeMetadata htmd = this.getHabitTypeMetadata(requestedID);
         // If the habit exists
-        if(!ht.getID().equals(-1)) {
-            return ht.getTitle();
+        if(!htmd.getLocalID().equals(-1)) {
+            return htmd.getTitle();
         } else {
             // Otherwise return an empty string
             return "";

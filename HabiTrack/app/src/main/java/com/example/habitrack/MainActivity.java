@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
         });
 // ------------------
 
-//        ------------------- TEMP USER ID
         currentUserID = liUserID;
+
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
