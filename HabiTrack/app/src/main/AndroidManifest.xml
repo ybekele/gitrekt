@@ -37,6 +37,7 @@
         <activity android:name=".HabitEventDetailsActivity" />
         <activity android:name=".HabitHistory" />
         <activity android:name=".heImageDisplay" />
+        <activity android:name=".SearchUsers" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
