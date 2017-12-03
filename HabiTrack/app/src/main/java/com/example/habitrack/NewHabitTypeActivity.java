@@ -2,6 +2,7 @@ package com.example.habitrack;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -59,10 +60,13 @@ public class NewHabitTypeActivity extends AppCompatActivity {
         final HabitTypeController htc = new HabitTypeController(this);
         sound = new SoundPlayer(this);
 
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+        userID = loggedInUserID.getString("userID", null);
+
         // Get incoming intent
         Intent incoming = getIntent();
         isConnected = incoming.getBooleanExtra("connection", Boolean.FALSE);
-        userID = incoming.getStringExtra("currentUserID");
+        //userID = incoming.getStringExtra("currentUserID");
 
         dateView = (TextView) findViewById(R.id.htStartDateText);
         dateSelect = (Button) findViewById(R.id.selectDateButton);

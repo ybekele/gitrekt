@@ -2,6 +2,7 @@ package com.example.habitrack;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -25,6 +26,8 @@ import java.util.Calendar;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * HabitEventController
