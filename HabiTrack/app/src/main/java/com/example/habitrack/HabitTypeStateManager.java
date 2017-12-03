@@ -90,11 +90,11 @@ public class HabitTypeStateManager {
     }
 
 
-    public static ArrayList<HabitTypeMetadata> getAllMetadata() {
+    public ArrayList<HabitTypeMetadata> getAllMetadata() {
         return htMetadata;
     }
 
-    public static void setHtMetadata(ArrayList<HabitTypeMetadata> htMetadata) {
+    public void setHtMetadata(ArrayList<HabitTypeMetadata> htMetadata) {
         HabitTypeStateManager.htMetadata = htMetadata;
     }
 
