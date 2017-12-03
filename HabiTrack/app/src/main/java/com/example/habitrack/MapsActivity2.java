@@ -61,7 +61,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
-    private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
+    //private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
 
 
     private static final int DEFAULT_ZOOM = 10;
@@ -99,6 +99,8 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         friends_IDs = getIntent().getStringArrayListExtra("tracker");
         all_IDs = getIntent().getStringArrayListExtra("tracker2");
 
+        Log.d("wtf", "friends "+friends_IDs);
+        Log.d("wtf", "all "+all_IDs);
         //titleString = hc.getHabitTitle(htID);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -120,33 +122,27 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
 
 
 
+
                 if (isChecked) {
                     //     getLocationPermission();
                     //     updateLocationUI();
                     //     getDeviceLocation();
                     Log.d("hiiii","not removed");
                     circle = mMap.addCircle(new CircleOptions()
-                            .center(new LatLng(-33.87365, 151.20689))
+                            .center(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
                             .radius(5000)
-                            .strokeColor(Color.RED)
-                            .fillColor(Color.BLUE));
+                            .strokeColor(Color.rgb(0, 136, 255))
+                            .fillColor(Color.argb(20, 0, 136, 255)));
 
 
-                    //highlight();
+                    highlight();
                 }
                 else {
 
                         circle.remove();
                         Log.d("hiiii","removed");
+                        switchButton();
 
-                    // The toggle is disabled
-//                    circle = mMap.addCircle(new CircleOptions()
-//                            .center(mDefaultLocation)
-//                            .radius(5000)
-//                            .visible(true)
-//                            .strokeColor(Color.rgb(150, 0, 0))
-//                            .fillColor(Color.argb(20, 0, 136, 255)));
-                    ;
 
 
                 }
@@ -173,32 +169,35 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
         Toast.makeText(this, "Map is ready", LENGTH_LONG).show();
+        getLocationPermission();
+        updateLocationUI();
+        getDeviceLocation();
 
-        if (friends_IDs != null) {
-            for (i = 0; i < friends_IDs.size(); i++) {
-                Log.d("rrr", "MarkersList" + friends_IDs.get(i));
-                the_id = friends_IDs.get(i);
-                Log.d("free", "ids" + the_id.toString());
-                friends_locations.add(hec.getHabitEventLocation(Integer.parseInt(the_id)));
-                Log.d("rrr", "the lcoation" + hec.getHabitEventLocation(Integer.parseInt(the_id)).toString());
-
-            }
-
-
-            //Get specific habitType title
-            for (i = 0;i< friends_locations.size();i++) {
-                m = mMap.addMarker(new MarkerOptions().position(friends_locations.get(i)).title(hec.getAllHabitEvent().get(i).getTitle()));
-                Markerslist.add(m);
-                //Log.d("frass", "MarkersList" + Markerslist.toString());
-
-
-            }
-        }
+//        if (friends_IDs != null) {
+//            for (i = 0; i < friends_IDs.size(); i++) {
+//                Log.d("rrr", "MarkersList" + friends_IDs.get(i));
+//                the_id = friends_IDs.get(i);
+//                Log.d("free", "ids" + the_id.toString());
+//                friends_locations.add(hec.getHabitEventLocation(Integer.parseInt(the_id)));
+//                Log.d("rrr", "the lcoation" + hec.getHabitEventLocation(Integer.parseInt(the_id)).toString());
+//
+//            }
+//
+//
+//            //Get specific habitType title
+//            for (i = 0;i< friends_locations.size();i++) {
+//                m = mMap.addMarker(new MarkerOptions().position(friends_locations.get(i)).title(hec.getAllHabitEvent().get(i).getTitle()));
+//                Markerslist.add(m);
+//                //Log.d("frass", "MarkersList" + Markerslist.toString());
+//
+//
+//            }
+//        }
 
         //Search bar
         Log.d("eeee", "i told you souu");
         searchBar();
-        //switchButton();
+        switchButton();
 
 
     }
@@ -211,7 +210,17 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
 
 
         HabitEventController hec = new HabitEventController(getApplication());
-        friends_locations.clear();
+        if(!(friends_locations.isEmpty())){
+            friends_locations.clear();
+        }
+        if (!(Markerslist.isEmpty())) {
+            for (Marker marker : Markerslist) {
+                if (SphericalUtil.computeDistanceBetween(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), marker.getPosition()) > 5000) {
+                    marker.setVisible(false);
+                }
+            }
+            Markerslist.clear();
+        }
 
         if (all_IDs != null) {
             for (i = 0; i < all_IDs.size(); i++) {
@@ -231,48 +240,57 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         }
 
 
-        //Draw your circle
-        Circle circle = mMap.addCircle(new CircleOptions()
-                .center(mDefaultLocation)
-                .radius(5000)
-                .visible(true)
-                .strokeColor(Color.rgb(0, 136, 255))
-                .fillColor(Color.argb(20, 0, 136, 255)));
+
 
         for (Marker marker : Markerslist) {
-            if (SphericalUtil.computeDistanceBetween(mDefaultLocation, marker.getPosition()) < 5000) {
+            if (SphericalUtil.computeDistanceBetween(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), marker.getPosition()) < 5000) {
                 marker.setVisible(true);
             }
+
+
         }
 
     }
 
     public void switchButton(){
         Log.d("eeee", "i told you so");
+        HabitEventController hec = new HabitEventController(getApplication());
+        if(!(friends_locations.isEmpty())) {
+            friends_locations.clear();
+        }
+        if (!(Markerslist.isEmpty())) {
+            for (Marker marker : Markerslist) {
+                marker.setVisible(false);
 
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (isChecked) {
-               //     getLocationPermission();
-               //     updateLocationUI();
-               //     getDeviceLocation();
-                    highlight();
-                }
-                else {
-                    // The toggle is disabled
-                    Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(mDefaultLocation)
-                            .radius(5000)
-                            .visible(false)
-                            .strokeColor(Color.rgb(0, 136, 255))
-                            .fillColor(Color.argb(20, 0, 136, 255)));
-
-                }
             }
-        });
-    }
+            Markerslist.clear();
+        }
+
+        if (friends_IDs != null) {
+            for (i = 0; i < friends_IDs.size(); i++) {
+                Log.d("rrr", "MarkersList" + friends_IDs.get(i));
+                the_id = friends_IDs.get(i);
+                Log.d("free", "ids" + the_id.toString());
+                friends_locations.add(hec.getHabitEventLocation(Integer.parseInt(the_id)));
+                Log.d("rrr", "the lcoation" + hec.getHabitEventLocation(Integer.parseInt(the_id)).toString());
+
+            }
+
+
+            //Get specific habitType title
+            for (i = 0;i< friends_locations.size();i++) {
+                m = mMap.addMarker(new MarkerOptions().position(friends_locations.get(i)).title(hec.getAllHabitEvent().get(i).getTitle()));
+                Markerslist.add(m);
+                Log.d("frass", "MarkersList" + Markerslist.toString());
+
+
+            }
+        }
+
+
+
+
+                }
 
 
     private void getDeviceLocation() {

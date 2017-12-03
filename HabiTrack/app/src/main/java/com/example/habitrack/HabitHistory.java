@@ -72,6 +72,7 @@ public class HabitHistory extends AppCompatActivity {
 
         Collections.reverse(all_habit_titles);
         Collections.reverse(listview_tracker);
+        Collections.reverse(listview_tracker2);
 
 
         the_titles = hc.getAllHabitEvent();
