@@ -64,6 +64,7 @@ public class FileManager {
             filename = RECENT_HE_FILE;
         } else if(mode == TODAY_HE_MODE){
             todayHabitEvents = HabitEventStateManager.getHEStateManager().getTodayHabitevents();
+            filename = TODAY_HE_FILE;
         }
         try {
             FileOutputStream fos = ctx.openFileOutput(filename,0);
