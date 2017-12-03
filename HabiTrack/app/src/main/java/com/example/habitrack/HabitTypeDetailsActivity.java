@@ -25,6 +25,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
     EditText reasonEdit;
     EditText dateEdit;
     ProgressBar progressBar;
+    Integer progressPercent;
     //Button editButton;
     Button deleteButton;
 
@@ -127,7 +128,6 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
                     titleEdit.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                         }
                         @Override
                         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
