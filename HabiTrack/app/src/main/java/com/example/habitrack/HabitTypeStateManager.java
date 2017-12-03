@@ -68,17 +68,24 @@ public class HabitTypeStateManager {
         }
     }
 
-    public void addMetadata(HabitType ht){
-        this.htMetadata.add(ht.getMyData());
+    public void addMetadata(HabitTypeMetadata ht){
+        htMetadata.add(ht);
     }
 
     public HabitTypeMetadata getHtMetadata(String esID){
-        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
-        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
-            if(habitTypeMetadata.getEsID() == esID){
-                htMD = habitTypeMetadata;
+        for(Integer count = 0; count < htMetadata.size(); count++){
+            String testESID = htMetadata.get(count).getEsID();
+            if(testESID.equals(esID)){
+//            if(htMetadata.get(count).getEsID() == esID){
+                return htMetadata.get(count);
             }
         }
+//        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
+//            if(habitTypeMetadata.getEsID() == esID){
+//                return habitTypeMetadata;
+//            }
+//        }
+        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
         return htMD;
     }
 
