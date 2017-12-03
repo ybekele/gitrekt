@@ -34,6 +34,14 @@ public class SocialActivity extends AppCompatActivity {
                 startActivity(viewFriends);
             }
         });
+
+        searchBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewSearch = new Intent(getApplicationContext(), SearchUsers.class);
+                startActivity(viewSearch);
+            }
+        });
     }
 
 

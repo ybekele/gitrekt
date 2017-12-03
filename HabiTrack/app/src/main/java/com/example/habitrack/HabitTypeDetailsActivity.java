@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 
 public class HabitTypeDetailsActivity extends AppCompatActivity {
     TextView progressNum;
