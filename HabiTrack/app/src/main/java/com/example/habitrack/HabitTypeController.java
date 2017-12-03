@@ -73,7 +73,7 @@ public class HabitTypeController {
         ht.setStartDate(startDate);     // Set start date
         ht.setSchedule(schedule);       // Set schedule
         // Save the metadata of the HT
-        HabitTypeStateManager.getHTStateManager().addMetadata(ht);
+        HabitTypeStateManager.getHTStateManager().addMetadata(ht.getMyData());
         // If connected to internet, then add the ht to es
         if(isConnected) {
             ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType(fileManager);
