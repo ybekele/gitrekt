@@ -32,6 +32,7 @@ public class HabitEvent {
 
     private final Integer habitEventID;         // ID for the event
     private final Integer habitTypeID;          // ID for the corresponding habit type
+    private String habitTypeEsID;               // ES ID of the corresponding habit type
     private String title;                       // title of the habit event
     private String comment;                     // comment for the habit event
     private Calendar date;                      // date of the habit event
@@ -53,11 +54,16 @@ public class HabitEvent {
         this.location = location;
     }
 
-    public HabitEvent(Integer heID, Integer htID) {
+    public HabitEvent(Integer heID, Integer htID, String givenEsID) {
         this.habitEventID = heID;
         this.habitTypeID = htID;
         this.date = Calendar.getInstance();
         this.isEmpty = Boolean.TRUE;
+        this.habitTypeEsID = givenEsID;
+    }
+
+    public String getHabitTypeEsID() {
+        return habitTypeEsID;
     }
 
     public String getEncodedPhoto() {
@@ -142,6 +148,6 @@ public class HabitEvent {
 
     @Override
     public String toString() {
-        return (getHabitEventID() + "\n" + getTitle() + "\n" + getComment());
+        return (getHabitEventID() + "\n" + getTitle() + "\n" + getId());
     }
 }
