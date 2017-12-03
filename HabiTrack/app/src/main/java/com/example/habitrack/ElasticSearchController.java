@@ -1,5 +1,6 @@
 package com.example.habitrack;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -45,7 +46,6 @@ public class ElasticSearchController {
         }
     }
 
-
     public static class GetUser extends AsyncTask<String, Void, ArrayList<NewUser>> {
         @Override
         protected ArrayList<NewUser> doInBackground(String... search_parameters) {
@@ -53,13 +53,6 @@ public class ElasticSearchController {
             verifySettings();
 
             ArrayList<NewUser> allUsers = new ArrayList<NewUser>();
-//            String text = search_parameters[0];
-
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"userName\": \"" + text + "\"} }\n" + "}";
-
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
 
             String query = "{\n" +
                     "  \"query\": { \"match_all\": {} }\n" + "}";
@@ -86,10 +79,13 @@ public class ElasticSearchController {
         }
     }
 
-
-
-
     public static class AddHabitType extends AsyncTask<HabitType, Void, Void> {
+
+        private FileManager fileManager;
+
+        public AddHabitType(FileManager givenFM){
+            fileManager = givenFM;
+        }
 
         @Override
         protected Void doInBackground(HabitType... habitTypes) {
@@ -100,6 +96,7 @@ public class ElasticSearchController {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
                         habitType.setId(result.getId());
+                        fileManager.save(fileManager.HT_METADATA_MODE);
                     } else {
                         Log.i("Error", "Elasticsearch was not able to add the HabitType");
                     }
@@ -110,7 +107,6 @@ public class ElasticSearchController {
             return null;
         }
     }
-
 
     public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Void> {
         @Override
@@ -132,23 +128,22 @@ public class ElasticSearchController {
             return null;
         }
     }
+    
 
-    public static class GetHabitType extends AsyncTask<String, Void, ArrayList<HabitType>> {
+
+
+    public static class GetHabitType extends AsyncTask<String, Void, HabitType> {
         @Override
-        protected ArrayList<HabitType> doInBackground(String... search_parameters) {
-
+        protected HabitType doInBackground(String... esIDinList) {
             verifySettings();
 
+            String esID = esIDinList[0];
+
             ArrayList<HabitType> habitTypes = new ArrayList<HabitType>();
-            String text = search_parameters[0];
+            String query;
 
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
-
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
-            String query = "{\n" +
-                    "  \"query\": { \"match_all\": {} }\n" + "}";
+            query = "{\n" +
+                    "  \"query\": { \"term\": {\"_id\": \"" + esID + "\"} }\n" + "}";
 
 
             Search search = new Search.Builder(query)
@@ -168,27 +163,58 @@ public class ElasticSearchController {
                 Log.i("Error", "Something went wrong when we tried to communicate with the elasticsearch server!");
             }
 
-            return habitTypes;
+            return habitTypes.get(0);
         }
     }
 
+    public static class EditHabitType extends AsyncTask<HabitType, Void, Void> {
+        @Override
+        protected Void doInBackground(HabitType... htList) {
+            verifySettings();
 
+            HabitType habitType = htList[0];
+            String esID = habitType.getElasticSearchId();
+            Boolean status = Boolean.FALSE;
+            // Push the new habit type back
+            Index index = new Index.Builder(habitType).index("gitrekt_htrack").type("habit_type").id(esID).build();
+            try {
+                DocumentResult result = client.execute(index);
+                if (result.isSucceeded()) {
+                    status = Boolean.TRUE;
+                } else {
+                    Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                }
+            } catch (IOException e) {
+                Log.i("Error", "The application failed to build and send the HabitType");
+            }
+            return null;
+        }
+    }
+
+    /**
+     * In a new thread, this task will get a habit event from elastic search. The
+     * query used will depend on the first search parameter given to the function.
+     * If the first search parameter is :
+     *   "" ---> query will result in all habit events
+     *   "user" ---> query will result in all habit events for the current user
+     *   "user_unique" ---> query will result in a specific habit event by the user
+     */
     public static class GetHabitEvent extends AsyncTask<String, Void, ArrayList<HabitEvent>> {
         @Override
         protected ArrayList<HabitEvent> doInBackground(String... search_parameters) {
             verifySettings();
+            String query;
 
             ArrayList<HabitEvent> habitEvents = new ArrayList<HabitEvent>();
-            String text = search_parameters[0];
-
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"title\": \"" + text + "\"} }\n" + "}";
-
-//            String query = "{\n" +
-//                    "  \"query\": { \"term\": {\"ID\": \"" + "100" + "\"} }\n" + "}";
-            String query = "{\n" +
-                    "  \"query\": { \"match_all\": {} }\n" + "}";
-
+            String key = search_parameters[0];
+            if (key == "user"){
+                String uid = search_parameters[1];
+                query = "{\n" +
+                    "  \"query\": { \"term\": {\"userID\": \"" + uid + "\"} }\n" + "}";
+            } else {
+                query = "{\n" +
+                        "  \"query\": { \"match_all\": {} }\n" + "}";
+            }
 
             Search search = new Search.Builder(query)
                     .addIndex("gitrekt_htrack")
