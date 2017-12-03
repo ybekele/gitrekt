@@ -69,6 +69,12 @@ public class SearchUsers extends AppCompatActivity {
         searchedUsersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int j = 0; j < matchedUsers.size(); j++){
+                    if (matchedUsers.get(j).getTitle().equals(displayNames.get(i))) {
+                        //matchedUsers.get(j).addRequest(PUT THE USERS OWN ID HERE );
+                        
+                    }
+                }
 //                AlertDialog.Builder adb = new AlertDialog.Builder(
 //                        MainActivity.this);
             }
