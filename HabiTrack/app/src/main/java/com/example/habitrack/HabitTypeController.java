@@ -86,7 +86,7 @@ public class HabitTypeController {
         if(schedule.contains(today)){
             HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
             HabitEventController hec = new HabitEventController(ctx);
-            hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
+            hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID, esID);
         }
         // Add the habit type to the event state manager
         HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
@@ -151,14 +151,22 @@ public class HabitTypeController {
         }
     }
 
-    public void setHabitTypeMostRecentEvent(Integer requestedID, HabitEvent he){
-
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setMostRecentEvent(he);
+    public void setHabitTypeMostRecentEvent(String htEsID, HabitEvent he){
+        HabitType returnedHT = new HabitType(-1);
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute(htEsID);
+        try {
+            returnedHT = getHabitType.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-        saveToFile();
+
+        if(returnedHT.getID() != -1){
+            returnedHT.setMostRecentEvent(he);
+            EditHabitTypeOnEs(returnedHT);
+        }
     }
 
     /**
@@ -369,26 +377,44 @@ public class HabitTypeController {
      * increments the current counter
      * @param requestedID ID of the habit type you wish to get
      */
-    public void incrementHTCurrentCounter(Integer requestedID) {
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if (!ht.getID().equals(-1)) {
-            ht.incrementCompletedCounter();
+    public void incrementHTCurrentCounter(String htEsID) {
+        HabitType returnedHT = new HabitType(-1);
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute(htEsID);
+        try {
+            returnedHT = getHabitType.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-        saveToFile();
+
+        if(returnedHT.getID() != -1){
+            returnedHT.incrementCompletedCounter();
+            EditHabitTypeOnEs(returnedHT);
+        }
     }
 
     /**
      * increment the max counter
      * @param requestedID ID of the habit type you wish to get
      */
-    public void incrementHTMaxCounter(Integer requestedID) {
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if (!ht.getID().equals(-1)) {
-            ht.incrementMaxCounter();
+    public void incrementHTMaxCounter(String htEsID) {
+        HabitType returnedHT = new HabitType(-1);
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute(htEsID);
+        try {
+            returnedHT = getHabitType.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-        saveToFile();
+
+        if(returnedHT.getID() != -1){
+            returnedHT.incrementMaxCounter();
+            EditHabitTypeOnEs(returnedHT);
+        }
     }
 
     /**
