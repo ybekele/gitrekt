@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("habitID", today.get(i).getID());
                 Intent intent;
                 Integer heID = today.get(i).getHabitEventID();
+                String esID = today.get(i).getHabitTypeEsID();
                 if(hec.getHabitEventIsEmpty(heID)) {
                     intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 } else {
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 intent.putExtra("connection", isConnected);
+                intent.putExtra("habitTypeEsID", esID);
                 startActivity(intent);
             }
         });
