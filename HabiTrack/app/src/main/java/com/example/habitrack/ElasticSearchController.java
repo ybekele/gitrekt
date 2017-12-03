@@ -24,6 +24,48 @@ import io.searchbox.core.SearchResult;
 public class ElasticSearchController {
     private static JestDroidClient client;
 
+    public static class VerifyESId extends AsyncTask<ArrayList<HabitTypeMetadata>, Void, Void> {
+
+        @Override
+        protected Void doInBackground(ArrayList<HabitTypeMetadata>... metadataLists) {
+            verifySettings();
+            ArrayList<HabitTypeMetadata> htMetadataList = metadataLists[0];
+            String uid = "test";
+            String query;
+            ArrayList<HabitType> habitTypes = new ArrayList<HabitType>();
+            query = "{\n" +
+                    "  \"query\": { \"term\": {\"userID\": \"" + uid + "\"} }\n" + "}";
+
+            Search search = new Search.Builder(query)
+                    .addIndex("gitrekt_htrack")
+                    .addType("habit_type")
+                    .build();
+
+            try {
+                SearchResult result = client.execute(search);
+                if (result.isSucceeded()) {
+                    List<HabitType> foundHabitType = result.getSourceAsObjectList(HabitType.class);
+                    habitTypes.addAll(foundHabitType);
+                } else {
+                    Log.i("Error", "The search query failed to find any tweets that matched");
+                }
+            } catch (Exception e) {
+                Log.i("Error", "Something went wrong when we tried to communicate with the elasticsearch server!");
+            }
+
+            for(HabitTypeMetadata htMetadata : htMetadataList) {
+                if (htMetadata.getEsID() != "" || htMetadata.getEsID() != null) {
+                    for (HabitType ht : habitTypes) {
+                        if(ht.getID() == htMetadata.getLocalID()){
+                            htMetadata.setEsID(ht.getElasticSearchId());
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     public static class AddNewUser extends AsyncTask<NewUser, Void, Void> {
 
         @Override
@@ -129,9 +171,6 @@ public class ElasticSearchController {
         }
     }
     
-
-
-
     public static class GetHabitType extends AsyncTask<String, Void, HabitType> {
         @Override
         protected HabitType doInBackground(String... esIDinList) {
