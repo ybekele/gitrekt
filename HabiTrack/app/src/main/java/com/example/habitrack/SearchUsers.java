@@ -13,9 +13,10 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class SearchUsers extends AppCompatActivity {
+
+    ListView searchedUsersListView;
+    Button searchUsersButton;
     private EditText searchedUsersEditText;
-    private ListView searchedUsersListView;
-    private Button searchUsersButton;
     private String searchText;
     private ArrayAdapter<String>  adapter;
     private ArrayList<NewUser> currentUsers = new ArrayList<>();
@@ -100,6 +101,7 @@ public class SearchUsers extends AppCompatActivity {
         super.onStart();
     }
 
+
     public ArrayList<NewUser> getCurrentUsers() {
 
         ArrayList<NewUser> eu = new ArrayList<>();
@@ -108,10 +110,10 @@ public class SearchUsers extends AppCompatActivity {
         getExistingUsers.execute("");
         Log.d("entered", eu.toString());
         try {
-            eu = getExistingUsers.get();
-            Log.d("existing", eu.toString());
+        eu = getExistingUsers.get();
+        Log.d("existing", eu.toString());
         } catch (Exception e) {
-            Log.i("Error", "Failed to get existing user ID's");
+        Log.i("Error", "Failed to get existing user ID's");
         }
         return eu;
     }

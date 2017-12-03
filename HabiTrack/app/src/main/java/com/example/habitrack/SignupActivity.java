@@ -49,9 +49,9 @@ public class SignupActivity extends AppCompatActivity {
         * Shared Preference files to store values of the users ID as well as the logged in state of the app
         */
         final SharedPreferences sharedLoggedInStatus = getSharedPreferences("loggedInStatus", Context.MODE_PRIVATE);
-        //final SharedPreferences sharedUserIDs = getSharedPreferences("userID", Context.MODE_PRIVATE);
+        final SharedPreferences loggedInUsersID = getSharedPreferences("userID", Context.MODE_PRIVATE);
         final SharedPreferences.Editor loggedInStatusEditor = sharedLoggedInStatus.edit();
-        //final SharedPreferences.Editor userIDEditor = sharedUserIDs.edit();
+        final SharedPreferences.Editor userIDEditor = loggedInUsersID.edit();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +70,9 @@ public class SignupActivity extends AppCompatActivity {
                             liuID = existingUserIDs.get(i).getId();
                             Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
                             loggedInStatusEditor.putBoolean("loggedIn", true);
+                            userIDEditor.putString("loggedInUsersID", liuID);
                             loggedInStatusEditor.apply();
+                            userIDEditor.apply();
                             Intent loggedIn = new Intent (SignupActivity.this, MainActivity.class);
                             startActivity(loggedIn);
                         }
