@@ -51,7 +51,7 @@ public class FileManager {
     public void save(Integer mode){
         // 4. If cases for the save function
         if(mode == HT_METADATA_MODE){
-            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getHtMetadata();
+            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getAllMetadata();
             filename = HT_METADATA_FILE;
         }
         try {
