@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -75,11 +76,11 @@ public class HabitTypeController {
         HabitTypeStateManager.getHTStateManager().addMetadata(ht);
         // If connected to internet, then add the ht to es
         if(isConnected) {
-            ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
+            ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType(fileManager);
             addHabitType.execute(ht);
         }
         // save the metadata
-        fileManager.save(fileManager.HT_METADATA_MODE);
+        // fileManager.save(fileManager.HT_METADATA_MODE);
         // Check if an event needs to be created
         Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         if(schedule.contains(today)){
@@ -93,9 +94,20 @@ public class HabitTypeController {
         saveToFile();
     }
 
-    public void getElasticSearchIDs(){
-
+    public HabitType getHabitTypeFromES(String esID){
+        HabitType toReturn = new HabitType(-1);
+        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
+        getHabitType.execute(esID);
+        try {
+            toReturn = getHabitType.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return toReturn;
     }
+
 
 
     /**
@@ -197,88 +209,59 @@ public class HabitTypeController {
      * get the habit type from elastic search
      * @return ht, the habit type
      */
-    public ArrayList<HabitType> getHabitTypeElasticSearch() {
-        ArrayList<HabitType> ht = new ArrayList<>();
-//                    String query = "{\n" +
-//                    "  \"query\": { \"match_all\": {} },\n" +
-//                    "  \"sort\": { \"date\": { \"order\": \"desc\" } },\n" +
-//                    "  \"size\": 10\n" +
-//                    "}";
-        String text = "ssh200";
-        String query = "{\n" + " \"query\": { \"term\": {\"title\":\"" + text + "\"} }\n" + "}";
-        ElasticSearchController.GetHabitType getHabitType = new ElasticSearchController.GetHabitType();
-        getHabitType.execute(text);
-        try {
-            ht = getHabitType.get();
-        } catch (Exception e) {
-            Log.i("Error", "Failed to get the tweets from the async object");
-        }
-        return ht;
-    }
 
-    public void addHabitTypeToElasticSearch(HabitType ht){
-        ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType();
-        addHabitType.execute(ht);
+    public void EditHabitTypeOnEs(HabitType habitType){
+        ElasticSearchController.EditHabitType editHabitType = new ElasticSearchController.EditHabitType(fileManager);
+        editHabitType.execute(habitType);
     }
 
 
     /**
      * Given an ID of a habit type and a new title, this method
      * edits the title, if the habit exists
-     * @param requestedID
      * @param newTitle
      */
-    public void editHabitTypeTitle(Integer requestedID, String newTitle){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setTitle(newTitle);
-        }
-        saveToFile();
+    public void editHabitTypeTitle(HabitType habitType, String newTitle){
+        habitType.setTitle(newTitle);
+        EditHabitTypeOnEs(habitType);
+        String esID = habitType.getElasticSearchId();
+        HabitTypeMetadata htMD = HabitTypeStateManager.getHTStateManager().getHtMetadata(esID);
+        htMD.setTitle(newTitle);
+        fileManager.save(fileManager.HT_METADATA_MODE);
     }
 
     /**
      * Given an ID of a habit type and a new reason, this method
      * edits the title, if the habit exists
-     * @param requestedID
      * @param newReason
      */
-    public void editHabitTypeReason(Integer requestedID, String newReason){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setReason(newReason);
-        }
-        saveToFile();
+    public void editHabitTypeReason(HabitType habitType, String newReason){
+        habitType.setReason(newReason);
+        EditHabitTypeOnEs(habitType);
     }
 
     /**
      * edits the start date
-     * @param requestedID the habit type id
      * @param newDate the new date you wish to insert
      */
-    public void editHabitTypeStartDate(Integer requestedID, Calendar newDate){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setStartDate(newDate);
-        }
-        saveToFile();
+    public void editHabitTypeStartDate(HabitType habitType, Calendar newDate){
+        habitType.setStartDate(newDate);
+        EditHabitTypeOnEs(habitType);
     }
 
     /**
      * Given an ID of a habit type and a new schedule, this method
      * edits the schedule, if the habit exists
-     * @param requestedID ID of the habit type you wish to edit
      * @param newSchedule the new schedule you'd like the habit type to follow
      */
-    public void editHabitTypeSchedule(Integer requestedID, ArrayList<Integer> newSchedule){
-        HabitType ht = this.getHabitType(requestedID);
-        // If the habit exists
-        if(!ht.getID().equals(-1)){
-            ht.setSchedule(newSchedule);
-        }
-        saveToFile();
+    public void editHabitTypeSchedule(HabitType habitType, ArrayList<Integer> newSchedule){
+        habitType.setSchedule(newSchedule);
+        EditHabitTypeOnEs(habitType);
+        String esID = habitType.getElasticSearchId();
+        HabitTypeMetadata htMD = HabitTypeStateManager.getHTStateManager().getHtMetadata(esID);
+        htMD.setSchedule(newSchedule);
+        fileManager.save(fileManager.HT_METADATA_MODE);
+
     }
 
     /**

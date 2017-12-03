@@ -72,7 +72,18 @@ public class HabitTypeStateManager {
         this.htMetadata.add(ht.getMyData());
     }
 
-    public static ArrayList<HabitTypeMetadata> getHtMetadata() {
+    public HabitTypeMetadata getHtMetadata(String esID){
+        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
+        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
+            if(habitTypeMetadata.getEsID() == esID){
+                htMD = habitTypeMetadata;
+            }
+        }
+        return htMD;
+    }
+
+
+    public static ArrayList<HabitTypeMetadata> getAllMetadata() {
         return htMetadata;
     }
 
