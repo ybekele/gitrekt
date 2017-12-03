@@ -29,6 +29,8 @@ public class HabitEventStateManager {
     private static ArrayList<HabitEvent> ALL_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> RECENT_HABITEVENTS = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> HABITEVENTS_FOR_TODAY = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> recentHabitEvents = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> heForToday = new ArrayList<HabitEvent>();
 
 
     public HabitEventStateManager(){}
@@ -51,6 +53,36 @@ public class HabitEventStateManager {
         }
     }
 
+    // add to today's habit event list
+    public void addTodayHabitEvent(HabitEvent he){
+        heForToday.add(he);
+    }
+
+    // add to recent events list
+    public void addRecentEvent(HabitEvent he){
+        recentHabitEvents.add(he);
+    }
+
+    // get all habit events for today
+    public ArrayList<HabitEvent> getTodayHabitevents(){
+        return heForToday;
+    }
+
+    // get all recent habit events
+    public ArrayList<HabitEvent> getRecentHabitevents(){
+        return recentHabitEvents;
+    }
+
+    // set all recent habit events
+    public void setRecentHabitEvents(ArrayList<HabitEvent> recentEvents){
+        this.recentHabitEvents = recentEvents;
+    }
+
+    // set all recent habit events
+    public void setTodayHabitEvents(ArrayList<HabitEvent> todayEvents){
+        this.heForToday = todayEvents;
+    }
+
     // setter and getter for HABITEVENTS_FOR_TODAY
     public ArrayList<HabitEvent> getALlHabitEventsForToday() {
         return HABITEVENTS_FOR_TODAY;
@@ -64,17 +96,8 @@ public class HabitEventStateManager {
         return ALL_HABITEVENTS;
     }
 
-    public ArrayList<HabitEvent> getRecentHabitevents(){
-        updateRecentHabitEvents();
-        return ALL_HABITEVENTS;
-    }
-
     public void setAllHabitEvents(ArrayList<HabitEvent> allEvents){
         this.ALL_HABITEVENTS = allEvents;
-    }
-
-    public void setRecentHabitEvents(ArrayList<HabitEvent> recentEvents){
-        this.RECENT_HABITEVENTS = recentEvents;
     }
 
     public void removeAllHabitEvents(){
