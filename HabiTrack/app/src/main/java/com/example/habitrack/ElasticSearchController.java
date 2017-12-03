@@ -226,7 +226,7 @@ public class ElasticSearchController {
             try {
                 DocumentResult result = client.execute(index);
                 if (result.isSucceeded()) {
-                    fileManager.save(fileManager.HT_METADATA_MODE);
+                    status = Boolean.TRUE;
                 } else {
                     Log.i("Error", "Elasticsearch was not able to add the HabitType");
                 }
