@@ -170,7 +170,7 @@ public class ElasticSearchController {
             return null;
         }
     }
-    
+
     public static class GetHabitType extends AsyncTask<String, Void, HabitType> {
         @Override
         protected HabitType doInBackground(String... esIDinList) {
@@ -207,6 +207,13 @@ public class ElasticSearchController {
     }
 
     public static class EditHabitType extends AsyncTask<HabitType, Void, Void> {
+
+        private FileManager fileManager;
+
+        public EditHabitType(FileManager givenFM){
+            fileManager = givenFM;
+        }
+
         @Override
         protected Void doInBackground(HabitType... htList) {
             verifySettings();
@@ -219,7 +226,7 @@ public class ElasticSearchController {
             try {
                 DocumentResult result = client.execute(index);
                 if (result.isSucceeded()) {
-                    status = Boolean.TRUE;
+                    fileManager.save(fileManager.HT_METADATA_MODE);
                 } else {
                     Log.i("Error", "Elasticsearch was not able to add the HabitType");
                 }
