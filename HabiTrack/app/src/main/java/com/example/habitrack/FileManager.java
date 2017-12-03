@@ -57,7 +57,7 @@ public class FileManager {
     public void save(Integer mode){
         // 4. If cases for the save function
         if(mode == HT_METADATA_MODE){
-            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getAllMetadata();
+            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
             filename = HT_METADATA_FILE;
         } else if(mode == RECENT_HE_MODE){
             recentHabitEvents = HabitEventStateManager.getHEStateManager().getRecentHabitevents();
@@ -125,7 +125,8 @@ public class FileManager {
             throw new RuntimeException();
         }
         if(mode == HT_METADATA_MODE){
-            HabitTypeStateManager.getHTStateManager().setHtMetadata(habitTypeMetadata);
+            HabitTypeStateManager.getHTStateManager().setHtMetadataAll(habitTypeMetadata);
+
         } else if(mode == RECENT_HE_MODE){
             HabitEventStateManager.getHEStateManager().setRecentHabitEvents(recentHabitEvents);
         } else if(mode == TODAY_HE_MODE){
