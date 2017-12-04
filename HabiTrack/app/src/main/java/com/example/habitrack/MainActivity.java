@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     // bool var for connection status
     Boolean isConnected;
+    // bool var checking if esid verification is running
+    Boolean isVerifying = Boolean.FALSE;
     // userID
     String currentUserID;
 
@@ -48,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     HabitEventController hec = new HabitEventController(this);
     // Get Filemanager
     FileManager fileManager = new FileManager(this);
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isConnected = isOnline();
                 Intent newType = new Intent(getApplicationContext(), NewHabitTypeActivity.class);
                 newType.putExtra("connection", isConnected);
                 newType.putExtra("currentUserID", currentUserID);
@@ -159,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     intent = new Intent(MainActivity.this, HabitEventDetailsActivity.class);
                 }
+                isConnected = isOnline();
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 intent.putExtra("connection", isConnected);
@@ -173,7 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 isConnected = isOnline();
                 hec.updateHabitEvents(isConnected, currentUserID);
                 adapter.notifyDataSetChanged();
-
+                hec.syncEditedHabitEvents();
+                hec.syncNewOfflineHEs();
+                hec.syncCompletedOfflineHEs();
             }
         });
 
@@ -220,20 +224,22 @@ public class MainActivity extends AppCompatActivity {
         }
 //        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 //
-//        NewUser user = new NewUser("testUser3");
+//        NewUser user = new NewUser("testUser1");
 //        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
 //        addNewUser.execute(user);
 //        NewUser user2 = new NewUser("testUser2");
 //        addNewUser.execute(user2);
+//        ArrayList<NewUser> allUsers = new ArrayList<NewUser>();
 //        ElasticSearchController.GetUser getUser = new ElasticSearchController.GetUser();
 //        getUser.execute();
 //        try {
-//            ArrayList<NewUser> allUsers = getUser.get();
+//            allUsers = getUser.get();
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        } catch (ExecutionException e) {
 //            e.printStackTrace();
 //        }
+//        Log.d("usersLog", allUsers.toString());
         // 2. load
 //        htc.loadHTID();
 //        hec.loadHEID();
@@ -286,7 +292,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isConnected = isOnline();
         hec.updateHabitEvents(isConnected, currentUserID);
+        isConnected = isOnline();
+        if(isConnected) {
+            hec.syncEditedHabitEvents();
+            hec.syncNewOfflineHEs();
+            hec.syncCompletedOfflineHEs();
+        }
 
     }
 

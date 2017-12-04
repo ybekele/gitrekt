@@ -1,9 +1,11 @@
 package com.example.habitrack;
 
+import android.support.annotation.ArrayRes;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 /**
  * HabitEventStateManager
@@ -29,6 +31,9 @@ public class HabitEventStateManager {
     private static ArrayList<HabitEvent> HABITEVENTS_FOR_TODAY = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> recentHabitEvents = new ArrayList<HabitEvent>();
     private static ArrayList<HabitEvent> heForToday = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> newOfflineHE = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> completedOfflineHE = new ArrayList<HabitEvent>();
+    private static ArrayList<HabitEvent> editedOfflineHE = new ArrayList<HabitEvent>();
 
 
     public HabitEventStateManager(){}
@@ -49,6 +54,42 @@ public class HabitEventStateManager {
                 RECENT_HABITEVENTS.remove(count.intValue());
             }
         }
+    }
+
+    public void addCompletedOfflineHE(HabitEvent he){
+        completedOfflineHE.add(he);
+    }
+
+    public ArrayList<HabitEvent> getCompletedOfflineHE() {
+        return completedOfflineHE;
+    }
+
+    public void setCompletedOfflineHE(ArrayList<HabitEvent> completedOfflineHE) {
+        HabitEventStateManager.completedOfflineHE = completedOfflineHE;
+    }
+
+    public void setNewOfflineHE(ArrayList<HabitEvent> newOfflineHE) {
+        HabitEventStateManager.newOfflineHE = newOfflineHE;
+    }
+
+    public void setEditedOfflineHE(ArrayList<HabitEvent> editedOfflineHE) {
+        HabitEventStateManager.editedOfflineHE = editedOfflineHE;
+    }
+
+    public ArrayList<HabitEvent> getNewOfflineHE() {
+        return newOfflineHE;
+    }
+
+    public ArrayList<HabitEvent> getEditedOfflineHE() {
+        return editedOfflineHE;
+    }
+
+    public void addNewOfflineHE(HabitEvent he){
+        newOfflineHE.add(he);
+    }
+
+    public void addEditedOfflineHE(HabitEvent he){
+        editedOfflineHE.add(he);
     }
 
     // add to today's habit event list
@@ -114,16 +155,33 @@ public class HabitEventStateManager {
     }
 
     public HabitEvent getHabitEvent(Integer requestedID){
-        for(Integer count = 0; count < RECENT_HABITEVENTS.size(); count++){
-            if(RECENT_HABITEVENTS.get(count).getHabitEventID() == requestedID){
-                return RECENT_HABITEVENTS.get(count);
+        // Check today's habit events
+        for(HabitEvent he : heForToday){
+            if(he.getHabitEventID() == requestedID){
+                return he;
             }
         }
-        for(Integer count = 0; count < ALL_HABITEVENTS.size(); count++){
-            if(ALL_HABITEVENTS.get(count).getHabitEventID() == requestedID){
-                return ALL_HABITEVENTS.get(count);
+        // Otherwise, check recent habit events
+        for(HabitEvent he : recentHabitEvents){
+            if(he.getHabitEventID() == requestedID){
+                return he;
             }
         }
+        // Otherwise, check all habit events on elastic search
+        ArrayList<HabitEvent> heList = new ArrayList<HabitEvent>();
+        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+        getHabitEvent.execute();
+        try {
+            heList = getHabitEvent.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if(heList.size() > 0){
+            return heList.get(0);
+        }
+        // If habit event doesn't exist, return placeholder
         HabitEvent he = new HabitEvent(-1, -1, "");
         return he;
     }

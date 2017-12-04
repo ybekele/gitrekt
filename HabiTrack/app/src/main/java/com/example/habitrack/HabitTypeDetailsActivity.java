@@ -94,7 +94,7 @@ public class HabitTypeDetailsActivity extends AppCompatActivity {
             //progressBar.setMax(htc.getMaxCounter(htID));
             progressBar.setMax(currHT.getCurrentMaxCounter());
             progressBar.setProgress(currHT.getCompletedCounter());
-            progressNum.setText(currHT.getCompletedCounter().toString());
+            progressNum.setText(currHT.getCompletedCounter().toString() + "/" + currHT.getCurrentMaxCounter().toString());
 
             // Get the edit text references
             titleEdit = (EditText) findViewById(R.id.titleBox);

@@ -112,16 +112,20 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 }
                 commentString = comment.getText().toString();
                 if(commentString.length() > 0 && commentString.length() < 30){
-                    hec.editHabitEventComment(heID, commentString);
+                    hec.editHabitEventComment(heID, commentString, isConnected);
                 }
 //
 //                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event",
 //                            Toast.LENGTH_SHORT).show();
 //                }
-                htc.incrementHTCurrentCounter(htEsID);
                 hec.completeHabitEvent(heID);
+                if(isConnected) {
+                    htc.incrementHTCurrentCounter(htEsID);
+                } else {
+                    HabitEvent he = hec.getHabitEvent(heID);
+                    HabitEventStateManager.getHEStateManager().addCompletedOfflineHE(he);
+                }
                 finish();
-
             }
         });
     }
