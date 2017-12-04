@@ -41,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Integer htID;
     Integer heID;
+    Integer htEsID;
     String titleString;
     ArrayList<LatLng> friends_locations = new ArrayList<LatLng>();
     ArrayList<String> friends_IDs;
@@ -79,10 +80,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         HabitEventController hec = new HabitEventController(this);
         htID = intent.getIntExtra("htID", -1);
         heID = intent.getIntExtra("heID", -1);
+        htEsID = intent.getIntExtra("htEsID", -1);
 
 
-
-        titleString = hc.getHabitTitle(htID);
+        titleString = hc.getHabitTitle(htEsID.toString());
 
 
 
@@ -103,8 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.

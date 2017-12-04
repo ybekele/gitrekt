@@ -70,6 +70,8 @@ public class HabitHistory extends AppCompatActivity {
             }
         }
 
+
+
         Collections.reverse(all_habit_titles);
         Collections.reverse(listview_tracker);
         Collections.reverse(listview_tracker2);
@@ -78,9 +80,6 @@ public class HabitHistory extends AppCompatActivity {
         the_titles = hc.getAllHabitEvent();
 
         Collections.reverse(the_titles);
-
-
-
 
 
         start_over = (Button) findViewById(R.id.reset);
