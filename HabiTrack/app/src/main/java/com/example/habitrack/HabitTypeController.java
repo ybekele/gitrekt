@@ -79,19 +79,27 @@ public class HabitTypeController {
             ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType(fileManager);
             addHabitType.execute(ht);
         }
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        if (schedule.contains(today)) {
+            HabitTypeStateManager.getHTStateManager().addMetadataToday(ht.getMyData());
+        }
         // save the metadata
         // fileManager.save(fileManager.HT_METADATA_MODE);
         // Check if an event needs to be created
-        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        if(schedule.contains(today)){
-            HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
-            HabitEventController hec = new HabitEventController(ctx);
-            hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
-        }
+//        if(ht.getElasticSearchId() == null) {
+//            Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+//            if (schedule.contains(today)) {
+////            HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
+//                HabitEventController hec = new HabitEventController(ctx);
+//                hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
+//                ht.getMyData().setScheduledToday(Boolean.TRUE);
+//                fileManager.save(fileManager.HT_METADATA_MODE);
+//            }
+//        }
         // Add the habit type to the event state manager
-        HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
+//        HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
         // Save to local
-        saveToFile();
+//        saveToFile();
     }
 
     public HabitType getHabitTypeFromES(String esID){
@@ -143,10 +151,9 @@ public class HabitTypeController {
             saveHTDate();
             // get he controller
             HabitEventController hec = new HabitEventController(ctx);
-            ArrayList<HabitType> recent;
-            recent = HabitTypeStateManager.getHTStateManager().getHabitTypesForToday();
-            for(HabitType ht : recent){
-                hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
+            ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataToday();
+            for(HabitTypeMetadata htmd : htmdList){
+                hec.createNewHabitEvent(htmd.getEsID(), htmd.getLocalID(), isConnected, userID);
             }
         }
     }
@@ -179,27 +186,11 @@ public class HabitTypeController {
         Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         for(HabitTypeMetadata htmd : habitTypeMetadata){
             ArrayList<Integer> schedule = htmd.getSchedule();
-            if(schedule.contains(today)){
+            if (schedule.contains(today)) {
                 htmdForToday.add(htmd);
             }
         }
         HabitTypeStateManager.getHTStateManager().setHtMetadataToday(htmdForToday);
-    }
-
-    /**
-     * This function deletes all habit types
-     */
-    public void deleteAllHabitTypes(){
-        HabitTypeStateManager.getHTStateManager().removeAllHabitTypes();
-        HabitTypeStateManager.getHTStateManager().removeHabitTypesForToday();
-        saveToFile();
-    }
-
-    /**
-     * this function deletes all the habit types scheduled for today
-     */
-    public void deleteHabitTypesForToday(){
-        HabitTypeStateManager.getHTStateManager().removeHabitTypesForToday();
     }
 
     /**
@@ -426,33 +417,33 @@ public class HabitTypeController {
     /**
      * loads from the file
      */
-    public void loadFromFile() {
-        ArrayList<HabitType> habits;
-        try {
-            FileInputStream fis = ctx.openFileInput(FILE_NAME);
-            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-            Gson gson = new Gson();
-            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
-            Type listType = new TypeToken<ArrayList<HabitType>>(){}.getType();
-            habits = gson.fromJson(in, listType);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            habits = new ArrayList<HabitType>();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            throw new RuntimeException();
-        }
-        ArrayList<HabitType> htForToday = new ArrayList<HabitType>();
-        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        for(HabitType ht : habits){
-            ArrayList<Integer> schedule = ht.getSchedule();
-            if(schedule.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
-                htForToday.add(ht);
-            }
-        }
-        HabitTypeStateManager.getHTStateManager().setHabitTypesForToday(htForToday);
-        HabitTypeStateManager.getHTStateManager().setAllHabittypes(habits);
-    }
+//    public void loadFromFile() {
+//        ArrayList<HabitType> habits;
+//        try {
+//            FileInputStream fis = ctx.openFileInput(FILE_NAME);
+//            BufferedReader in = new BufferedReader(new InputStreamReader(fis));
+//            Gson gson = new Gson();
+//            //Code taken from http://stackoverflow.com/questions/12384064/gson-convert-from-json-to-a-typed-arraylistt Sept.22,2016
+//            Type listType = new TypeToken<ArrayList<HabitType>>(){}.getType();
+//            habits = gson.fromJson(in, listType);
+//        } catch (FileNotFoundException e) {
+//            // TODO Auto-generated catch block
+//            habits = new ArrayList<HabitType>();
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            throw new RuntimeException();
+//        }
+//        ArrayList<HabitType> htForToday = new ArrayList<HabitType>();
+//        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+//        for(HabitType ht : habits){
+//            ArrayList<Integer> schedule = ht.getSchedule();
+//            if(schedule.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
+//                htForToday.add(ht);
+//            }
+//        }
+//        HabitTypeStateManager.getHTStateManager().setHabitTypesForToday(htForToday);
+//        HabitTypeStateManager.getHTStateManager().setAllHabittypes(habits);
+//    }
 
     public void saveToFile() {
         ArrayList<HabitType> habits = getAllHabitTypes();
