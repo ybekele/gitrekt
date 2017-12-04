@@ -31,6 +31,7 @@ public class ImageHandler {
                 byte[] b = byteArrayBitmapStream.toByteArray();
                 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
                 he.setEncodedPhoto(encodedImage);
+                HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
             }
             return null;
         }

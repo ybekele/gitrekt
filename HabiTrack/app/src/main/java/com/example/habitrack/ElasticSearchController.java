@@ -23,10 +23,10 @@ import io.searchbox.core.SearchResult;
 public class ElasticSearchController {
     private static JestDroidClient client;
 
-    public static class VerifyESId extends AsyncTask<ArrayList<HabitTypeMetadata>, Void, Void> {
+    public static class VerifyESId extends AsyncTask<ArrayList<HabitTypeMetadata>, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(ArrayList<HabitTypeMetadata>... metadataLists) {
+        protected Boolean doInBackground(ArrayList<HabitTypeMetadata>... metadataLists) {
             verifySettings();
             ArrayList<HabitTypeMetadata> htMetadataList = metadataLists[0];
             String uid = "test";
@@ -53,7 +53,7 @@ public class ElasticSearchController {
             }
 
             for(HabitTypeMetadata htMetadata : htMetadataList) {
-                if (htMetadata.getEsID() != "" || htMetadata.getEsID() != null) {
+                if (htMetadata.getEsID() == "" || htMetadata.getEsID() == null) {
                     for (HabitType ht : habitTypes) {
                         if(ht.getID() == htMetadata.getLocalID()){
                             htMetadata.setEsID(ht.getElasticSearchId());
@@ -61,7 +61,7 @@ public class ElasticSearchController {
                     }
                 }
             }
-            return null;
+            return Boolean.FALSE;
         }
     }
 
@@ -160,9 +160,10 @@ public class ElasticSearchController {
         }
     }
 
-    public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Void> {
+    public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Boolean> {
         @Override
-        protected Void doInBackground(HabitEvent... habitEvents) {
+        protected Boolean doInBackground(HabitEvent... habitEvents) {
+            Boolean status = Boolean.FALSE;
             verifySettings();
             for (HabitEvent habitEvent : habitEvents) {
                 Index index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").build();
@@ -170,6 +171,7 @@ public class ElasticSearchController {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
                         habitEvent.setId(result.getId());
+                        status = Boolean.TRUE;
                     } else {
                         Log.i("Error", "Elasticsearch was not able to add the HabitEvent");
                     }
@@ -177,7 +179,7 @@ public class ElasticSearchController {
                     Log.i("Error", "The application failed to build and send the HabitEvent");
                 }
             }
-            return null;
+            return status;
         }
     }
 
@@ -317,6 +319,131 @@ public class ElasticSearchController {
             }
 
             return habitEvents;
+        }
+    }
+
+    public static class AddOfflineEvents extends AsyncTask<ArrayList<HabitEvent>, Void, Void> {
+
+        private FileManager fileManager;
+
+        public AddOfflineEvents(FileManager givenFM) {
+            this.fileManager = givenFM;
+        }
+
+        @Override
+        protected Void doInBackground(ArrayList<HabitEvent>... heList) {
+            verifySettings();
+            ArrayList<HabitEvent> offlineHEs = heList[0];
+            for (HabitEvent habitEvent : offlineHEs) {
+                if(habitEvent.getId() == null) {
+                    Index index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").build();
+                    try {
+                        DocumentResult result = client.execute(index);
+                        if (result.isSucceeded()) {
+                            habitEvent.setId(result.getId());
+                            fileManager.save(fileManager.RECENT_HE_MODE);
+                        } else {
+                            Log.i("Error", "Elasticsearch was not able to add the HabitEvent");
+                        }
+                    } catch (IOException e) {
+                        Log.i("Error", "The application failed to build and send the HabitEvent");
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class EditHabitEvent extends AsyncTask<HabitEvent, Void, Boolean> {
+
+        private FileManager fileManager;
+
+        public EditHabitEvent(FileManager givenFM){
+            fileManager = givenFM;
+        }
+
+        @Override
+        protected Boolean doInBackground(HabitEvent... heList) {
+            verifySettings();
+
+            HabitEvent habitEvent = heList[0];
+            String esID = habitEvent.getId();
+            Boolean status = Boolean.FALSE;
+            // Push the new habit type back
+            Index index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").id(esID).build();
+            try {
+                DocumentResult result = client.execute(index);
+                if (result.isSucceeded()) {
+                    status = Boolean.TRUE;
+                } else {
+                    Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                }
+            } catch (IOException e) {
+                Log.i("Error", "The application failed to build and send the HabitType");
+            }
+            return status;
+        }
+    }
+
+    public static class syncEditedOfflineHEs extends AsyncTask<Void, Void, Void> {
+
+        private FileManager fileManager;
+
+        public syncEditedOfflineHEs (FileManager givenFM){
+            fileManager = givenFM;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            verifySettings();
+
+            ArrayList<HabitEvent> editedOffLineHeList = HabitEventStateManager.getHEStateManager().getEditedOfflineHE();
+            while(editedOffLineHeList.size() > 0){
+//            for(HabitEvent habitEvent : editedOffLineHeList) {
+                Index index;
+                HabitEvent habitEvent = editedOffLineHeList.get(0);
+                String esID = habitEvent.getId();
+                Boolean status = Boolean.FALSE;
+                // Push the new habit type back
+                index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").id(esID).build();
+                try {
+                    DocumentResult result = client.execute(index);
+                    if (result.isSucceeded()) {
+                        status = Boolean.TRUE;
+                        editedOffLineHeList.remove(habitEvent);
+                    } else {
+                        Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                    }
+                } catch (IOException e) {
+                    Log.i("Error", "The application failed to build and send the HabitType");
+                }
+                HabitEventStateManager.getHEStateManager().setEditedOfflineHE(editedOffLineHeList);
+                fileManager.save(fileManager.EDITED_OFFLINE_HE_MODE);
+            }
+//            ArrayList<HabitEvent> newOffLineHeList = HabitEventStateManager.getHEStateManager().getNewOfflineHE();
+//            while(newOffLineHeList.size() > 0){
+////            for(HabitEvent habitEvent : newOffLineHeList) {
+//                HabitEvent habitEvent = newOffLineHeList.get(0);
+//                Index index;
+//                String esID = habitEvent.getId();
+//                Boolean status = Boolean.FALSE;
+//                // Push the new habit type back
+//                index = new Index.Builder(habitEvent).index("gitrekt_htrack").type("habit_event").build();
+//
+//                try {
+//                    DocumentResult result = client.execute(index);
+//                    if (result.isSucceeded()) {
+//                        habitEvent.setId(result.getId());
+//                        newOffLineHeList.remove(habitEvent);
+//
+//                    } else {
+//                        Log.i("Error", "Elasticsearch was not able to add the HabitType");
+//                    }
+//                } catch (IOException e) {
+//                    Log.i("Error", "The application failed to build and send the HabitType");
+//                }
+//            }
+            return null;
         }
     }
 
