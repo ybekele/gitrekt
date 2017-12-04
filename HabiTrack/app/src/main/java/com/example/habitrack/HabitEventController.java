@@ -320,7 +320,7 @@ public class HabitEventController {
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setLocation(loc);
-            saveToFile();
+            fileManager.save(fileManager.TODAY_HE_MODE);
             HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
         }
     }
