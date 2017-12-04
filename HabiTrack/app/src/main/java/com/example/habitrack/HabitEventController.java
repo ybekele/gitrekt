@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -64,15 +65,9 @@ public class HabitEventController {
         he.setTitle(htc.getHabitTitle(esID));
         // set user ID
         he.setUserID(userID);
-        // add to today's events & save event as part of today's events
-        HabitEventStateManager.getHEStateManager().addTodayHabitEvent(he);
-        fileManager.save(fileManager.TODAY_HE_MODE);
-        // add to recent events & save event as recent event
-        HabitEventStateManager.getHEStateManager().addRecentEvent(he);
-        fileManager.save(fileManager.RECENT_HE_MODE);
         // Save event on elastic search if connected
         if(isConnected) {
-            ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+            ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent(fileManager);
             addHabitEvent.execute(he);
             // set the current event to be the most recent event for the ht
             htc.setHabitTypeMostRecentEvent(esID, he);
@@ -81,9 +76,16 @@ public class HabitEventController {
         } else {
             HabitEventStateManager.getHEStateManager().addNewOfflineHE(he);
         }
-        // Save event locally
-//        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-//        saveToFile();
+        // Set the htmd scheduled today to TRUE
+        HabitTypeMetadata htmd = HabitTypeStateManager.getHTStateManager().getHtMetadata(esID);
+        htmd.setScheduledToday(Boolean.TRUE);
+        fileManager.save(fileManager.HT_METADATA_MODE);
+        // add to today's events & save event as part of today's events
+        HabitEventStateManager.getHEStateManager().addTodayHabitEvent(he);
+        fileManager.save(fileManager.TODAY_HE_MODE);
+        // add to recent events & save event as recent event
+        HabitEventStateManager.getHEStateManager().addRecentEvent(he);
+        fileManager.save(fileManager.RECENT_HE_MODE);
     }
 
     public ArrayList<HabitEvent> getHabitEventsForToday(){
@@ -227,7 +229,7 @@ public class HabitEventController {
             while(newOfflineHEs.size() > 0) {
                 HabitEvent habitEvent = newOfflineHEs.get(0);
                 Boolean result = Boolean.FALSE;
-                ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+                ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent(fileManager);
                 addHabitEvent.execute(habitEvent);
                 try {
                     result = addHabitEvent.get();
