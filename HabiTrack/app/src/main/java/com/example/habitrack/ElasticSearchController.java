@@ -161,6 +161,11 @@ public class ElasticSearchController {
     }
 
     public static class AddHabitEvent extends AsyncTask<HabitEvent, Void, Boolean> {
+        private FileManager fileManager;
+
+        public AddHabitEvent(FileManager givenFM){
+            this.fileManager = givenFM;
+        }
         @Override
         protected Boolean doInBackground(HabitEvent... habitEvents) {
             Boolean status = Boolean.FALSE;
@@ -172,6 +177,8 @@ public class ElasticSearchController {
                     if (result.isSucceeded()) {
                         habitEvent.setId(result.getId());
                         status = Boolean.TRUE;
+                        fileManager.save(fileManager.TODAY_HE_MODE);
+                        fileManager.save(fileManager.RECENT_HE_MODE);
                     } else {
                         Log.i("Error", "Elasticsearch was not able to add the HabitEvent");
                     }
@@ -189,10 +196,8 @@ public class ElasticSearchController {
             verifySettings();
 
             String esID = esIDinList[0];
-
             ArrayList<HabitType> habitTypes = new ArrayList<HabitType>();
             String query;
-
             query = "{\n" +
                     "  \"query\": { \"term\": {\"_id\": \"" + esID + "\"} }\n" + "}";
 
