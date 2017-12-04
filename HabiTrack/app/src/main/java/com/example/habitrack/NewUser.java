@@ -37,16 +37,16 @@ public class NewUser {
         return userID;
     }
 
-    public String findId(String userName) {
-        return userID;
-    }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public String getUserID(String userName) {
+        return userID;
     }
 
     public void addUsersFollowed(NewUser follower) {
