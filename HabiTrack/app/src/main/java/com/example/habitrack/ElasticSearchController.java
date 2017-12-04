@@ -1,6 +1,5 @@
 package com.example.habitrack;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -234,6 +233,32 @@ public class ElasticSearchController {
             Boolean status = Boolean.FALSE;
             // Push the new habit type back
             Index index = new Index.Builder(habitType).index("gitrekt_htrack").type("habit_type").id(esID).build();
+            try {
+                DocumentResult result = client.execute(index);
+                if (result.isSucceeded()) {
+                    status = Boolean.TRUE;
+                } else {
+                    Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                }
+            } catch (IOException e) {
+                Log.i("Error", "The application failed to build and send the HabitType");
+            }
+            return null;
+        }
+    }
+
+
+    public static class EditUser extends AsyncTask<NewUser, Void, Void> {
+
+        @Override
+        protected Void doInBackground(NewUser... users) {
+            verifySettings();
+
+            NewUser usr = users[0];
+            String esID = usr.getId();
+            Boolean status = Boolean.FALSE;
+            // Push the new habit type back
+            Index index = new Index.Builder(usr).index("gitrekt_htrack").type("htr_usr").id(esID).build();
             try {
                 DocumentResult result = client.execute(index);
                 if (result.isSucceeded()) {
