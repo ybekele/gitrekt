@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
 // ------------------
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
         SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
-        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUserID", MODE_PRIVATE);
         final SharedPreferences.Editor loggedInEditor = loggedInPrefs.edit();
         boolean isLoggedIn = loggedInPrefs.getBoolean("loggedIn", false);
-        String liUserID = loggedInUserID.getString("userID", null);
+        String liUserID = loggedInUserID.getString("loggedInUserID", null);
         final Intent toLogIn = new Intent(getApplicationContext(), SignupActivity.class);
         if(!isLoggedIn) {
             startActivity(toLogIn);
