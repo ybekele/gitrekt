@@ -82,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-        titleString = hc.getHabitTitle(htID);
+        //titleString = hc.getHabitTitle(htID);
 
 
 

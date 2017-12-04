@@ -37,6 +37,10 @@ public class NewUser {
         return userID;
     }
 
+    public String findId(String userName) {
+        return userID;
+    }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
