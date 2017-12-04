@@ -67,7 +67,7 @@ public class AllHabitTypesActivity extends AppCompatActivity {
         super.onStart();
         // Restore all HT
 
-        htMDList = HabitTypeStateManager.getHTStateManager().getAllMetadata();
+        htMDList = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
         //adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, namesOfTypes);
         adapter = new ArrayAdapter<HabitTypeMetadata>(this, R.layout.list_item, htMDList);
         allTypes.setAdapter(adapter);

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Button allButton;
     Button logoutButton;
     Button socialButton;
+    ImageButton refreshButton;
     private ListView displayNames;
     //private ArrayList<HabitType> today = new ArrayList<HabitType>();
     private ArrayList<HabitEvent> today = new ArrayList<HabitEvent>();
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         createTypeButton = (Button) findViewById(R.id.createHabitButton);
         allButton = (Button) findViewById(R.id.allButton);
         historybutton = (Button) findViewById(R.id.historyButton);
+        refreshButton = findViewById(R.id.refreshButton);
         logoutButton = (Button) findViewById(R.id.button10);
         socialButton = (Button) findViewById(R.id.button4);
         displayNames = (ListView) findViewById(R.id.listView);
@@ -109,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
         });
 // ------------------
 
-//        ------------------- TEMP USER ID
         currentUserID = liUserID;
+
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
@@ -150,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("habitID", today.get(i).getID());
                 Intent intent;
                 Integer heID = today.get(i).getHabitEventID();
+                String esID = today.get(i).getHabitTypeEsID();
                 if(hec.getHabitEventIsEmpty(heID)) {
                     intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 } else {
@@ -158,7 +162,18 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 intent.putExtra("connection", isConnected);
+                intent.putExtra("habitTypeEsID", esID);
                 startActivity(intent);
+            }
+        });
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isConnected = isOnline();
+                hec.updateHabitEvents(isConnected, currentUserID);
+                adapter.notifyDataSetChanged();
+
             }
         });
 
@@ -224,19 +239,36 @@ public class MainActivity extends AppCompatActivity {
 //        hec.loadHEID();
 //        hec.createNewHabitEvent(1000, isConnected, currentUserID);
 //        hec.doOfflineTasks();
+//        ArrayList<Integer> plan = new ArrayList<Integer>();
+//        plan.add(Calendar.SUNDAY);
+//        HabitTypeMetadata htmd1 = new HabitTypeMetadata(1001, "esid1");
+//        htmd1.setTitle("title1");
+//        htmd1.setScheduledToday(Boolean.TRUE);
+//        htmd1.setSchedule(plan);
+//        htmd1.setCanBeScheduled(Boolean.TRUE);
+//
+//        HabitTypeStateManager.getHTStateManager().addMetadata(htmd1);
+//        fileManager.save(fileManager.HT_METADATA_MODE);
 //  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
 
-        // load HT Metadata
-        fileManager.load(fileManager.HT_METADATA_MODE);
-        // 2. load
+        // 0. load IDs
         htc.loadHTID();
         hec.loadHEID();
-        // 3. Restore all HT and HE if saved
-        htc.loadFromFile();
-        hec.loadFromFile();
-        // 4. Get Recent events and HabitTypes for today
+        // 1. load HT Metadata
+        fileManager.load(fileManager.HT_METADATA_MODE);
+        // 2. load habit events for today
+        fileManager.load(fileManager.TODAY_HE_MODE);
+        // 2. calculate all the hts for today, using htmds
+        htc.getHabitTypesForToday();
+        // 3. calculate the hes for today, using the previously created htmdfortoday list
         htc.generateHabitsForToday(isConnected, currentUserID);
-        hec.updateRecentHabitEvents();
+        //hec.generateEventsForToday(isConnected, currentUserID);
+        // 3. Restore all HT and HE if saved
+//        htc.loadFromFile();
+//        hec.loadFromFile();
+        // 4. Get Recent events and HabitTypes for today
+//        htc.generateHabitsForToday(isConnected, currentUserID);
+//        hec.updateRecentHabitEvents();
 
     }
 
@@ -254,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        hec.updateHabitEvents(isConnected, currentUserID);
 
     }
 
