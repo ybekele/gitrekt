@@ -15,6 +15,10 @@ public class NewUser {
     private String userID;
     public ArrayList<NewUser> followRequests = new ArrayList<>();
     public ArrayList<NewUser> usersFollowed = new ArrayList<>();
+
+    /**
+     * ignore this
+     */
     public ArrayList<String> requestsEID = new ArrayList<>();
 
     /* I added these two extra lists to see if it's easier working with strings through ES*/
