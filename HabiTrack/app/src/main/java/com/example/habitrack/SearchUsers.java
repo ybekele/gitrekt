@@ -35,6 +35,10 @@ public class SearchUsers extends AppCompatActivity {
         setContentView(R.layout.activity_search_users);
 
         currentUsers = getCurrentUsers();
+        Log.d("userslist", currentUsers.toString());
+        for (int i = 0; i < currentUsers.size(); i++) {
+            Log.d("us", currentUsers.get(i).getTitle());
+        }
         searchedUsersListView = findViewById(R.id.searchUserListView);
         searchedUsersEditText = findViewById(R.id.searchUserEditText);
         searchUsersButton = findViewById(R.id.buttonsu);

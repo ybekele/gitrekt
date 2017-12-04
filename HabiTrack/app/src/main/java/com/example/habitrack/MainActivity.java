@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -163,29 +163,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
-        NewUser usr = new NewUser("asdfasdf");
-        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
-        addNewUser.execute(usr);
-
-        NewUser usr2 = new NewUser("follower");
-        ElasticSearchController.AddNewUser addNewUser2 = new ElasticSearchController.AddNewUser();
-        addNewUser2.execute(usr2);
-        usr.requestsEID.add("follower");
-
-
-        NewUser usr3 = new NewUser("beginner");
-        ElasticSearchController.AddNewUser addNewUser3 = new ElasticSearchController.AddNewUser();
-        addNewUser3.execute(usr3);
-        usr3.followRequests.add(usr2);
-        usr3.followRequests.add(usr);
-        Log.d("worked", usr3.getFollowRequests().toString());
-
-
-        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
-        editUser.execute(usr);
-
-        ElasticSearchController.EditUser editUser1 = new ElasticSearchController.EditUser();
-        editUser1.execute(usr3);
+//        NewUser usr = new NewUser("asdfasdf");
+//        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+//        addNewUser.execute(usr);
+//
+//        NewUser usr2 = new NewUser("follower");
+//        ElasticSearchController.AddNewUser addNewUser2 = new ElasticSearchController.AddNewUser();
+//        addNewUser2.execute(usr2);
+//        usr.requestsEID.add("follower");
+//
+//
+//        NewUser usr3 = new NewUser("beginner");
+//        ElasticSearchController.AddNewUser addNewUser3 = new ElasticSearchController.AddNewUser();
+//        addNewUser3.execute(usr3);
+//        usr3.followRequests.add(usr2);
+//        usr3.followRequests.add(usr);
+//        Log.d("worked", usr3.getFollowRequests().toString());
+//
+//
+//        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+//        editUser.execute(usr);
+//
+//        ElasticSearchController.EditUser editUser1 = new ElasticSearchController.EditUser();
+//        editUser1.execute(usr3);
 //        HabitEvent testHE = new HabitEvent(1000, 2000);
 //        testHE.setUserID("test");
 //        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
@@ -194,8 +194,15 @@ public class MainActivity extends AppCompatActivity {
 //        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
 //        getHabitEvent.execute("user", "test");
 //
-//        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
-//        users.execute("");
+        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
+        users.execute("");
+        try {
+            ArrayList<NewUser> ls = users.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 //        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 //
 //        NewUser user = new NewUser("testUser3");
