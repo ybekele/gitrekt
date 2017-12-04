@@ -90,9 +90,6 @@ public class HabitType {
         this.myData.setSchedule(this.schedule);
     }
 
-    public Double getStatus(){
-        return (completedCounter.doubleValue()/currentMaxCounter.doubleValue());}
-
     public Integer getID() {
         return ID;
     }
