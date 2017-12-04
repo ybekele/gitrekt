@@ -35,11 +35,17 @@ public class DateSelector extends AppCompatActivity {
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("year", year);
-                returnIntent.putExtra("month", month);
+                returnIntent.putExtra("month", month+1);
                 returnIntent.putExtra("day", day);
                 setResult(Activity.RESULT_OK,returnIntent);
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

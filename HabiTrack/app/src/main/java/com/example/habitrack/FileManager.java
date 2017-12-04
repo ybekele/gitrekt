@@ -39,6 +39,7 @@ public class FileManager {
     private ArrayList<HabitEvent> todayHabitEvents;
     private ArrayList<HabitEvent> editedOfflineHEs;
     private ArrayList<HabitEvent> newOfflineHEs;
+    private Calendar date;
 
     // 2. MODES
     public final Integer HT_METADATA_MODE = 100;
@@ -46,6 +47,8 @@ public class FileManager {
     public final Integer TODAY_HE_MODE = 300;
     public final Integer EDITED_OFFLINE_HE_MODE = 400;
     public final Integer NEW_OFFLINE_HE_MODE = 500;
+    public final Integer DATE_MODE = 600;
+
 
     // 3. FILENAMES
     private String filename;
@@ -54,6 +57,7 @@ public class FileManager {
     private final String TODAY_HE_FILE = "todayhabitevents.sav";
     private final String EDITED_OFFLINE_HE_FILE = "editedOfflinehabitevents.sav";
     private final String NEW_OFFLINE_HE_FILE = "newOfflinehabitevents.sav";
+    private final String DATE_FILE = "htdate.sav";
 
     // Constructor
     public FileManager(Context context) {
@@ -77,6 +81,9 @@ public class FileManager {
         } else if(mode == NEW_OFFLINE_HE_MODE){
             newOfflineHEs = HabitEventStateManager.getHEStateManager().getNewOfflineHE();
             filename = NEW_OFFLINE_HE_FILE;
+        } else if(mode == DATE_MODE){
+            date = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
+            filename = DATE_FILE;
         }
         try {
             FileOutputStream fos = ctx.openFileOutput(filename,0);
@@ -92,6 +99,8 @@ public class FileManager {
                 gson.toJson(editedOfflineHEs, writer);
             } else if(mode == NEW_OFFLINE_HE_MODE){
                 gson.toJson(newOfflineHEs, writer);
+            } else if(mode == DATE_MODE) {
+                gson.toJson(date, writer);
             }
             writer.flush();
         } catch (FileNotFoundException e) {
@@ -115,6 +124,8 @@ public class FileManager {
             filename = EDITED_OFFLINE_HE_FILE;
         } else if(mode == NEW_OFFLINE_HE_MODE){
             filename = NEW_OFFLINE_HE_FILE;
+        } else if(mode == DATE_MODE){
+            filename = DATE_FILE;
         }
         try {
             FileInputStream fis = ctx.openFileInput(filename);
@@ -136,6 +147,9 @@ public class FileManager {
             } else if (mode == NEW_OFFLINE_HE_MODE){
                 Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
                 newOfflineHEs = gson.fromJson(in, calType);
+            } else if (mode == DATE_MODE){
+                Type calType = new TypeToken<Calendar>() {}.getType();
+                date = gson.fromJson(in, calType);
             }
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -149,6 +163,12 @@ public class FileManager {
                 editedOfflineHEs = new ArrayList<HabitEvent>();
             } else if(mode == NEW_OFFLINE_HE_MODE){
                 newOfflineHEs = new ArrayList<HabitEvent>();
+            } else if(mode == DATE_MODE){
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(Calendar.DATE, 1);
+                newDate.set(Calendar.MONTH, 1);
+                newDate.set(Calendar.YEAR, 1);
+                date = newDate;
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -164,8 +184,11 @@ public class FileManager {
             HabitEventStateManager.getHEStateManager().setEditedOfflineHE(editedOfflineHEs);
         } else if(mode == NEW_OFFLINE_HE_MODE){
             HabitEventStateManager.getHEStateManager().setNewOfflineHE(newOfflineHEs);
+        } else if(mode == DATE_MODE){
+            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(date);
         }
     }
 
 }
+
 

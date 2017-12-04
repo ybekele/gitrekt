@@ -3,6 +3,7 @@ package com.example.habitrack;
 import android.content.Context;
 import android.provider.CalendarContract;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -72,8 +73,6 @@ public class HabitTypeController {
         ht.setReason(reason);           // Set reason
         ht.setStartDate(startDate);     // Set start date
         ht.setSchedule(schedule);       // Set schedule
-        // Save the metadata of the HT
-        HabitTypeStateManager.getHTStateManager().addMetadata(ht.getMyData());
         // If connected to internet, then add the ht to es
         if(isConnected) {
             ElasticSearchController.AddHabitType addHabitType = new ElasticSearchController.AddHabitType(fileManager);
@@ -83,23 +82,10 @@ public class HabitTypeController {
         if (schedule.contains(today)) {
             HabitTypeStateManager.getHTStateManager().addMetadataToday(ht.getMyData());
         }
-        // save the metadata
-        // fileManager.save(fileManager.HT_METADATA_MODE);
-        // Check if an event needs to be created
-//        if(ht.getElasticSearchId() == null) {
-//            Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-//            if (schedule.contains(today)) {
-////            HabitTypeStateManager.getHTStateManager().addHabitTypeForToday(ht);
-//                HabitEventController hec = new HabitEventController(ctx);
-//                hec.createNewHabitEvent(ht.getElasticSearchId(), ht.getID(), isConnected, userID);
-//                ht.getMyData().setScheduledToday(Boolean.TRUE);
-//                fileManager.save(fileManager.HT_METADATA_MODE);
-//            }
-//        }
-        // Add the habit type to the event state manager
-//        HabitTypeStateManager.getHTStateManager().storeHabitType(ht);
-        // Save to local
-//        saveToFile();
+        // Save the metadata of the HT
+        HabitTypeStateManager.getHTStateManager().addMetadata(ht.getMyData());
+        // Save the changes
+        fileManager.save(fileManager.HT_METADATA_MODE);
     }
 
     public HabitType getHabitTypeFromES(String esID){
@@ -130,32 +116,34 @@ public class HabitTypeController {
      * This function is needed
      */
     public void generateHabitsForToday(Boolean isConnected, String userID){
-        // load previous date
-        loadHTDate();
-        // get today's date, and previous date
-        Calendar today = Calendar.getInstance();
-        Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
-        //TEMP --- ONLY FOR TESTING AND ENSURING IT WORKS
-        // htDate.add(Calendar.DAY_OF_MONTH, -1);
-        // if loaded date is behind today's date
-        if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
-                || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
-                && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
-                || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
-                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
-                && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))){
-            // Calculate the list for today
-            // HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
-            // Save the new date
-            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
-            saveHTDate();
-            // get he controller
-            HabitEventController hec = new HabitEventController(ctx);
-            ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataToday();
-            for(HabitTypeMetadata htmd : htmdList){
-                hec.createNewHabitEvent(htmd.getEsID(), htmd.getLocalID(), isConnected, userID);
-            }
+//        // load previous date
+//        loadHTDate();
+//        // get today's date, and previous date
+//        Calendar today = Calendar.getInstance();
+//        Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
+//        //TEMP --- ONLY FOR TESTING AND ENSURING IT WORKS
+//        // htDate.add(Calendar.DAY_OF_MONTH, -1);
+//        // if loaded date is behind today's date
+//        if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
+//                || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+//                && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
+//                || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
+//                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+//                && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))){
+//            // Calculate the list for today
+//            // HabitTypeStateManager.getHTStateManager().calculateHabitsForToday();
+//            // Save the new date
+//            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
+//            saveHTDate();
+//            // get he controller
+        HabitEventController hec = new HabitEventController(ctx);
+        ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataToday();
+        for(HabitTypeMetadata htmd : htmdList){
+            hec.createNewHabitEvent(htmd.getEsID(), htmd.getLocalID(), isConnected, userID);
+            htmd.setScheduledToday(Boolean.TRUE);
+            fileManager.save(fileManager.HT_METADATA_MODE);
         }
+//        }
     }
 
     public void setHabitTypeMostRecentEvent(String htEsID, HabitEvent he){
@@ -169,7 +157,6 @@ public class HabitTypeController {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
         if(returnedHT.getID() != -1){
             returnedHT.setMostRecentEvent(he);
             EditHabitTypeOnEs(returnedHT);
