@@ -12,12 +12,14 @@ public class HabitTypeMetadata {
     private String esID;
     private String title;
     private Boolean canBeScheduled;
+    private Boolean scheduledToday;
     private ArrayList<Integer> schedule;
 
 
     public HabitTypeMetadata(Integer localID, String esID) {
         this.localID = localID;
         this.esID = esID;
+        this.scheduledToday = Boolean.FALSE;
     }
 
     public Integer getLocalID() {
@@ -50,6 +52,14 @@ public class HabitTypeMetadata {
 
     public void setCanBeScheduled(Boolean canBeScheduled) {
         this.canBeScheduled = canBeScheduled;
+    }
+
+    public Boolean getScheduledToday() {
+        return scheduledToday;
+    }
+
+    public void setScheduledToday(Boolean scheduledToday) {
+        this.scheduledToday = scheduledToday;
     }
 
     public ArrayList<Integer> getSchedule() {
