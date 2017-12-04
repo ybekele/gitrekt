@@ -224,8 +224,8 @@ public class HabitTrackActivityTest extends ActivityInstrumentationTestCase2<Mai
         solo.waitForActivity(SocialActivity.class);
         solo.assertCurrentActivity("Wrong Activity, not social activity", SocialActivity.class);
         solo.clickOnView(solo.getView(R.id.friendsButton));
-        solo.waitForActivity(MyFollowers.class);
-        solo.assertCurrentActivity("Wrong Activity, not myFollowers class", MyFollowers.class);
+        solo.waitForActivity(MyFollowing.class);
+        solo.assertCurrentActivity("Wrong Activity, not myFollowers class", MyFollowing.class);
     }
 
 

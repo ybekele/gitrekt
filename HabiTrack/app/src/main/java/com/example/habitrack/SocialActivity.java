@@ -30,7 +30,7 @@ public class SocialActivity extends AppCompatActivity {
         friendsBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent viewFriends = new Intent(getApplicationContext(), MyFollowers.class);
+                Intent viewFriends = new Intent(getApplicationContext(), MyFollowing.class);
                 startActivity(viewFriends);
             }
         });
@@ -40,6 +40,14 @@ public class SocialActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent viewSearch = new Intent(getApplicationContext(), SearchUsers.class);
                 startActivity(viewSearch);
+            }
+        });
+
+        requestBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent viewRequests = new Intent(getApplicationContext(), myRequests.class);
+                startActivity(viewRequests);
             }
         });
     }

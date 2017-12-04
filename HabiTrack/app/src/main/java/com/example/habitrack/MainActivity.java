@@ -16,8 +16,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -165,6 +163,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
+        NewUser usr = new NewUser("asdfasdf");
+        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+        addNewUser.execute(usr);
+
+        NewUser usr2 = new NewUser("follower");
+        ElasticSearchController.AddNewUser addNewUser2 = new ElasticSearchController.AddNewUser();
+        addNewUser2.execute(usr2);
+        usr.requestsEID.add("follower");
+
+
+        NewUser usr3 = new NewUser("beginner");
+        ElasticSearchController.AddNewUser addNewUser3 = new ElasticSearchController.AddNewUser();
+        addNewUser3.execute(usr3);
+        usr3.followRequests.add(usr2);
+        usr3.followRequests.add(usr);
+        Log.d("worked", usr3.getFollowRequests().toString());
+
+
+        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+        editUser.execute(usr);
+
+        ElasticSearchController.EditUser editUser1 = new ElasticSearchController.EditUser();
+        editUser1.execute(usr3);
 //        HabitEvent testHE = new HabitEvent(1000, 2000);
 //        testHE.setUserID("test");
 //        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();

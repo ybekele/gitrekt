@@ -1,12 +1,6 @@
 package com.example.habitrack;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import io.searchbox.annotations.JestId;
 
@@ -19,13 +13,13 @@ public class NewUser {
     private String userName;
     @JestId
     private String userID;
-    private ArrayList<NewUser> followRequests = new ArrayList<>();
-    private ArrayList<NewUser> usersFollowed = new ArrayList<>();
+    public ArrayList<NewUser> followRequests = new ArrayList<>();
+    public ArrayList<NewUser> usersFollowed = new ArrayList<>();
+    public ArrayList<String> requestsEID = new ArrayList<>();
 
     /* I added these two extra lists to see if it's easier working with strings through ES*/
-    private List<String> followRequestsList = new ArrayList<>();
-    private List<String> usersFollowedList = new ArrayList<>();
-
+    //private List<String> followRequestsList = new ArrayList<>();
+    //private List<String> usersFollowedList = new ArrayList<>();
 
 
 
@@ -33,6 +27,7 @@ public class NewUser {
     public NewUser(String userName){
         this.userName = userName;
     }
+
 
     public String getTitle(){
         return userName;
@@ -53,20 +48,33 @@ public class NewUser {
     public void addUsersFollowed(NewUser follower) {
         usersFollowed.add(follower);
     }
+
     public void addRequest(NewUser requester) {
         followRequests.add(requester);
     }
 
-    public void addUsersFollowedList(String followee) { usersFollowedList.add(followee); }
-    public void addRequestList (String follower) { followRequestsList.add(follower); }
+    public void addUsersFollowedList(NewUser followee) {
+        usersFollowed.add(followee); }
+
+    public void addRequestList (NewUser follower) {
+        followRequests.add(follower);
+    }
 
 
     public ArrayList<NewUser> getUsersFollowed() {
         return usersFollowed;
     }
-    public List<String> getUsersFollowedList() { return usersFollowedList; }
+
     public ArrayList<NewUser> getFollowRequests() {
         return followRequests;
     }
-    public List<String> getFollowRequestsList() { return followRequestsList; }
+
+    public ArrayList<String> getRequestsEID() {
+        return requestsEID;
+    }
+
+
+
+
 }
+
