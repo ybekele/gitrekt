@@ -64,6 +64,12 @@ public class HabitEventController {
         he.setTitle(htc.getHabitTitle(esID));
         // set user ID
         he.setUserID(userID);
+        // add to today's events & save event as part of today's events
+        HabitEventStateManager.getHEStateManager().addTodayHabitEvent(he);
+        fileManager.save(fileManager.TODAY_HE_MODE);
+        // add to recent events & save event as recent event
+        HabitEventStateManager.getHEStateManager().addRecentEvent(he);
+        fileManager.save(fileManager.RECENT_HE_MODE);
         // Save event on elastic search if connected
         if(isConnected) {
             ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
@@ -72,16 +78,12 @@ public class HabitEventController {
             htc.setHabitTypeMostRecentEvent(esID, he);
             // Increment the completed event counter for the habit type
             htc.incrementHTMaxCounter(esID);
+        } else {
+            HabitEventStateManager.getHEStateManager().addNewOfflineHE(he);
         }
-        // add to today's events & save event as part of today's events
-        HabitEventStateManager.getHEStateManager().addTodayHabitEvent(he);
-        fileManager.save(fileManager.TODAY_HE_MODE);
-        // add to recent events & save event as recent event
-        HabitEventStateManager.getHEStateManager().addRecentEvent(he);
-        fileManager.save(fileManager.RECENT_HE_MODE);
         // Save event locally
-        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
-        saveToFile();
+//        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+//        saveToFile();
     }
 
     public ArrayList<HabitEvent> getHabitEventsForToday(){
@@ -194,13 +196,77 @@ public class HabitEventController {
 //        }
 //    }
 
-    public void editHabitEventComment(Integer requestedID, String newComment){
+    public void editHabitEventComment(Integer requestedID, String newComment, Boolean isConnected){
         HabitEvent he = this.getHabitEvent(requestedID);
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setComment(newComment);
             // Save event locally
             saveToFile();
+            if(isConnected){
+                ElasticSearchController.EditHabitEvent editHabitEvent = new ElasticSearchController.EditHabitEvent(fileManager);
+                editHabitEvent.execute(he);
+            } else {
+                HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
+            }
+        }
+    }
+
+    public void syncEditedHabitEvents(){
+        ArrayList<HabitEvent> editedHEs = HabitEventStateManager.getHEStateManager().getEditedOfflineHE();
+        if(editedHEs.size() > 0 ) {
+            ElasticSearchController.syncEditedOfflineHEs syncer = new ElasticSearchController.syncEditedOfflineHEs(fileManager);
+            syncer.execute();
+        }
+    }
+
+    public void syncNewOfflineHEs(){
+        ArrayList<HabitEvent> newOfflineHEs = HabitEventStateManager.getHEStateManager().getNewOfflineHE();
+        if(newOfflineHEs.size() > 0){
+            HabitTypeController htc = new HabitTypeController(hectx);
+            while(newOfflineHEs.size() > 0) {
+                HabitEvent habitEvent = newOfflineHEs.get(0);
+                Boolean result = Boolean.FALSE;
+                ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+                addHabitEvent.execute(habitEvent);
+                try {
+                    result = addHabitEvent.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    String htEsID = habitEvent.getHabitTypeEsID();
+                    htc.incrementHTMaxCounter(htEsID);
+                    newOfflineHEs.remove(habitEvent);
+                }
+            }
+        }
+    }
+
+    public void syncCompletedOfflineHEs(){
+        ArrayList<HabitEvent> newOfflineHEs = HabitEventStateManager.getHEStateManager().getCompletedOfflineHE();
+        if(newOfflineHEs.size() > 0){
+            HabitTypeController htc = new HabitTypeController(hectx);
+            while(newOfflineHEs.size() > 0) {
+                HabitEvent habitEvent = newOfflineHEs.get(0);
+                Boolean result = Boolean.FALSE;
+                ElasticSearchController.EditHabitEvent editHabitEvent = new ElasticSearchController.EditHabitEvent(fileManager);
+                editHabitEvent.execute(habitEvent);
+                try {
+                    result = editHabitEvent.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    String htEsID = habitEvent.getHabitTypeEsID();
+                    htc.incrementHTCurrentCounter(htEsID);
+                    newOfflineHEs.remove(habitEvent);
+                }
+            }
         }
     }
 
@@ -252,6 +318,8 @@ public class HabitEventController {
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setLocation(loc);
+            saveToFile();
+            HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
         }
     }
 
@@ -293,6 +361,7 @@ public class HabitEventController {
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setEncodedPhoto(encodedPhoto);
+            HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
         }
     }
 
@@ -331,6 +400,8 @@ public class HabitEventController {
         if(!he.getHabitEventID().equals(-1)){
             he.setEmpty(Boolean.FALSE);
         }
+        fileManager.save(fileManager.TODAY_HE_MODE);
+        fileManager.save(fileManager.RECENT_HE_MODE);
         saveToFile();
     }
 
