@@ -95,6 +95,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
                 //Log.d("COOL", String.valueOf(htID));
                 goToMap.putExtra("htID", htID);
                 goToMap.putExtra("heID", heID);
+                goToMap.putExtra("htEsID",htEsID);
                 startActivity(goToMap);
 
             }
