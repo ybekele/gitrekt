@@ -2,6 +2,7 @@ package com.example.habitrack;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -26,6 +27,8 @@ import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * HabitEventController
  *
@@ -44,38 +47,47 @@ public class HabitEventController {
     private Context hectx;
     private final String FILE_NAME = "habitEvents.sav";
     private final String ID_FILE_NAME = "heid.sav";
-    private final String DATE_FILE_NAME = "hedate.sav";
-    private final String HE_TODAY_FILE_NAME = "heForToday.sav";
+    private FileManager fileManager;
 
     public HabitEventController(Context ctx){
         this.hectx = ctx;
+        this.fileManager = new FileManager(ctx);
     }
 
-    public void createNewHabitEvent(Integer habitTypeID, Boolean isConnected, String userID){
+    public void createNewHabitEvent(String esID, Integer habitTypeID, Boolean isConnected, String userID){
         Log.d("seen","itcame here");
         HabitTypeController htc = new HabitTypeController(hectx);
         HabitEvent he = new
-                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID);
+                HabitEvent(HabitEventStateManager.getHEStateManager().getHabitEventID(), habitTypeID, esID);
         // Save the new HE ID
         saveHEID();
-        he.setTitle(htc.getHabitTitle(habitTypeID));
+        he.setTitle(htc.getHabitTitle(esID));
+        // set user ID
         he.setUserID(userID);
-        htc.setHabitTypeMostRecentEvent(habitTypeID, he);
-        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+        // add to today's events & save event as part of today's events
+        HabitEventStateManager.getHEStateManager().addTodayHabitEvent(he);
+        fileManager.save(fileManager.TODAY_HE_MODE);
+        // add to recent events & save event as recent event
+        HabitEventStateManager.getHEStateManager().addRecentEvent(he);
+        fileManager.save(fileManager.RECENT_HE_MODE);
         // Save event on elastic search if connected
         if(isConnected) {
             ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
             addHabitEvent.execute(he);
+            // set the current event to be the most recent event for the ht
+            htc.setHabitTypeMostRecentEvent(esID, he);
+            // Increment the completed event counter for the habit type
+            htc.incrementHTMaxCounter(esID);
+        } else {
+            HabitEventStateManager.getHEStateManager().addNewOfflineHE(he);
         }
         // Save event locally
-        saveToFile();
-        // Increment the completed event counter for the habit type
-        htc.incrementHTMaxCounter(habitTypeID);
+//        HabitEventStateManager.getHEStateManager().storeHabitEvent(he);
+//        saveToFile();
     }
 
     public ArrayList<HabitEvent> getHabitEventsForToday(){
-        //generateEventsForToday();
-        return HabitEventStateManager.getHEStateManager().getALlHabitEventsForToday();
+        return HabitEventStateManager.getHEStateManager().getTodayHabitevents();
     }
 
     public ArrayList<HabitEvent> getAllHabitEvent(){
@@ -86,6 +98,19 @@ public class HabitEventController {
         HabitEventStateManager.getHEStateManager().updateRecentHabitEvents();
     }
 
+    public void generateEventsForToday(Boolean isConnected, String userID){
+        ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
+        Integer today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        for(HabitTypeMetadata htmd : htmdList){
+            ArrayList<Integer> schedule = htmd.getSchedule();
+            if(schedule.contains(today)){
+                String esID = htmd.getEsID();
+                Integer htID = htmd.getLocalID();
+                createNewHabitEvent(esID, htID, isConnected, userID);
+            }
+        }
+    }
+
     /**
      * This function returns the list of recent events
      * @return
@@ -93,6 +118,19 @@ public class HabitEventController {
     public ArrayList<HabitEvent> getRecentHabitEvents(){
         return HabitEventStateManager.getHEStateManager().getRecentHabitevents();
     }
+
+    public void updateHabitEvents(Boolean isConnected, String userID){
+        ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataToday();
+        for(HabitTypeMetadata htmd : htmdList){
+            String esID = htmd.getEsID();
+            if(htmd.getScheduledToday() == Boolean.FALSE && esID != null){
+                createNewHabitEvent(esID, htmd.getLocalID(), isConnected, userID);
+                htmd.setScheduledToday(Boolean.TRUE);
+            }
+        }
+        fileManager.save(fileManager.HT_METADATA_MODE);
+    }
+
 
     /**
      * This function deletes all habit events
@@ -158,13 +196,77 @@ public class HabitEventController {
 //        }
 //    }
 
-    public void editHabitEventComment(Integer requestedID, String newComment){
+    public void editHabitEventComment(Integer requestedID, String newComment, Boolean isConnected){
         HabitEvent he = this.getHabitEvent(requestedID);
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setComment(newComment);
             // Save event locally
             saveToFile();
+            if(isConnected){
+                ElasticSearchController.EditHabitEvent editHabitEvent = new ElasticSearchController.EditHabitEvent(fileManager);
+                editHabitEvent.execute(he);
+            } else {
+                HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
+            }
+        }
+    }
+
+    public void syncEditedHabitEvents(){
+        ArrayList<HabitEvent> editedHEs = HabitEventStateManager.getHEStateManager().getEditedOfflineHE();
+        if(editedHEs.size() > 0 ) {
+            ElasticSearchController.syncEditedOfflineHEs syncer = new ElasticSearchController.syncEditedOfflineHEs(fileManager);
+            syncer.execute();
+        }
+    }
+
+    public void syncNewOfflineHEs(){
+        ArrayList<HabitEvent> newOfflineHEs = HabitEventStateManager.getHEStateManager().getNewOfflineHE();
+        if(newOfflineHEs.size() > 0){
+            HabitTypeController htc = new HabitTypeController(hectx);
+            while(newOfflineHEs.size() > 0) {
+                HabitEvent habitEvent = newOfflineHEs.get(0);
+                Boolean result = Boolean.FALSE;
+                ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
+                addHabitEvent.execute(habitEvent);
+                try {
+                    result = addHabitEvent.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    String htEsID = habitEvent.getHabitTypeEsID();
+                    htc.incrementHTMaxCounter(htEsID);
+                    newOfflineHEs.remove(habitEvent);
+                }
+            }
+        }
+    }
+
+    public void syncCompletedOfflineHEs(){
+        ArrayList<HabitEvent> newOfflineHEs = HabitEventStateManager.getHEStateManager().getCompletedOfflineHE();
+        if(newOfflineHEs.size() > 0){
+            HabitTypeController htc = new HabitTypeController(hectx);
+            while(newOfflineHEs.size() > 0) {
+                HabitEvent habitEvent = newOfflineHEs.get(0);
+                Boolean result = Boolean.FALSE;
+                ElasticSearchController.EditHabitEvent editHabitEvent = new ElasticSearchController.EditHabitEvent(fileManager);
+                editHabitEvent.execute(habitEvent);
+                try {
+                    result = editHabitEvent.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if(result){
+                    String htEsID = habitEvent.getHabitTypeEsID();
+                    htc.incrementHTCurrentCounter(htEsID);
+                    newOfflineHEs.remove(habitEvent);
+                }
+            }
         }
     }
 
@@ -216,6 +318,8 @@ public class HabitEventController {
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setLocation(loc);
+            saveToFile();
+            HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
         }
     }
 
@@ -257,6 +361,7 @@ public class HabitEventController {
         // If the habit event exists
         if(!he.getHabitEventID().equals(-1)){
             he.setEncodedPhoto(encodedPhoto);
+            HabitEventStateManager.getHEStateManager().addEditedOfflineHE(he);
         }
     }
 
@@ -295,6 +400,8 @@ public class HabitEventController {
         if(!he.getHabitEventID().equals(-1)){
             he.setEmpty(Boolean.FALSE);
         }
+        fileManager.save(fileManager.TODAY_HE_MODE);
+        fileManager.save(fileManager.RECENT_HE_MODE);
         saveToFile();
     }
 

@@ -2,6 +2,7 @@ package com.example.habitrack;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,9 +45,10 @@ public class HabitEventControllerTest extends AndroidTestCase {
         htDate.add(Calendar.DATE, -14);
         ArrayList<Integer> htSchedule = new ArrayList<>();
         htSchedule.add(htDate.get(Calendar.DAY_OF_WEEK));
-        htc.createNewHabitType(htTitle, htReason,htDate, htSchedule);
+        //createNewHabitType(htTitle, htReason,htDate, htSchedule);
+        htc.createNewHabitType(htTitle, htReason,htDate, htSchedule, Boolean.TRUE, null);
         // make first test habit event with no comment
-        hec.createNewHabitEvent(1);
+        //hec.createNewHabitEvent(1);
         // make 2nd test habit event with comment for same habit type
         this.comment = "testComment1";
         hec.editHabitEventComment(1, comment);
@@ -62,9 +64,13 @@ public class HabitEventControllerTest extends AndroidTestCase {
      * that the completed counter for the habit type is incremented both times
      */
     public void testCreateHabitEvent(){
+        Log.d("secondhe", this.secondhe.getComment());
+        Log.d("comment", comment);
         assertEquals(this.secondhe.getComment(), comment);
+        Log.d("expect", Integer.toString(this.htc.getCompletedCounter(1).intValue()));
         assertEquals(2, this.htc.getCompletedCounter(1).intValue());
     }
-    protected void tearDown(){}
+    protected void tearDown(){
+    }
 
 }

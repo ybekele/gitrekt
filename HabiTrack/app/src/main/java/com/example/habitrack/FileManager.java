@@ -35,13 +35,25 @@ public class FileManager {
 
     // 1. Base objects
     private ArrayList<HabitTypeMetadata> habitTypeMetadata;
+    private ArrayList<HabitEvent> recentHabitEvents;
+    private ArrayList<HabitEvent> todayHabitEvents;
+    private ArrayList<HabitEvent> editedOfflineHEs;
+    private ArrayList<HabitEvent> newOfflineHEs;
 
     // 2. MODES
     public final Integer HT_METADATA_MODE = 100;
+    public final Integer RECENT_HE_MODE = 200;
+    public final Integer TODAY_HE_MODE = 300;
+    public final Integer EDITED_OFFLINE_HE_MODE = 400;
+    public final Integer NEW_OFFLINE_HE_MODE = 500;
 
     // 3. FILENAMES
     private String filename;
     private final String HT_METADATA_FILE = "htmetadata.sav";
+    private final String RECENT_HE_FILE = "recenthabitevents.sav";
+    private final String TODAY_HE_FILE = "todayhabitevents.sav";
+    private final String EDITED_OFFLINE_HE_FILE = "editedOfflinehabitevents.sav";
+    private final String NEW_OFFLINE_HE_FILE = "newOfflinehabitevents.sav";
 
     // Constructor
     public FileManager(Context context) {
@@ -51,8 +63,20 @@ public class FileManager {
     public void save(Integer mode){
         // 4. If cases for the save function
         if(mode == HT_METADATA_MODE){
-            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getHtMetadata();
+            habitTypeMetadata = HabitTypeStateManager.getHTStateManager().getHtMetadataAll();
             filename = HT_METADATA_FILE;
+        } else if(mode == RECENT_HE_MODE){
+            recentHabitEvents = HabitEventStateManager.getHEStateManager().getRecentHabitevents();
+            filename = RECENT_HE_FILE;
+        } else if(mode == TODAY_HE_MODE){
+            todayHabitEvents = HabitEventStateManager.getHEStateManager().getTodayHabitevents();
+            filename = TODAY_HE_FILE;
+        } else if(mode == EDITED_OFFLINE_HE_MODE){
+            editedOfflineHEs = HabitEventStateManager.getHEStateManager().getEditedOfflineHE();
+            filename = EDITED_OFFLINE_HE_FILE;
+        } else if(mode == NEW_OFFLINE_HE_MODE){
+            newOfflineHEs = HabitEventStateManager.getHEStateManager().getNewOfflineHE();
+            filename = NEW_OFFLINE_HE_FILE;
         }
         try {
             FileOutputStream fos = ctx.openFileOutput(filename,0);
@@ -60,6 +84,14 @@ public class FileManager {
             Gson gson = new Gson();
             if(mode == HT_METADATA_MODE) {
                 gson.toJson(habitTypeMetadata, writer);
+            } else if (mode == RECENT_HE_MODE){
+                gson.toJson(recentHabitEvents, writer);
+            } else if(mode == TODAY_HE_MODE){
+                gson.toJson(todayHabitEvents, writer);
+            } else if(mode == EDITED_OFFLINE_HE_MODE){
+                gson.toJson(editedOfflineHEs, writer);
+            } else if(mode == NEW_OFFLINE_HE_MODE){
+                gson.toJson(newOfflineHEs, writer);
             }
             writer.flush();
         } catch (FileNotFoundException e) {
@@ -75,6 +107,14 @@ public class FileManager {
         // 5. If cases for load function
         if(mode == HT_METADATA_MODE){
             filename = HT_METADATA_FILE;
+        } else if(mode == RECENT_HE_MODE){
+            filename = RECENT_HE_FILE;
+        } else if(mode == TODAY_HE_MODE){
+            filename = TODAY_HE_FILE;
+        } else if(mode == EDITED_OFFLINE_HE_MODE){
+            filename = EDITED_OFFLINE_HE_FILE;
+        } else if(mode == NEW_OFFLINE_HE_MODE){
+            filename = NEW_OFFLINE_HE_FILE;
         }
         try {
             FileInputStream fis = ctx.openFileInput(filename);
@@ -84,18 +124,46 @@ public class FileManager {
             if(mode == HT_METADATA_MODE) {
                 Type calType = new TypeToken<ArrayList<HabitTypeMetadata>>() {}.getType();
                 habitTypeMetadata = gson.fromJson(in, calType);
+            } else if (mode == RECENT_HE_MODE){
+                Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
+                recentHabitEvents = gson.fromJson(in, calType);
+            } else if (mode == TODAY_HE_MODE){
+                Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
+                todayHabitEvents = gson.fromJson(in, calType);
+            } else if (mode == EDITED_OFFLINE_HE_MODE){
+                Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
+                editedOfflineHEs = gson.fromJson(in, calType);
+            } else if (mode == NEW_OFFLINE_HE_MODE){
+                Type calType = new TypeToken<ArrayList<HabitEvent>>() {}.getType();
+                newOfflineHEs = gson.fromJson(in, calType);
             }
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             if(mode == HT_METADATA_MODE){
                 habitTypeMetadata = new ArrayList<HabitTypeMetadata>();
+            } else if(mode == RECENT_HE_MODE){
+                recentHabitEvents = new ArrayList<HabitEvent>();
+            } else if(mode == TODAY_HE_MODE){
+                todayHabitEvents = new ArrayList<HabitEvent>();
+            } else if(mode == EDITED_OFFLINE_HE_MODE){
+                editedOfflineHEs = new ArrayList<HabitEvent>();
+            } else if(mode == NEW_OFFLINE_HE_MODE){
+                newOfflineHEs = new ArrayList<HabitEvent>();
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException();
         }
         if(mode == HT_METADATA_MODE){
-            HabitTypeStateManager.setHtMetadata(habitTypeMetadata);
+            HabitTypeStateManager.getHTStateManager().setHtMetadataAll(habitTypeMetadata);
+        } else if(mode == RECENT_HE_MODE){
+            HabitEventStateManager.getHEStateManager().setRecentHabitEvents(recentHabitEvents);
+        } else if(mode == TODAY_HE_MODE){
+            HabitEventStateManager.getHEStateManager().setTodayHabitEvents(todayHabitEvents);
+        } else if(mode == EDITED_OFFLINE_HE_MODE){
+            HabitEventStateManager.getHEStateManager().setEditedOfflineHE(editedOfflineHEs);
+        } else if(mode == NEW_OFFLINE_HE_MODE){
+            HabitEventStateManager.getHEStateManager().setNewOfflineHE(newOfflineHEs);
         }
     }
 

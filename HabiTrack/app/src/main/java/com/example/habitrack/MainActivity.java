@@ -7,16 +7,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 
@@ -28,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     // bool var for connection status
     Boolean isConnected;
+    // bool var checking if esid verification is running
+    Boolean isVerifying = Boolean.FALSE;
     // userID
     String currentUserID;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Button allButton;
     Button logoutButton;
     Button socialButton;
+    ImageButton refreshButton;
     private ListView displayNames;
     //private ArrayList<HabitType> today = new ArrayList<HabitType>();
     private ArrayList<HabitEvent> today = new ArrayList<HabitEvent>();
@@ -49,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
     // Get Filemanager
     FileManager fileManager = new FileManager(this);
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         createTypeButton = (Button) findViewById(R.id.createHabitButton);
         allButton = (Button) findViewById(R.id.allButton);
         historybutton = (Button) findViewById(R.id.historyButton);
+        refreshButton = findViewById(R.id.refreshButton);
         logoutButton = (Button) findViewById(R.id.button10);
         socialButton = (Button) findViewById(R.id.button4);
         displayNames = (ListView) findViewById(R.id.listView);
@@ -81,8 +82,10 @@ public class MainActivity extends AppCompatActivity {
 // ------------------
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
         SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
         final SharedPreferences.Editor loggedInEditor = loggedInPrefs.edit();
         boolean isLoggedIn = loggedInPrefs.getBoolean("loggedIn", false);
+        String liUserID = loggedInUserID.getString("userID", null);
         final Intent toLogIn = new Intent(getApplicationContext(), SignupActivity.class);
         if(!isLoggedIn) {
             startActivity(toLogIn);
@@ -109,14 +112,15 @@ public class MainActivity extends AppCompatActivity {
         });
 // ------------------
 
-//        ------------------- TEMP USER ID
-        currentUserID = "testUserID";
+        currentUserID = liUserID;
+
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
         createTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isConnected = isOnline();
                 Intent newType = new Intent(getApplicationContext(), NewHabitTypeActivity.class);
                 newType.putExtra("connection", isConnected);
                 newType.putExtra("currentUserID", currentUserID);
@@ -150,64 +154,127 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("habitID", today.get(i).getID());
                 Intent intent;
                 Integer heID = today.get(i).getHabitEventID();
+                String esID = today.get(i).getHabitTypeEsID();
                 if(hec.getHabitEventIsEmpty(heID)) {
                     intent = new Intent(MainActivity.this, NewHabitEventActivity.class);
                 } else {
                     intent = new Intent(MainActivity.this, HabitEventDetailsActivity.class);
                 }
+                isConnected = isOnline();
                 intent.putExtra("habitEventID", heID);
                 intent.putExtra("habitTypeID", hec.getCorrespondingHabitTypeID(heID));
                 intent.putExtra("connection", isConnected);
+                intent.putExtra("habitTypeEsID", esID);
                 startActivity(intent);
             }
         });
 
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isConnected = isOnline();
+                hec.updateHabitEvents(isConnected, currentUserID);
+                adapter.notifyDataSetChanged();
+                hec.syncEditedHabitEvents();
+                hec.syncNewOfflineHEs();
+                hec.syncCompletedOfflineHEs();
+            }
+        });
+
 //  --------------------------------TEST COMMANDS BELOW -- MUST BE REMOVED ------------------
+//        NewUser usr = new NewUser("asdfasdf");
+//        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+//        addNewUser.execute(usr);
+//
+//        NewUser usr2 = new NewUser("follower");
+//        ElasticSearchController.AddNewUser addNewUser2 = new ElasticSearchController.AddNewUser();
+//        addNewUser2.execute(usr2);
+//        usr.requestsEID.add("follower");
+//
+//
+//        NewUser usr3 = new NewUser("beginner");
+//        ElasticSearchController.AddNewUser addNewUser3 = new ElasticSearchController.AddNewUser();
+//        addNewUser3.execute(usr3);
+//        usr3.followRequests.add(usr2);
+//        usr3.followRequests.add(usr);
+//        Log.d("worked", usr3.getFollowRequests().toString());
+//
+//
+//        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+//        editUser.execute(usr);
+//
+//        ElasticSearchController.EditUser editUser1 = new ElasticSearchController.EditUser();
+//        editUser1.execute(usr3);
 //        HabitEvent testHE = new HabitEvent(1000, 2000);
+//        testHE.setUserID("test");
 //        ElasticSearchController.AddHabitEvent addHabitEvent = new ElasticSearchController.AddHabitEvent();
 //        addHabitEvent.execute(testHE);
 //
 //        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
-//        getHabitEvent.execute("");
-//        ArrayList<Integer> schedule = new ArrayList<>();
-//        schedule.add(Calendar.SUNDAY);
-//        HabitType ht = new HabitType(201);
-//        ht.setTitle("ssh200");
-//        ht.setReason("ssh200");
-//        ht.setSchedule(schedule);
-//        ht.setStartDate(Calendar.getInstance());
-//        htc.addHabitTypeToElasticSearch(ht);
+//        getHabitEvent.execute("user", "test");
+//
+        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
+        users.execute("");
+        try {
+            ArrayList<NewUser> ls = users.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 //        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 //
-//        NewUser user = new NewUser("testUser3");
+//        NewUser user = new NewUser("testUser1");
 //        ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
 //        addNewUser.execute(user);
 //        NewUser user2 = new NewUser("testUser2");
 //        addNewUser.execute(user2);
+//        ArrayList<NewUser> allUsers = new ArrayList<NewUser>();
 //        ElasticSearchController.GetUser getUser = new ElasticSearchController.GetUser();
 //        getUser.execute();
 //        try {
-//            ArrayList<NewUser> allUsers = getUser.get();
+//            allUsers = getUser.get();
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        } catch (ExecutionException e) {
 //            e.printStackTrace();
 //        }
+//        Log.d("usersLog", allUsers.toString());
+        // 2. load
+//        htc.loadHTID();
+//        hec.loadHEID();
+//        hec.createNewHabitEvent(1000, isConnected, currentUserID);
+//        hec.doOfflineTasks();
+//        ArrayList<Integer> plan = new ArrayList<Integer>();
+//        plan.add(Calendar.SUNDAY);
+//        HabitTypeMetadata htmd1 = new HabitTypeMetadata(1001, "esid1");
+//        htmd1.setTitle("title1");
+//        htmd1.setScheduledToday(Boolean.TRUE);
+//        htmd1.setSchedule(plan);
+//        htmd1.setCanBeScheduled(Boolean.TRUE);
+//
+//        HabitTypeStateManager.getHTStateManager().addMetadata(htmd1);
+//        fileManager.save(fileManager.HT_METADATA_MODE);
 //  --------------------------------TEST COMMANDS ABOVE -- MUST BE REMOVED ------------------
 
-        // load HT Metadata
-        fileManager.load(fileManager.HT_METADATA_MODE);
-        // Start a new thread to get elastic search IDs if possible
-        // htc.getElasticSearchIDs();
-        // 2. load
+        // 0. load IDs
         htc.loadHTID();
         hec.loadHEID();
-        // 3. Restore all HT and HE if saved
-        htc.loadFromFile();
-        hec.loadFromFile();
-        // 4. Get Recent events and HabitTypes for today
+        // 1. load HT Metadata
+        fileManager.load(fileManager.HT_METADATA_MODE);
+        // 2. load habit events for today
+        fileManager.load(fileManager.TODAY_HE_MODE);
+        // 2. calculate all the hts for today, using htmds
+        htc.getHabitTypesForToday();
+        // 3. calculate the hes for today, using the previously created htmdfortoday list
         htc.generateHabitsForToday(isConnected, currentUserID);
-        hec.updateRecentHabitEvents();
+        //hec.generateEventsForToday(isConnected, currentUserID);
+        // 3. Restore all HT and HE if saved
+//        htc.loadFromFile();
+//        hec.loadFromFile();
+        // 4. Get Recent events and HabitTypes for today
+//        htc.generateHabitsForToday(isConnected, currentUserID);
+//        hec.updateRecentHabitEvents();
 
     }
 
@@ -225,9 +292,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isConnected = isOnline();
+        hec.updateHabitEvents(isConnected, currentUserID);
+        isConnected = isOnline();
+        if(isConnected) {
+            hec.syncEditedHabitEvents();
+            hec.syncNewOfflineHEs();
+            hec.syncCompletedOfflineHEs();
+        }
 
     }
 
+    // Code taken from: https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
