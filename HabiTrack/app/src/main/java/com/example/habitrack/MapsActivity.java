@@ -83,7 +83,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         htEsID = intent.getIntExtra("htEsID", -1);
 
 
+
         titleString = hc.getHabitTitle(htEsID.toString());
+
 
 
 
