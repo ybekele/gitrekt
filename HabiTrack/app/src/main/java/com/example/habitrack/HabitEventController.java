@@ -85,7 +85,7 @@ public class HabitEventController {
     }
 
     public ArrayList<HabitEvent> getHabitEventsForToday(){
-        return HabitEventStateManager.getHEStateManager().getALlHabitEventsForToday();
+        return HabitEventStateManager.getHEStateManager().getTodayHabitevents();
     }
 
     public ArrayList<HabitEvent> getAllHabitEvent(){
@@ -116,6 +116,19 @@ public class HabitEventController {
     public ArrayList<HabitEvent> getRecentHabitEvents(){
         return HabitEventStateManager.getHEStateManager().getRecentHabitevents();
     }
+
+    public void updateHabitEvents(Boolean isConnected, String userID){
+        ArrayList<HabitTypeMetadata> htmdList = HabitTypeStateManager.getHTStateManager().getHtMetadataToday();
+        for(HabitTypeMetadata htmd : htmdList){
+            String esID = htmd.getEsID();
+            if(htmd.getScheduledToday() == Boolean.FALSE && esID != null){
+                createNewHabitEvent(esID, htmd.getLocalID(), isConnected, userID);
+                htmd.setScheduledToday(Boolean.TRUE);
+            }
+        }
+        fileManager.save(fileManager.HT_METADATA_MODE);
+    }
+
 
     /**
      * This function deletes all habit events
