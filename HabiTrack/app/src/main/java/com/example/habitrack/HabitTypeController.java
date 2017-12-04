@@ -86,11 +86,6 @@ public class HabitTypeController {
         HabitTypeStateManager.getHTStateManager().addMetadata(ht.getMyData());
         // Save the changes
         fileManager.save(fileManager.HT_METADATA_MODE);
-        if(ht.getMyData().getEsID() != null) {
-            Toast.makeText(ctx, "Habit successfully created and saved", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(ctx, "Habit created but not saved", Toast.LENGTH_SHORT).show();
-        }
     }
 
     public HabitType getHabitTypeFromES(String esID){
