@@ -75,20 +75,20 @@ public class HabitTypeStateManager {
         htMetadataAll.add(ht);
     }
 
+    public void addMetadataToday(HabitTypeMetadata ht){
+        htMetadataToday.add(ht);
+    }
+
     public HabitTypeMetadata getHtMetadata(String esID){
-        for(Integer count = 0; count < htMetadataAll.size(); count++){
-            String testESID = htMetadataAll.get(count).getEsID();
-            if(testESID.equals(esID)){
-//            if(htMetadata.get(count).getEsID() == esID){
-                return htMetadataAll.get(count);
+        if(esID != null) {
+            for (Integer count = 0; count < htMetadataAll.size(); count++) {
+                String testESID = htMetadataAll.get(count).getEsID();
+                if (esID.equals(testESID)) {
+                    return htMetadataAll.get(count);
+                }
             }
         }
-//        for(HabitTypeMetadata habitTypeMetadata : htMetadata){
-//            if(habitTypeMetadata.getEsID() == esID){
-//                return habitTypeMetadata;
-//            }
-//        }
-        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "");
+        HabitTypeMetadata htMD = new HabitTypeMetadata(-1, "noesid");
         return htMD;
     }
 
