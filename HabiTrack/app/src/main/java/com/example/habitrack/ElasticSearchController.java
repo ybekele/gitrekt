@@ -144,6 +144,17 @@ public class ElasticSearchController {
                 } catch (IOException e) {
                     Log.i("Error", "The application failed to build and send the HabitType");
                 }
+                index = new Index.Builder(habitType).index("gitrekt_htrack").type("habit_type").build();
+                try {
+                    DocumentResult result = client.execute(index);
+                    if (result.isSucceeded()) {
+                        Boolean status = Boolean.TRUE;
+                    } else {
+                        Log.i("Error", "Elasticsearch was not able to add the HabitType");
+                    }
+                } catch (IOException e) {
+                    Log.i("Error", "The application failed to build and send the HabitType");
+                }
             }
             return null;
         }
@@ -225,7 +236,7 @@ public class ElasticSearchController {
             try {
                 DocumentResult result = client.execute(index);
                 if (result.isSucceeded()) {
-                    fileManager.save(fileManager.HT_METADATA_MODE);
+                    status = Boolean.TRUE;
                 } else {
                     Log.i("Error", "Elasticsearch was not able to add the HabitType");
                 }

@@ -31,6 +31,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
     // declare components
     public Integer heID;
     public Integer htID;
+    public String htEsID;
     TextView title;
     // Comment
     EditText comment;
@@ -58,6 +59,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
         heID = intent.getIntExtra("habitEventID", -1);
         htID = intent.getIntExtra("habitTypeID", -1);
         isConnected = intent.getBooleanExtra("connection", Boolean.FALSE);
+        htEsID = intent.getStringExtra("habitTypeEsID");
 
         // Get interesting HT's attributes
         String titleString = hec.getHabitEventTitle(heID);
@@ -116,7 +118,7 @@ public class NewHabitEventActivity extends AppCompatActivity {
 //                    Toast.makeText(NewHabitEventActivity.this, "Error Adding Habit Event",
 //                            Toast.LENGTH_SHORT).show();
 //                }
-                htc.incrementHTCurrentCounter(htID);
+                htc.incrementHTCurrentCounter(htEsID);
                 hec.completeHabitEvent(heID);
                 finish();
 
