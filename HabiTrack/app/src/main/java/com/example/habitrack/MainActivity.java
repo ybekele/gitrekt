@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 
@@ -83,10 +84,12 @@ public class MainActivity extends AppCompatActivity {
 // ------------------
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
         SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
-        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUsersID", MODE_PRIVATE);
+
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUserID", MODE_PRIVATE);
         final SharedPreferences.Editor loggedInEditor = loggedInPrefs.edit();
         boolean isLoggedIn = loggedInPrefs.getBoolean("loggedIn", false);
-        String liUserID = loggedInUserID.getString("loggedInUsersID", null);
+        String liUserID = loggedInUserID.getString("loggedInUserID", null);
+
         final Intent toLogIn = new Intent(getApplicationContext(), SignupActivity.class);
         if(!isLoggedIn) {
             startActivity(toLogIn);
@@ -215,15 +218,15 @@ public class MainActivity extends AppCompatActivity {
 //        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
 //        getHabitEvent.execute("user", "test");
 //
-        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
-        users.execute("");
-        try {
-            ArrayList<NewUser> ls = users.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+//        ElasticSearchController.GetUser users = new ElasticSearchController.GetUser();
+//        users.execute("");
+//        try {
+//            ArrayList<NewUser> ls = users.get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 //        ArrayList<HabitType> test = htc.getHabitTypeElasticSearch();
 //
 //        NewUser user = new NewUser("testUser1");
@@ -269,14 +272,22 @@ public class MainActivity extends AppCompatActivity {
         // 2. calculate all the hts for today, using htmds
         htc.getHabitTypesForToday();
         // 3. calculate the hes for today, using the previously created htmdfortoday list
-        htc.generateHabitsForToday(isConnected, currentUserID);
-        //hec.generateEventsForToday(isConnected, currentUserID);
-        // 3. Restore all HT and HE if saved
-//        htc.loadFromFile();
-//        hec.loadFromFile();
-        // 4. Get Recent events and HabitTypes for today
-//        htc.generateHabitsForToday(isConnected, currentUserID);
-//        hec.updateRecentHabitEvents();
+        fileManager.load(fileManager.DATE_MODE);
+        // get today's date, and previous date
+        Calendar today = Calendar.getInstance();
+        Calendar htDate = HabitTypeStateManager.getHTStateManager().getHabitTypeDate();
+        if(htDate.get(Calendar.YEAR) < today.get(Calendar.YEAR)
+                || (htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.MONTH) < today.get(Calendar.MONTH))
+                || (htDate.get(Calendar.MONTH) <= today.get(Calendar.MONTH)
+                && htDate.get(Calendar.YEAR) <= today.get(Calendar.YEAR)
+                && htDate.get(Calendar.DATE) < today.get(Calendar.DATE))) {
+            HabitTypeStateManager.getHTStateManager().setHabitTypeDate(today);
+            fileManager.save(fileManager.DATE_MODE);
+            htc.generateHabitsForToday(isConnected, currentUserID);
+            fileManager.load(fileManager.RECENT_HE_MODE);
+            hec.updateRecentHabitEvents();
+        }
 
     }
 

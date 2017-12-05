@@ -15,6 +15,10 @@ public class NewUser {
     private String userID;
     public ArrayList<NewUser> followRequests = new ArrayList<>();
     public ArrayList<NewUser> usersFollowed = new ArrayList<>();
+
+    /**
+     * ignore this
+     */
     public ArrayList<String> requestsEID = new ArrayList<>();
 
     /* I added these two extra lists to see if it's easier working with strings through ES*/
@@ -37,16 +41,14 @@ public class NewUser {
         return userID;
     }
 
-    public String findId(String userName) {
-        return userID;
-    }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setUserID(String userID) { this.userID = userID; }
+
+    public String getUserID(String userName) {
+        return userID;
     }
 
     public void addUsersFollowed(NewUser follower) {
