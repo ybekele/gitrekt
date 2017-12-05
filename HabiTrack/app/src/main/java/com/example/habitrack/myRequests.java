@@ -67,17 +67,17 @@ public class myRequests extends AppCompatActivity {
 
                                     ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
                                     addNewUser.execute(requests.get(j));
-                                    if (!requests.get(j).usersFollowed.contains(liu)) {
-                                        requests.get(j).usersFollowed.add(liu);
-                                        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
-                                        editUser.execute(requests.get(j));
-                                        removeableIndex = j;
-                                    }
-                                    Log.d("requestedTitle", liu.getTitle());
-                                    Log.d("requesteeTitle", requests.get(j).getTitle());
+                                    //if (!requests.get(j).usersFollowed.contains(liu)) {
+                                    requests.get(j).usersFollowed.add(liu);
                                     ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
                                     editUser.execute(requests.get(j));
                                     removeableIndex = j;
+                                   // }
+                                    Log.d("requestedTitle", liu.getTitle());
+                                    Log.d("requesteeTitle", requests.get(j).getTitle());
+                                    //ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+                                    //editUser.execute(requests.get(j));
+                                    //removeableIndex = j;
                                     Log.d("requesteeFollowing", requests.get(j).followRequests.toString());
                                 }
 
@@ -127,7 +127,7 @@ public class myRequests extends AppCompatActivity {
     }
 
     public NewUser getCurrentUser(ArrayList<NewUser> currentUsers) {
-        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUserID", MODE_PRIVATE);
         liuName = loggedInUserID.getString("loggedInName", null);
         NewUser localUser = null;
         for (int i = 0; i < currentUsers.size(); i++) {

@@ -37,6 +37,7 @@ public class HabitEventDetailsActivity extends AppCompatActivity {
     Button shareButton;
     private String dateString;
 
+
     HabitTypeController htc = new HabitTypeController(this);
     HabitEventController he = new HabitEventController(this);
     @Override

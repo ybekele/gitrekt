@@ -1,12 +1,9 @@
 package com.example.habitrack;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
 import io.searchbox.annotations.JestId;
@@ -148,6 +145,6 @@ public class HabitEvent {
 
     @Override
     public String toString() {
-        return (getHabitEventID() + "\n" + getTitle() + "\n" + getId());
+        return getTitle();
     }
 }
