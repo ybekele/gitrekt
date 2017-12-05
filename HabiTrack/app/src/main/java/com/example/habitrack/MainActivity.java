@@ -85,10 +85,13 @@ public class MainActivity extends AppCompatActivity {
         // Checks if app is in a logged in state. If not, goes to login page (SignupActivity)
         SharedPreferences loggedInPrefs = getApplicationContext().getSharedPreferences("loggedInStatus", MODE_PRIVATE);
 
-        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUserID", MODE_PRIVATE);
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("loggedInUsersID", MODE_PRIVATE);
+        Log.d("logged in", loggedInUserID.toString());
         final SharedPreferences.Editor loggedInEditor = loggedInPrefs.edit();
         boolean isLoggedIn = loggedInPrefs.getBoolean("loggedIn", false);
-        String liUserID = loggedInUserID.getString("loggedInUserID", null);
+        String liUserID = loggedInUserID.getString("loggedInUsersID", null);
+
+
 
         final Intent toLogIn = new Intent(getApplicationContext(), SignupActivity.class);
         if(!isLoggedIn) {
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 // ------------------
 
         currentUserID = liUserID;
-
+        Log.d("liUserId", "here is it "+ liUserID);
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
