@@ -151,6 +151,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
                 /* Adds the new Habit Type to the Habit Type Controller */
                 if ((!(title.equals("")) && !(reason.equals("")) && plan != null)) {
                     htc.createNewHabitType(title, reason, date, plan, isConnected, userID);
+                    sound.playHabitSound();
 
                 }
 
@@ -161,7 +162,7 @@ public class NewHabitTypeActivity extends AppCompatActivity {
 
 
                 }
-                sound.playHabitSound();
+
 
                 finish();
             }
