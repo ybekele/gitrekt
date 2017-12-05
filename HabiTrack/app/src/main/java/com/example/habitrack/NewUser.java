@@ -45,9 +45,7 @@ public class NewUser {
         this.userName = userName;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+    public void setUserID(String userID) { this.userID = userID; }
 
     public String getUserID(String userName) {
         return userID;
