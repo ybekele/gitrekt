@@ -26,6 +26,7 @@ public class SearchUsers extends AppCompatActivity {
     private ArrayList<NewUser> matchedUsers = new ArrayList<>();
     private ArrayList<String> displayNames = new ArrayList<>();
     String liuName;
+    String liuID;
     NewUser loggedInUser;
 
 
@@ -44,6 +45,13 @@ public class SearchUsers extends AppCompatActivity {
         searchUsersButton = findViewById(R.id.buttonsu);
         //searchedUsersAdapter = new ArrayAdapter<NewUser>(this, R.layout.list_item, R.id.searchUserListView, currentUsers);
         //searchedUsersListView.setAdapter(searchedUsersAdapter);
+
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+        liuName = loggedInUserID.getString("loggedInName", null);
+        liuID = loggedInUserID.getString("loggedInUsersID", null);
+        Log.d("usrNAME", liuName);
+
+        Log.d("usrInCurrent", liuID);
 
         searchUsersButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,6 +167,10 @@ public class SearchUsers extends AppCompatActivity {
     public NewUser getCurrentUser(ArrayList<NewUser> currentUsers) {
         SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
         liuName = loggedInUserID.getString("loggedInName", null);
+        liuID = loggedInUserID.getString("loggedInUsersID", null);
+        Log.d("usrNAME", liuName);
+
+        Log.d("usrInCurrent", liuID);
         NewUser localUser = null;
         for (int i = 0; i < currentUsers.size(); i++) {
             if (currentUsers.get(i).getTitle().equals(liuName)) {
