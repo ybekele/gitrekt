@@ -9,14 +9,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class myRequests extends AppCompatActivity {
     String liuName;
     NewUser liu;
+    Integer removeableIndex;
     ListView requestsListView;
+    Button removeBut;
     private ArrayAdapter<String> adapter;
     private ArrayList<NewUser> requests = new ArrayList<>();
     private ArrayList<String> displayRequests = new ArrayList<>();
@@ -31,8 +35,10 @@ public class myRequests extends AppCompatActivity {
         requestsListView = findViewById(R.id.requestList);
 
         for (Integer i = 0; i < requests.size(); i++) {
-            displayRequests.add(requests.get(i).getTitle());
+            String requestName = requests.get(i).getTitle();
+            displayRequests.add(requestName);
         }
+
         Log.d("requestsLog", requests.toString());
         Log.d("requestDisplay", displayRequests.toString());
 
@@ -46,32 +52,63 @@ public class myRequests extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final Integer index = i;
                 AlertDialog.Builder builder = new AlertDialog.Builder(myRequests.this);
-                builder.setMessage("Would you like to allow this User to follow you?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                for (int j = 0; j < requests.size(); j++) {
-                                    if (requests.get(j).getTitle().equals(displayRequests.get(index))) {
-                                        if ((liu!= null) && (liu != requests.get(j))) {
-                                            requests.get(j).addUsersFollowed(liu);
-                                            requests.remove(j);
-                                            ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
-                                            editUser.execute(requests.get(j));
-                                        }
+                builder.setMessage("Would you like to allow this User to follow you?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for (int j = 0; j < requests.size(); j++) {
+                            if (requests.get(j).getTitle().equals(displayRequests.get(index))) {
+                                if ((liu != null) && (liu != requests.get(j))) {
+//                                            requests.get(j).addUsersFollowed(liu);
+//                                            requests.remove(j);
+//                                            ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+//                                            editUser.execute(requests.get(j));
 
+
+                                    ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
+                                    addNewUser.execute(requests.get(j));
+                                    if (!requests.get(j).usersFollowed.contains(liu)) {
+                                        requests.get(j).usersFollowed.add(liu);
+                                        ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+                                        editUser.execute(requests.get(j));
+                                        removeableIndex = j;
                                     }
+                                    Log.d("requestedTitle", liu.getTitle());
+                                    Log.d("requesteeTitle", requests.get(j).getTitle());
+                                    ElasticSearchController.EditUser editUser = new ElasticSearchController.EditUser();
+                                    editUser.execute(requests.get(j));
+                                    removeableIndex = j;
+                                    Log.d("requesteeFollowing", requests.get(j).followRequests.toString());
                                 }
+
                             }
-                        })
-                        .setNegativeButton("Cancel", null);
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
                 AlertDialog alert = builder.create();
                 alert.show();
             }
-        });
-        adapter.notifyDataSetChanged();
 
+
+        });
+        //requests.remove(removeableIndex);
+        //displayRequests.remove(removeableIndex);
+
+
+        removeBut = findViewById(R.id.removeAll);
+        removeBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayRequests.clear();
+                requests.clear();
+                adapter.notifyDataSetChanged();
+                Toast.makeText(myRequests.this, "Removing All Requests", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
+
 
     public ArrayList<NewUser> getCurrentUsers() {
 
@@ -100,5 +137,10 @@ public class myRequests extends AppCompatActivity {
         }
         return localUser;
     }
-}
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.notifyDataSetChanged();
+    }
+}
