@@ -61,7 +61,7 @@ public class SignupActivity extends AppCompatActivity {
                             userNameExists = true;
                             liuName = existingUserIDs.get(i).getTitle();
                             liuID = existingUserIDs.get(i).getId();
-
+                            Log.d("this is the luid", liuID);
 
                             Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
                             loggedInStatusEditor.putBoolean("loggedIn", true);

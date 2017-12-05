@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 // ------------------
 
         currentUserID = liUserID;
-        Log.d("liUserId", liUserID);
+        Log.d("liUserId", "here is it "+ liUserID);
 
 
         // Handles if user pressed CREATE button , redirects to create a new habit type class
