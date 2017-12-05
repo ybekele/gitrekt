@@ -126,6 +126,8 @@ public class SignupActivity extends AppCompatActivity {
                 }
                 if (userNameExists == Boolean.FALSE) {
                     NewUser thisUser = new NewUser(userName);
+                    String newUsersID = Integer.toString(existingUserIDs.size());
+                    thisUser.setUserID(newUsersID);
                     ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
                     addNewUser.execute(thisUser);
                     Toast.makeText(getApplicationContext(), "Welcome to HabiTrack! You may now login.", Toast.LENGTH_LONG).show();

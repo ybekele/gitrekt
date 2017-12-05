@@ -71,11 +71,12 @@ public class ElasticSearchController {
         protected Void doInBackground(NewUser... newUsers) {
             verifySettings();
             for (NewUser usr : newUsers) {
-                Index index = new Index.Builder(usr).index("gitrekt_htrack").type("htr_user").build();
+                String esID = usr.getId();
+                Index index = new Index.Builder(usr).index("gitrekt_htrack").type("htr_user").id(esID).build();
                 try {
                     DocumentResult result = client.execute(index);
                     if (result.isSucceeded()) {
-                        usr.setUserID(result.getId());
+//                        usr.setUserID(result.getId());
                     } else {
                         Log.i("Error", "Elasticsearch was not able to add the user");
                     }
