@@ -1,7 +1,10 @@
 package com.example.habitrack;
 
 import android.accessibilityservice.FingerprintGestureController;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,10 +18,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class HabitHistory extends AppCompatActivity {
     private ArrayList<HabitType> today = new ArrayList<HabitType>();
@@ -30,6 +35,9 @@ public class HabitHistory extends AppCompatActivity {
     Button start_over;
     Button show_map;
     Integer changing = 1;
+
+    public android.net.NetworkInfo wifi;
+    public android.net.NetworkInfo mobile;
 
 
     //Intializing arrays
@@ -44,6 +52,10 @@ public class HabitHistory extends AppCompatActivity {
     List<Integer> temp_tracker = new ArrayList<Integer>();
     ArrayList<String> listview_tracker2 = new ArrayList<String>();
 
+    String usr;
+
+    ArrayList<HabitEvent> allEvents;
+    private FileManager fileManager = new FileManager(this);
 
     int i;
     int a;
@@ -58,17 +70,82 @@ public class HabitHistory extends AppCompatActivity {
         ListView lv = (ListView)findViewById(R.id.listView_history);
         final HabitEventController hc = new HabitEventController(this);
         HabitTypeController ht = new HabitTypeController(this);
+        ElasticSearchController.GetHabitEvent getHabitEvent = new ElasticSearchController.GetHabitEvent();
+        fileManager.load(fileManager.RECENT_HE_MODE);
 
+
+        /*
+        Getting the usr ID
+         */
+
+        SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+        usr = loggedInUserID.getString("loggedInUsersID", null);
+
+
+
+        Log.d("usr", "these usr" + usr);
+
+
+        getHabitEvent.execute("user", usr);
+        try {
+            allEvents = getHabitEvent.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.d("usr", "these are the events" + allEvents.toString());
+
+
+
+
+
+
+
+        /**
+         * Following checks wifi connection
+         */
+        final ConnectivityManager connMgr = (ConnectivityManager)
+                this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        /*if (wifi.isConnectedOrConnecting ()) {
+            Toast.makeText(this, "Wifi", Toast.LENGTH_LONG).show();
+        } else if (mobile.isConnectedOrConnecting ()) {
+            Toast.makeText(this, "Mobile 3G ", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "No Network ", Toast.LENGTH_LONG).show();
+        }
+
+        if(wifi.isConnected() || mobile.isConnected()){
+            Toast.makeText(this, "hey hey hey hey hey  ", Toast.LENGTH_LONG).show();
+        }*/
 
         //Filling array with habit event titles
-        for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
-            if(hc.getAllHabitEvent().get(i).getEmpty() == Boolean.FALSE) {
-                String title = hc.getAllHabitEvent().get(i).getTitle();
-                all_habit_titles.add(title);
-                listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
-                listview_tracker2.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+        if(wifi.isConnectedOrConnecting()|| mobile.isConnectedOrConnecting()) {
+            for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                if (hc.getAllHabitEvent().get(i).getEmpty() == Boolean.FALSE) {
+                    String title = hc.getAllHabitEvent().get(i).getTitle();
+                    all_habit_titles.add(title);
+                    listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+                    listview_tracker2.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+                }
             }
         }
+        else {
+
+            for (i = 0; i < hc.getRecentHabitEvents().size(); i++) {
+                if (hc.getRecentHabitEvents().get(i).getEmpty() == Boolean.FALSE) {
+                    String title = hc.getRecentHabitEvents().get(i).getTitle();
+                    all_habit_titles.add(title);
+                    listview_tracker.add(hc.getRecentHabitEvents().get(i).getHabitEventID().toString());
+                    listview_tracker2.add(hc.getRecentHabitEvents().get(i).getHabitEventID().toString());
+                }
+            }
+        }
+
 
 
 
@@ -226,20 +303,42 @@ public class HabitHistory extends AppCompatActivity {
                         all_habit_titles.clear();
                         listview_tracker.clear();
                         HabitEventController hc = new HabitEventController(getApplicationContext());
-                        for(i=0;i<hc.getAllHabitEvent().size();i++) {
-                            String comment = hc.getAllHabitEvent().get(i).getComment();
-                            if(comment == null){
-                                comment = " ";
+
+
+                        if(wifi.isConnectedOrConnecting()||mobile.isConnectedOrConnecting()) {
+                            for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                                String comment = hc.getAllHabitEvent().get(i).getComment();
+                                if (comment == null) {
+                                    comment = " ";
+                                }
+                                String title = hc.getAllHabitEvent().get(i).getTitle();
+                                comments_list.add(comment);
+                                habit_title.add(title);
+                                temp_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
+
+                                Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
+
+
                             }
-                            String title = hc.getAllHabitEvent().get(i).getTitle();
-                            comments_list.add(comment);
-                            habit_title.add(title);
-                            temp_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID());
-
-                            Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
-
-
                         }
+                        else{
+                            for(i=0;i<hc.getRecentHabitEvents().size();i++) {
+                                String comment = hc.getRecentHabitEvents().get(i).getComment();
+                                if(comment == null){
+                                    comment = " ";
+                                }
+                                String title = hc.getRecentHabitEvents().get(i).getTitle();
+                                comments_list.add(comment);
+                                habit_title.add(title);
+                                temp_tracker.add(hc.getRecentHabitEvents().get(i).getHabitEventID());
+
+                                Log.d("query3", "the comment = " + comments_list.get(i) + "------" + s + "-------" + comments_list.get(i).startsWith(s.toLowerCase()));
+
+
+                            }
+                        }
+
+
 
                         for(i=0;i<comments_list.size();i++){
                             if(comments_list.get(i).startsWith(s.toUpperCase()) || comments_list.get(i).startsWith(s.toLowerCase()))
@@ -278,10 +377,22 @@ public class HabitHistory extends AppCompatActivity {
                 }
                 Log.d("checking","we came to the super");
 
-                for(int i=0;i<all_habit_titles.size();i++){
-                    if(all_habit_titles.get(i).startsWith(newText)){
-                        listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+
+                if(wifi.isConnectedOrConnecting()||mobile.isConnectedOrConnecting()) {
+
+                    for (int i = 0; i < all_habit_titles.size(); i++) {
+                        if (all_habit_titles.get(i).startsWith(newText)) {
+                            listview_tracker.add(hc.getAllHabitEvent().get(i).getHabitEventID().toString());
+                        }
                     }
+                }
+                else{
+                    for (int i = 0; i < all_habit_titles.size(); i++) {
+                        if (all_habit_titles.get(i).startsWith(newText)) {
+                            listview_tracker.add(hc.getRecentHabitEvents().get(i).getHabitEventID().toString());
+                        }
+                    }
+
                 }
 
                 return false;
@@ -306,11 +417,23 @@ public class HabitHistory extends AppCompatActivity {
         HabitEventController hc = new HabitEventController(this);
         ArrayList<String> all_titles = new ArrayList<String>();
         all_titles.clear();
-        for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
-            String title = hc.getAllHabitEvent().get(i).getTitle();
-            Log.d("checking","this is the title"+title);
-            all_titles.add(title);
 
+        if(wifi.isConnectedOrConnecting()|| mobile.isConnectedOrConnecting()) {
+            for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                String title = hc.getAllHabitEvent().get(i).getTitle();
+                Log.d("checking", "this is the title" + title);
+                all_titles.add(title);
+
+            }
+        }
+        else {
+
+            for (i = 0; i < hc.getAllHabitEvent().size(); i++) {
+                String title = hc.getAllHabitEvent().get(i).getTitle();
+                Log.d("checking", "this is the title" + title);
+                all_titles.add(title);
+
+            }
         }
 
         Log.d("last","this is in the method"+all_titles.get(0));

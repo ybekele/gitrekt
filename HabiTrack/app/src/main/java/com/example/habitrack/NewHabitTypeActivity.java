@@ -63,7 +63,9 @@ public class NewHabitTypeActivity extends AppCompatActivity {
 
         //Use sharedPreferences to get userID
         SharedPreferences loggedInUserID = getApplicationContext().getSharedPreferences("userID", MODE_PRIVATE);
+
         //userID = loggedInUserID.getString("userID", null);
+
         userID = getIntent().getStringExtra("currentUserID");
         Log.d("userID", "does it actually get userID?");
 
