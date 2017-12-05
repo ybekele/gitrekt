@@ -42,7 +42,7 @@ public class SignupActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.button9);
 
         final SharedPreferences sharedLoggedInStatus = getSharedPreferences("loggedInStatus", Context.MODE_PRIVATE);
-        final SharedPreferences loggedInUsersID = getSharedPreferences("userID", Context.MODE_PRIVATE);
+        final SharedPreferences loggedInUsersID = getSharedPreferences("loggedInUsersID", Context.MODE_PRIVATE);
         final SharedPreferences.Editor loggedInStatusEditor = sharedLoggedInStatus.edit();
         final SharedPreferences.Editor userIDEditor = loggedInUsersID.edit();
 
@@ -61,6 +61,7 @@ public class SignupActivity extends AppCompatActivity {
                             userNameExists = true;
                             liuName = existingUserIDs.get(i).getTitle();
                             liuID = existingUserIDs.get(i).getId();
+                            Log.d("this is the luid", liuID);
 
                             Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
                             loggedInStatusEditor.putBoolean("loggedIn", true);
@@ -162,7 +163,7 @@ public class SignupActivity extends AppCompatActivity {
             * Shared Preference files to store values of the users ID as well as the logged in state of the app
             */
         final SharedPreferences sharedLoggedInStatus = getSharedPreferences("loggedInStatus", Context.MODE_PRIVATE);
-        final SharedPreferences loggedInUsersID = getSharedPreferences("userID", Context.MODE_PRIVATE);
+        final SharedPreferences loggedInUsersID = getSharedPreferences("loggedInUsersID", Context.MODE_PRIVATE);
         final SharedPreferences.Editor loggedInStatusEditor = sharedLoggedInStatus.edit();
         final SharedPreferences.Editor userIDEditor = loggedInUsersID.edit();
 
@@ -171,6 +172,7 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View view) {
                 /*Checks if a username key already exists in sharedUserIDs*/
                 existingUserIDs = getUserIDs();
+                Log.d("print", existingUserIDs.toString());
                 userNameExists = Boolean.FALSE;
                 userName = userInput.getText().toString();
                 if (existingUserIDs.size() > 0) {
@@ -181,7 +183,7 @@ public class SignupActivity extends AppCompatActivity {
                             userNameExists = true;
                             liuName = existingUserIDs.get(i).getTitle();
                             liuID = existingUserIDs.get(i).getId();
-
+                            Log.d("elastic search id", liuID);
                             Toast.makeText(getApplicationContext(), "Login Successful!", Toast.LENGTH_LONG).show();
                             loggedInStatusEditor.putBoolean("loggedIn", true);
                             userIDEditor.putString("loggedInUsersID", liuID);
@@ -246,6 +248,8 @@ public class SignupActivity extends AppCompatActivity {
                 }
                 if (userNameExists == Boolean.FALSE) {
                     NewUser thisUser = new NewUser(userName);
+                    String newUsersID = Integer.toString(existingUserIDs.size());
+                    thisUser.setUserID(newUsersID);
                     ElasticSearchController.AddNewUser addNewUser = new ElasticSearchController.AddNewUser();
                     addNewUser.execute(thisUser);
                     Toast.makeText(getApplicationContext(), "Welcome to HabiTrack! You may now login.", Toast.LENGTH_LONG).show();

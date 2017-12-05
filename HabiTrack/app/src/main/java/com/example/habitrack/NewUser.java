@@ -80,6 +80,8 @@ public class NewUser {
     }
 
 
+    @Override
+    public String toString(){return getId() + " | " + getTitle();}
 
 
 }
